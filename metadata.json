@@ -1,0 +1,12 @@
+{
+  "name": "Copy of Apex Sportswear Pro",
+  "short_name": "Apex",
+  "description": "Enterprise-grade sportswear manufacturing and e-commerce platform.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#2563eb",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
