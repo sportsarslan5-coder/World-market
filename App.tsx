@@ -7,6 +7,7 @@ import Products from './pages/Products';
 import AIDesigner from './pages/AIDesigner';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
+import Cart from './pages/Cart';
 
 const App: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ const App: React.FC = () => {
           <Route path="/ai-designer" element={<AIDesigner />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/cart" element={<Cart />} />
         </Routes>
       </Layout>
     </Router>

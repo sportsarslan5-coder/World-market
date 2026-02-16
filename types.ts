@@ -8,24 +8,30 @@ export interface Product {
   price: number;
   rating: string;
   stock: number;
+  datePosted: string;
 }
 
 export interface CartItem extends Product {
   quantity: number;
 }
 
-export interface DesignRequest {
-  sport: string;
-  colorScheme: string;
-  quantity: string;
-  specialInstructions: string;
+export interface SaleRecord {
+  id: string;
+  productId: string;
+  productName: string;
+  customerName: string;
+  customerEmail: string;
+  amount: number;
+  date: string;
+  status: 'Delivered' | 'Processing' | 'Shipped';
 }
 
-export enum AppRoute {
-  Home = '/',
-  Products = '/products',
-  AIDesigner = '/ai-designer',
-  Contact = '/contact',
-  Cart = '/cart',
-  Admin = '/admin'
+export interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  location: string;
+  totalSpent: number;
+  orderCount: number;
+  lastOrderDate: string;
 }
