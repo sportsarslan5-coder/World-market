@@ -1,7 +1,7 @@
 
 import { Product, Customer } from './types';
 
-export const ADMIN_WHATSAPP = "1234567890"; // Admin's contact for seller data delivery
+export const ADMIN_WHATSAPP = "923187536795"; // Updated with user's specific WhatsApp number
 
 export const CATEGORIES = [
   "Soccer", "Football", "Basketball", "Baseball", "Softball", 
