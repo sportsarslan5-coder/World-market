@@ -35,3 +35,14 @@ export interface Customer {
   orderCount: number;
   lastOrderDate: string;
 }
+
+export interface SellerInfo {
+  fullName: string;
+  whatsapp: string;
+  email: string;
+  country: string;
+  city: string;
+  contactNumber: string;
+  paymentDetails: string;
+  showName: string;
+}

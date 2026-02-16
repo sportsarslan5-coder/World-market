@@ -1,6 +1,8 @@
 
 import { Product, Customer } from './types';
 
+export const ADMIN_WHATSAPP = "1234567890"; // Admin's contact for seller data delivery
+
 export const CATEGORIES = [
   "Soccer", "Football", "Basketball", "Baseball", "Softball", 
   "Volleyball", "Hockey", "Cycling", "Rugby", "American Football",
@@ -8,7 +10,6 @@ export const CATEGORIES = [
   "Fitness Wear", "Leggings", "Shorts", "Socks", "Caps"
 ];
 
-// Generate 200 items (simulating a large inventory system)
 export const PRODUCTS: Product[] = Array.from({ length: 200 }).map((_, idx) => {
   const category = CATEGORIES[idx % CATEGORIES.length];
   return {
@@ -20,7 +21,6 @@ export const PRODUCTS: Product[] = Array.from({ length: 200 }).map((_, idx) => {
     stock: 15 + (idx % 100),
     description: `Professional-grade ${category.toLowerCase()} performance gear. Features Apex-Tech moisture management and reinforced durability for high-intensity play.`,
     image: `https://picsum.photos/seed/apex-${idx}/800/800`,
-    // Fix: Added datePosted property required by the Product interface
     datePosted: new Date(Date.now() - Math.random() * 1000000000).toISOString()
   };
 });
@@ -31,7 +31,6 @@ export const MOCK_SALES = Array.from({ length: 12 }).map((_, i) => ({
   customers: 120 + Math.floor(Math.random() * 300)
 }));
 
-// Fix: Updated MOCK_CUSTOMERS to include missing properties and corrected 'orders' to 'orderCount' to match the Customer interface
 export const MOCK_CUSTOMERS: Customer[] = [
   { id: 'c1', name: 'John Doe', email: 'john@example.com', orderCount: 5, totalSpent: 1250, location: 'New York, USA', lastOrderDate: '2024-12-01' },
   { id: 'c2', name: 'Sarah Smith', email: 'sarah.s@sports.co', orderCount: 12, totalSpent: 4300, location: 'London, UK', lastOrderDate: '2025-01-15' },
