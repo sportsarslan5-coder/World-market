@@ -1,10 +1,15 @@
-
 import { GoogleGenAI } from "@google/genai";
 
-// Safe access to API Key to prevent "process is not defined" crashes
+// Crash-proof access to API Key for production environments
 const getSafeApiKey = () => {
   try {
-    return (typeof process !== 'undefined' && process.env) ? process.env.API_KEY || '' : '';
+    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+      return process.env.API_KEY;
+    }
+    if (typeof window !== 'undefined' && (window as any).process?.env?.API_KEY) {
+      return (window as any).process.env.API_KEY;
+    }
+    return '';
   } catch (e) {
     return '';
   }
@@ -12,6 +17,10 @@ const getSafeApiKey = () => {
 
 export const generateDesignConcept = async (prompt: string) => {
   const apiKey = getSafeApiKey();
+  if (!apiKey) {
+    return "API Key not configured. Please contact the administrator.";
+  }
+  
   const ai = new GoogleGenAI({ apiKey });
   
   const response = await ai.models.generateContent({
@@ -29,6 +38,8 @@ export const generateDesignConcept = async (prompt: string) => {
 
 export const generateUniformPreview = async (prompt: string) => {
   const apiKey = getSafeApiKey();
+  if (!apiKey) return null;
+  
   const ai = new GoogleGenAI({ apiKey });
   
   const response = await ai.models.generateContent({
