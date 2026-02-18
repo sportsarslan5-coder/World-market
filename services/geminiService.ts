@@ -1,9 +1,18 @@
 
 import { GoogleGenAI } from "@google/genai";
 
+// Safe access to API Key to prevent "process is not defined" crashes
+const getSafeApiKey = () => {
+  try {
+    return (typeof process !== 'undefined' && process.env) ? process.env.API_KEY || '' : '';
+  } catch (e) {
+    return '';
+  }
+};
+
 export const generateDesignConcept = async (prompt: string) => {
-  // Use a new instance initialized with process.env.API_KEY directly for better reliability
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const apiKey = getSafeApiKey();
+  const ai = new GoogleGenAI({ apiKey });
   
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
@@ -15,13 +24,12 @@ export const generateDesignConcept = async (prompt: string) => {
     }
   });
 
-  // Directly access the .text property of GenerateContentResponse as per documentation
   return response.text || '';
 };
 
 export const generateUniformPreview = async (prompt: string) => {
-  // Use a new instance initialized with process.env.API_KEY directly
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const apiKey = getSafeApiKey();
+  const ai = new GoogleGenAI({ apiKey });
   
   const response = await ai.models.generateContent({
     model: 'gemini-2.5-flash-image',
@@ -37,7 +45,6 @@ export const generateUniformPreview = async (prompt: string) => {
     }
   });
 
-  // Iterate through all parts of the response candidates to extract the image data safely
   if (response.candidates?.[0]?.content?.parts) {
     for (const part of response.candidates[0].content.parts) {
       if (part.inlineData) {
