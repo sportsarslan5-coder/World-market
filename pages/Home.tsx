@@ -2,14 +2,18 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { CATEGORIES, PRODUCTS } from '../constants';
+import { useStore } from '../context/StoreContext';
+import { getEnvironmentMode } from '../services/routingUtils';
 
 const Home: React.FC = () => {
-  const { showName } = useParams();
+  const { showName: pathShowName } = useParams();
+  const { activeShowName: subdomainShowName } = useStore();
+  const showName = pathShowName || subdomainShowName;
 
   // Environment Detection Helper
   useEffect(() => {
-    const isPreview = window.location.hostname.includes('preview') || window.location.search.includes('mode=preview');
-    if (isPreview && !showName) {
+    const mode = getEnvironmentMode();
+    if (mode === 'preview' && !showName) {
       console.log("System detected preview mode. Ensure shared links use production environment for reliability.");
     }
   }, [showName]);
@@ -76,7 +80,7 @@ const Home: React.FC = () => {
               <div>
                 <h4 className="font-bold text-xs line-clamp-1">{p.name}</h4>
                 <div className="flex justify-between mt-1">
-                  <span className="text-blue-600 font-black text-[10px]">${p.price}</span>
+                  <span className="text-blue-600 font-black text-[10px]">${p.price.toFixed(2)}</span>
                   <span className="text-gray-300 font-bold text-[8px] uppercase">Apex Direct</span>
                 </div>
               </div>

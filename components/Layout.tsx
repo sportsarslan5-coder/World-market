@@ -6,9 +6,12 @@ import { useStore } from '../context/StoreContext';
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { showName } = useParams();
-  const { cart } = useStore();
+  const { showName: pathShowName } = useParams();
+  const { cart, activeShowName: subdomainShowName } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Priority: Path-based parameter > Subdomain-based detection
+  const showName = pathShowName || subdomainShowName;
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -21,6 +24,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   };
 
   const getLink = (to: string) => {
+    // If we have a showName and it's not the admin page, keep the show context in the path
+    // Note: If using real subdomains, we might not need the /s/ path, but for 404 safety in SPAs, HashRouter + path is best.
     if (showName && to !== '/admin') return `/s/${showName}${to === '/' ? '' : to}`;
     return to;
   };

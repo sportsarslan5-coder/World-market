@@ -2,12 +2,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, CartItem, SaleRecord, Customer } from '../types';
 import { PRODUCTS, MOCK_CUSTOMERS } from '../constants';
+import { detectShowName } from '../services/routingUtils';
 
 interface StoreContextType {
   products: Product[];
   cart: CartItem[];
   sales: SaleRecord[];
   customers: Customer[];
+  activeShowName: string | null;
   addProduct: (product: Omit<Product, 'id' | 'datePosted'>) => void;
   addToCart: (product: Product) => void;
   removeFromCart: (productId: string) => void;
@@ -21,6 +23,13 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [cart, setCart] = useState<CartItem[]>([]);
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [sales, setSales] = useState<SaleRecord[]>([]);
+  const [activeShowName, setActiveShowName] = useState<string | null>(detectShowName());
+
+  useEffect(() => {
+    // Re-check show name on mount
+    const detected = detectShowName();
+    if (detected) setActiveShowName(detected);
+  }, []);
 
   // Generate initial sales data based on products
   useEffect(() => {
@@ -67,7 +76,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const clearCart = () => setCart([]);
 
   return (
-    <StoreContext.Provider value={{ products, cart, sales, customers, addProduct, addToCart, removeFromCart, clearCart }}>
+    <StoreContext.Provider value={{ 
+      products, cart, sales, customers, activeShowName,
+      addProduct, addToCart, removeFromCart, clearCart 
+    }}>
       {children}
     </StoreContext.Provider>
   );

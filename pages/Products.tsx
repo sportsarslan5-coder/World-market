@@ -2,10 +2,11 @@
 import React, { useState, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
-import { CATEGORIES } from '../constants';
+import { CATEGORIES, ADMIN_WHATSAPP } from '../constants';
+import { Product } from '../types';
 
 const Products: React.FC = () => {
-  const { products, addToCart } = useStore();
+  const { products } = useStore();
   const [activeCategory, setActiveCategory] = useState('All');
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -18,6 +19,25 @@ const Products: React.FC = () => {
       return matchesCat && matchesSearch;
     });
   }, [activeCategory, query, products]);
+
+  const handleOrderNow = (product: Product) => {
+    const message = `NEW ORDER INQUIRY - Apex Sportswear
+---------------------------------
+Item: ${product.name}
+Price: $${product.price.toFixed(2)}
+---------------------------------
+REQUIRED DATA:
+Full Name: 
+Quantity: 
+Sizes (S/M/L/XL): 
+Shipping Address: 
+Contact Number: 
+---------------------------------
+Please fill the above data to proceed with manufacturing.`;
+
+    const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;
+    window.open(waLink, '_blank');
+  };
 
   return (
     <div className="bg-white min-h-screen">
@@ -43,14 +63,13 @@ const Products: React.FC = () => {
               {activeCategory} <span className="text-blue-600 underline">COLLECTION</span>
             </h1>
             <p className="text-gray-400 text-xs font-black uppercase tracking-widest mt-2">
-              Showing {filteredProducts.length} high-performance items posted by Apex Sellers
+              Factory Direct Pricing | Manufacturer & Exporter
             </p>
           </div>
           <div className="flex gap-2 text-[10px] font-black uppercase">
             <span className="text-gray-400">Sort by:</span>
             <select className="bg-transparent outline-none cursor-pointer hover:text-blue-500">
               <option>Newest First</option>
-              <option>Price: Low to High</option>
               <option>Featured</option>
             </select>
           </div>
@@ -67,8 +86,7 @@ const Products: React.FC = () => {
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                 />
                 <div className="absolute top-2 left-2 flex flex-col gap-1">
-                  <span className="bg-blue-600 text-white text-[8px] font-black px-2 py-1 rounded uppercase shadow-lg">Seller Direct</span>
-                  {p.stock < 20 && <span className="bg-red-500 text-white text-[8px] font-black px-2 py-1 rounded uppercase shadow-lg">Limited Stock</span>}
+                  <span className="bg-blue-600 text-white text-[8px] font-black px-2 py-1 rounded uppercase shadow-lg">Apex Original</span>
                 </div>
                 <div className="absolute bottom-2 right-2 bg-black/70 backdrop-blur-md px-2 py-1 rounded text-[10px] font-black text-white">
                   ⭐ {p.rating}
@@ -79,17 +97,16 @@ const Products: React.FC = () => {
                 <h3 className="font-bold text-sm text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight h-10 mb-1">{p.name}</h3>
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{p.category}</p>
                 
-                <div className="mt-auto pt-6 flex items-center justify-between border-t border-gray-50">
-                  <div className="flex flex-col">
-                    <span className="text-lg font-black tracking-tighter text-gray-900">${p.price.toFixed(2)}</span>
-                    <span className="text-[8px] font-bold text-green-600 uppercase">✓ In Stock</span>
+                <div className="mt-auto pt-6 border-t border-gray-50">
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-xl font-black tracking-tighter text-gray-900">${p.price.toFixed(2)}</span>
+                    <span className="text-[8px] font-bold text-green-600 uppercase">✓ Factory Stock</span>
                   </div>
                   <button 
-                    onClick={() => addToCart(p)}
-                    className="bg-blue-600 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 hover:bg-black hover:scale-110 transition-all transform active:scale-90"
-                    title="Add to Cart"
+                    onClick={() => handleOrderNow(p)}
+                    className="w-full bg-black text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-600 transition-all transform active:scale-95 shadow-lg shadow-black/5"
                   >
-                    <span className="text-xl">🛒</span>
+                    ORDER NOW
                   </button>
                 </div>
               </div>
@@ -101,7 +118,6 @@ const Products: React.FC = () => {
           <div className="py-40 text-center">
             <span className="text-7xl block mb-6 animate-bounce">📦</span>
             <h2 className="text-3xl font-black text-gray-300 uppercase italic tracking-tighter">No matching results found</h2>
-            <p className="text-gray-400 font-bold uppercase text-xs mt-2">Try adjusting your filters or search keywords</p>
             <button onClick={() => { setActiveCategory('All'); window.history.replaceState({}, '', '/products'); }} className="mt-8 text-blue-600 font-black uppercase text-sm tracking-widest hover:underline">Clear all filters</button>
           </div>
         )}

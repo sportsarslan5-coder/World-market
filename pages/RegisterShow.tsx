@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ADMIN_WHATSAPP } from '../constants';
+import { generateProfessionalLink } from '../services/routingUtils';
 
 const RegisterShow: React.FC = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const RegisterShow: React.FC = () => {
     paymentDetails: '',
     showName: ''
   });
+  const [registrationSuccess, setRegistrationSuccess] = useState<string | null>(null);
 
   const isPakistan = formData.country.toLowerCase().includes('pakistan');
 
@@ -23,6 +25,7 @@ const RegisterShow: React.FC = () => {
     
     // Format the shareable show ID
     const showId = formData.showName.toLowerCase().trim().replace(/\s+/g, '-');
+    const proLink = generateProfessionalLink(showId);
     
     // Format WhatsApp message for the Admin
     const message = `NEW SELLER REGISTERED – Admin Patch Shop
@@ -33,6 +36,7 @@ Email: ${formData.email}
 Location: ${formData.city}, ${formData.country}
 Contact: ${formData.contactNumber}
 Show Name: ${formData.showName}
+PRO LINK: ${proLink}
 Payment Method: ${isPakistan ? 'JazzCash' : 'Bank Account (IBAN)'}
 Details: ${formData.paymentDetails}
 ---------------------------------`;
@@ -43,12 +47,57 @@ Details: ${formData.paymentDetails}
     // Open WhatsApp
     window.open(waLink, '_blank');
     
-    // Success notification and redirect to the persistent public show link
-    alert("Registration data successfully dispatched to Admin WhatsApp! Redirecting you to your public show page.");
-    
-    // Navigate using the public shareable route structure
-    navigate(`/s/${showId}`);
+    // Set success state to show user their professional link
+    setRegistrationSuccess(proLink);
   };
+
+  if (registrationSuccess) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4">
+        <div className="bg-white p-12 rounded-[3rem] shadow-2xl max-w-lg w-full text-center border border-blue-100 animate-fadeIn">
+          <div className="w-24 h-24 bg-green-500 text-white rounded-3xl flex items-center justify-center text-5xl mx-auto mb-8 shadow-xl shadow-green-500/30">
+            🚀
+          </div>
+          <h2 className="text-4xl font-black italic tracking-tighter uppercase mb-4">Show <span className="text-blue-600 underline">Activated</span></h2>
+          <p className="text-gray-400 font-bold text-xs uppercase tracking-widest mb-10 leading-relaxed">
+            Registration sent to Admin. Your professional show link is now ready to share globally.
+          </p>
+
+          <div className="bg-gray-50 p-6 rounded-2xl border-2 border-dashed border-blue-200 mb-10 group relative">
+            <span className="text-[10px] font-black uppercase text-blue-500 absolute -top-3 left-6 bg-white px-2">Your Business Link</span>
+            <p className="text-blue-600 font-black text-lg break-all">{registrationSuccess}</p>
+            <button 
+              onClick={() => {
+                navigator.clipboard.writeText(registrationSuccess);
+                alert("Link copied to clipboard!");
+              }}
+              className="mt-4 text-[10px] font-black uppercase text-gray-400 hover:text-blue-600 transition-colors"
+            >
+              Click to Copy Link
+            </button>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <button 
+              onClick={() => {
+                const showId = formData.showName.toLowerCase().trim().replace(/\s+/g, '-');
+                navigate(`/s/${showId}`);
+              }}
+              className="w-full bg-black text-white py-5 rounded-2xl font-black text-lg uppercase tracking-[0.2em] shadow-xl hover:bg-blue-600 transition-all transform active:scale-95"
+            >
+              View My Shop
+            </button>
+            <button 
+              onClick={() => setRegistrationSuccess(null)}
+              className="text-[10px] font-black uppercase text-gray-400 hover:text-black tracking-widest"
+            >
+              Back to Registration
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 md:py-20">
@@ -70,7 +119,7 @@ Details: ${formData.paymentDetails}
             <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Proposed Show Name</label>
             <input 
               required
-              placeholder="e.g. Thunder Soccer Store"
+              placeholder="e.g. Arsalan Sports"
               className="w-full bg-gray-50 border-2 border-transparent focus:border-blue-600 p-5 rounded-2xl outline-none font-black text-blue-600 transition-all text-lg shadow-inner"
               value={formData.showName}
               onChange={e => setFormData({...formData, showName: e.target.value})}
@@ -104,7 +153,7 @@ Details: ${formData.paymentDetails}
               <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1">WhatsApp Number</label>
               <input 
                 required
-                placeholder="e.g. 923001234567"
+                placeholder="e.g. 923187536795"
                 className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
                 value={formData.whatsapp}
                 onChange={e => setFormData({...formData, whatsapp: e.target.value})}
