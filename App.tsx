@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Products from './pages/Products';
@@ -15,7 +15,7 @@ const App: React.FC = () => {
     <Router>
       <Layout>
         <Routes>
-          {/* Main Landing */}
+          {/* Main Global Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
           <Route path="/ai-designer" element={<AIDesigner />} />
@@ -24,11 +24,12 @@ const App: React.FC = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/register-show" element={<RegisterShow />} />
 
-          {/* Dynamic Multi-Show Routing (Ensures shareable links work across all devices) */}
-          <Route path="/s/:showName" element={<Home />} />
-          <Route path="/s/:showName/products" element={<Products />} />
-          <Route path="/s/:showName/ai-designer" element={<AIDesigner />} />
-          <Route path="/s/:showName/cart" element={<Cart />} />
+          {/* Clean Dynamic Multi-Show Routing (e.g. /arslan, /arslan/products) */}
+          <Route path="/:showName" element={<Home />} />
+          <Route path="/:showName/products" element={<Products />} />
+          <Route path="/:showName/ai-designer" element={<AIDesigner />} />
+          <Route path="/:showName/cart" element={<Cart />} />
+          <Route path="/:showName/contact" element={<Contact />} />
         </Routes>
       </Layout>
     </Router>

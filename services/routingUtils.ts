@@ -1,8 +1,12 @@
 
 /**
  * Utility to handle link generation and show detection.
- * Supports both path-based (/s/name) and subdomain-based identification.
+ * Supports clean path-based identification (e.g., domain.com/showname).
  */
+
+const RESERVED_NAMES = [
+  'products', 'ai-designer', 'contact', 'admin', 'cart', 'register-show', 'checkout'
+];
 
 export const getEnvironmentMode = () => {
   try {
@@ -18,16 +22,18 @@ export const getEnvironmentMode = () => {
 export const detectShowName = () => {
   try {
     const hostname = window.location.hostname;
-    const hash = window.location.hash;
+    const pathname = window.location.pathname;
+    const pathSegments = pathname.split('/').filter(Boolean);
 
-    // 1. Priority: Check the URL Hash (works everywhere, including WordPress/Vercel)
-    // Format: #/s/arslan
-    const hashMatch = hash.match(/\/s\/([^/]+)/);
-    if (hashMatch && hashMatch[1]) {
-      return hashMatch[1].toLowerCase();
+    // 1. Check the first path segment (e.g., /arslan/products -> arslan)
+    if (pathSegments.length > 0) {
+      const firstSegment = pathSegments[0].toLowerCase();
+      if (!RESERVED_NAMES.includes(firstSegment)) {
+        return firstSegment;
+      }
     }
 
-    // 2. Secondary: Check Subdomain (e.g., arsalan.world-market-shop.vercel.app)
+    // 2. Fallback: Check for subdomains
     const parts = hostname.split('.');
     if (parts.length > 2) {
       const subdomain = parts[0].toLowerCase();
@@ -49,15 +55,9 @@ export const generateProfessionalLink = (showName: string) => {
     const protocol = window.location.protocol;
     const port = window.location.port ? `:${window.location.port}` : '';
     
-    // For Vercel deployments, use the hash-path which is 100% mobile compatible
-    // Example: https://world-market-shop.vercel.app/#/s/arslan
-    if (hostname.includes('vercel.app')) {
-      return `${protocol}//${hostname}${port}/#/s/${cleanName}`;
-    }
-
-    // Fallback for custom domains
-    return `${protocol}//${hostname}${port}/#/s/${cleanName}`;
+    // Generates the exact clean format requested: https://world-market-shop.vercel.app/arslan
+    return `${protocol}//${hostname}${port}/${cleanName}`;
   } catch (e) {
-    return `/#/s/${showName}`;
+    return `/${showName}`;
   }
 };

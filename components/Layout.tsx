@@ -22,15 +22,17 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      const path = currentShow ? `/s/${currentShow}/products` : '/products';
+      const path = currentShow ? `/${currentShow}/products` : '/products';
       navigate(`${path}?q=${encodeURIComponent(searchQuery)}`);
     }
   };
 
   const getLink = (to: string) => {
-    if (currentShow && to !== '/admin') {
+    // If we are in a show context, prefix paths unless it's a global admin route
+    const RESERVED_GLOBAL = ['/admin', '/register-show'];
+    if (currentShow && !RESERVED_GLOBAL.includes(to)) {
       const cleanTo = to === '/' ? '' : to.startsWith('/') ? to : `/${to}`;
-      return `/s/${currentShow}${cleanTo}`;
+      return `/${currentShow}${cleanTo}`;
     }
     return to;
   };

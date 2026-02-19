@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { CATEGORIES, PRODUCTS } from '../constants';
@@ -16,7 +17,13 @@ const Home: React.FC = () => {
     }
   }, [showName]);
 
-  const getLink = (to: string) => showName ? `/s/${showName}${to === '/' ? '' : to}` : to;
+  const getLink = (to: string) => {
+    if (showName) {
+      const cleanTo = to === '/' ? '' : to.startsWith('/') ? to : `/${to}`;
+      return `/${showName}${cleanTo}`;
+    }
+    return to;
+  };
 
   return (
     <div className="animate-fadeIn bg-white">
