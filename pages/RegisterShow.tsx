@@ -54,38 +54,40 @@ Details: ${formData.paymentDetails}
   if (registrationSuccess) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4">
-        <div className="bg-white p-12 rounded-[3rem] shadow-2xl max-w-lg w-full text-center border border-blue-100 animate-fadeIn">
-          <div className="w-24 h-24 bg-green-500 text-white rounded-3xl flex items-center justify-center text-5xl mx-auto mb-8 shadow-xl shadow-green-500/30">
+        <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl max-w-lg w-full text-center border border-blue-100 animate-fadeIn">
+          <div className="w-20 h-20 bg-green-500 text-white rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-xl shadow-green-500/30">
             🚀
           </div>
-          <h2 className="text-4xl font-black italic tracking-tighter uppercase mb-4">Show <span className="text-blue-600 underline">Activated</span></h2>
-          <p className="text-gray-400 font-bold text-xs uppercase tracking-widest mb-10 leading-relaxed">
-            Registration sent to Admin. Your professional show link is now ready to share globally.
+          <h2 className="text-3xl font-black italic tracking-tighter uppercase mb-4 leading-tight">Your Show is <span className="text-blue-600 underline">Live</span></h2>
+          <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mb-8 leading-relaxed">
+            Your registration is sent to the manufacturer. Use the professional link below to start selling on mobile.
           </p>
 
-          <div className="bg-gray-50 p-6 rounded-2xl border-2 border-dashed border-blue-200 mb-10 group relative">
-            <span className="text-[10px] font-black uppercase text-blue-500 absolute -top-3 left-6 bg-white px-2">Your Business Link</span>
-            <p className="text-blue-600 font-black text-lg break-all">{registrationSuccess}</p>
+          <div className="bg-blue-50 p-6 rounded-2xl border-2 border-dashed border-blue-200 mb-8 group relative overflow-hidden">
+            <span className="text-[9px] font-black uppercase text-blue-600 absolute top-2 left-4">Professional Business Link</span>
+            <p className="text-blue-700 font-black text-sm md:text-base break-all mt-4 mb-4 select-all">
+              {registrationSuccess}
+            </p>
             <button 
               onClick={() => {
                 navigator.clipboard.writeText(registrationSuccess);
-                alert("Link copied to clipboard!");
+                alert("Professional link copied!");
               }}
-              className="mt-4 text-[10px] font-black uppercase text-gray-400 hover:text-blue-600 transition-colors"
+              className="w-full bg-blue-600 text-white py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all"
             >
-              Click to Copy Link
+              Copy Link to Share
             </button>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             <button 
               onClick={() => {
                 const showId = formData.showName.toLowerCase().trim().replace(/\s+/g, '-');
                 navigate(`/s/${showId}`);
               }}
-              className="w-full bg-black text-white py-5 rounded-2xl font-black text-lg uppercase tracking-[0.2em] shadow-xl hover:bg-blue-600 transition-all transform active:scale-95"
+              className="w-full bg-black text-white py-5 rounded-xl font-black text-base uppercase tracking-[0.2em] shadow-xl hover:bg-blue-600 transition-all transform active:scale-95"
             >
-              View My Shop
+              Open My Shop
             </button>
             <button 
               onClick={() => setRegistrationSuccess(null)}
@@ -116,7 +118,7 @@ Details: ${formData.paymentDetails}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Proposed Show Name</label>
+            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Proposed Show Name (Business Link Name)</label>
             <input 
               required
               placeholder="e.g. Arsalan Sports"

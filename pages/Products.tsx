@@ -1,12 +1,15 @@
-
 import React, { useState, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES, ADMIN_WHATSAPP } from '../constants';
 import { Product } from '../types';
 
 const Products: React.FC = () => {
   const { products } = useStore();
+  const { showName: pathShowName } = useParams();
+  const { activeShowName: subdomainShowName } = useStore();
+  const showName = pathShowName || subdomainShowName;
+
   const [activeCategory, setActiveCategory] = useState('All');
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -23,6 +26,7 @@ const Products: React.FC = () => {
   const handleOrderNow = (product: Product) => {
     const message = `NEW ORDER INQUIRY - Apex Sportswear
 ---------------------------------
+SOURCE SHOW: ${showName ? showName.toUpperCase() : 'MAIN STORE'}
 Item: ${product.name}
 Price: $${product.price.toFixed(2)}
 ---------------------------------
@@ -63,7 +67,7 @@ Please fill the above data to proceed with manufacturing.`;
               {activeCategory} <span className="text-blue-600 underline">COLLECTION</span>
             </h1>
             <p className="text-gray-400 text-xs font-black uppercase tracking-widest mt-2">
-              Factory Direct Pricing | Manufacturer & Exporter
+              Factory Direct Pricing | {showName ? `${showName.toUpperCase()} Verified Seller` : 'Manufacturer & Exporter'}
             </p>
           </div>
           <div className="flex gap-2 text-[10px] font-black uppercase">

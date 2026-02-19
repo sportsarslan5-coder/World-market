@@ -18,12 +18,20 @@ export const getEnvironmentMode = () => {
 export const detectShowName = () => {
   try {
     const hostname = window.location.hostname;
+    const hash = window.location.hash;
+
+    // 1. Priority: Check the URL Hash (works everywhere, including WordPress/Vercel)
+    // Format: #/s/arslan
+    const hashMatch = hash.match(/\/s\/([^/]+)/);
+    if (hashMatch && hashMatch[1]) {
+      return hashMatch[1].toLowerCase();
+    }
+
+    // 2. Secondary: Check Subdomain (e.g., arsalan.world-market-shop.vercel.app)
     const parts = hostname.split('.');
-    
-    // Check for subdomain (e.g., arsalan.apex-sports.com)
     if (parts.length > 2) {
       const subdomain = parts[0].toLowerCase();
-      const ignored = ['www', 'preview', 'dev', 'api', 'app', 'github', 'vercel'];
+      const ignored = ['www', 'preview', 'dev', 'api', 'app', 'github', 'vercel', 'world-market-shop'];
       if (!ignored.includes(subdomain)) {
         return subdomain;
       }
@@ -36,20 +44,18 @@ export const detectShowName = () => {
 
 export const generateProfessionalLink = (showName: string) => {
   try {
-    const mode = getEnvironmentMode();
     const cleanName = showName.toLowerCase().trim().replace(/\s+/g, '-');
     const hostname = window.location.hostname;
     const protocol = window.location.protocol;
     const port = window.location.port ? `:${window.location.port}` : '';
-
-    if (mode === 'production' && !hostname.includes('localhost')) {
-      const parts = hostname.split('.');
-      if (parts.length >= 2) {
-        const baseDomain = parts.slice(-2).join('.');
-        return `${protocol}//${cleanName}.${baseDomain}${port}/#/`;
-      }
+    
+    // For Vercel deployments, use the hash-path which is 100% mobile compatible
+    // Example: https://world-market-shop.vercel.app/#/s/arslan
+    if (hostname.includes('vercel.app')) {
+      return `${protocol}//${hostname}${port}/#/s/${cleanName}`;
     }
 
+    // Fallback for custom domains
     return `${protocol}//${hostname}${port}/#/s/${cleanName}`;
   } catch (e) {
     return `/#/s/${showName}`;

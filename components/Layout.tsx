@@ -1,36 +1,36 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
+import { detectShowName } from '../services/routingUtils';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { cart, activeShowName: subdomainShowName } = useStore();
+  const { cart } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentShow, setCurrentShow] = useState<string | null>(null);
 
-  // Extract showName from path manually since Layout is outside Routes
-  const pathShowName = useMemo(() => {
-    const match = location.pathname.match(/\/s\/([^/]+)/);
-    return match ? match[1] : null;
-  }, [location.pathname]);
-
-  const showName = pathShowName || subdomainShowName;
+  // Sync current show based on the URL
+  useEffect(() => {
+    const detected = detectShowName();
+    setCurrentShow(detected);
+  }, [location]);
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      const path = showName ? `/s/${showName}/products` : '/products';
+      const path = currentShow ? `/s/${currentShow}/products` : '/products';
       navigate(`${path}?q=${encodeURIComponent(searchQuery)}`);
     }
   };
 
   const getLink = (to: string) => {
-    if (showName && to !== '/admin') {
+    if (currentShow && to !== '/admin') {
       const cleanTo = to === '/' ? '' : to.startsWith('/') ? to : `/${to}`;
-      return `/s/${showName}${cleanTo}`;
+      return `/s/${currentShow}${cleanTo}`;
     }
     return to;
   };
@@ -38,7 +38,10 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col font-sans selection:bg-blue-600 selection:text-white bg-white">
       <div className="bg-gray-900 py-1.5 px-4 text-[10px] flex justify-between uppercase font-bold text-gray-400 tracking-widest border-b border-white/5">
-        <span className="flex items-center gap-1"><span className="text-green-500">●</span> {showName ? `${showName.toUpperCase()} OFFICIAL SHOW` : '24/7 Seller Support'}</span>
+        <span className="flex items-center gap-1">
+          <span className="text-green-500">●</span> 
+          {currentShow ? `${currentShow.toUpperCase()} OFFICIAL SHOW` : '24/7 Seller Support'}
+        </span>
         <div className="flex gap-4">
           <Link to="/admin" className="hover:text-white transition-colors">Seller Center</Link>
           <span className="text-gray-600">|</span>
@@ -52,14 +55,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <Link to={getLink('/')} className="flex items-center gap-2 flex-shrink-0 group">
               <span className="text-3xl font-black font-oswald tracking-tighter text-blue-500 italic group-hover:text-white transition-colors">APEX</span>
               <span className="text-xl font-bold font-oswald hidden sm:block tracking-widest border-l border-white/20 pl-2 text-gray-400">
-                {showName ? showName.toUpperCase() : 'MARKET'}
+                {currentShow ? currentShow.toUpperCase() : 'MARKET'}
               </span>
             </Link>
 
             <form onSubmit={handleSearch} className="flex flex-grow relative max-w-3xl">
               <input 
                 type="text" 
-                placeholder={`Search ${showName ? showName : 'Apex'} catalog...`}
+                placeholder={`Search ${currentShow ? currentShow : 'Apex'} catalog...`}
                 className="w-full bg-white/5 border border-white/10 rounded-full py-2.5 pl-6 pr-12 focus:bg-white focus:text-black focus:ring-4 focus:ring-blue-500/30 transition-all outline-none text-sm font-semibold"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -157,7 +160,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
         <div className="bg-black py-12 border-t border-white/5 text-center">
           <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest px-4">
-            © 2025 {showName ? showName.toUpperCase() : 'Apex'} & Apex Sportswear Mfg. All Rights Reserved.
+            © 2025 {currentShow ? currentShow.toUpperCase() : 'Apex'} & Apex Sportswear Mfg. All Rights Reserved.
           </p>
         </div>
       </footer>

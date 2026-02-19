@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { CATEGORIES, PRODUCTS } from '../constants';
@@ -10,11 +9,10 @@ const Home: React.FC = () => {
   const { activeShowName: subdomainShowName } = useStore();
   const showName = pathShowName || subdomainShowName;
 
-  // Environment Detection Helper
   useEffect(() => {
     const mode = getEnvironmentMode();
     if (mode === 'preview' && !showName) {
-      console.log("System detected preview mode. Ensure shared links use production environment for reliability.");
+      console.log("System detected preview mode.");
     }
   }, [showName]);
 
@@ -22,6 +20,15 @@ const Home: React.FC = () => {
 
   return (
     <div className="animate-fadeIn bg-white">
+      {/* Dynamic Show Banner */}
+      {showName && (
+        <div className="bg-yellow-400 py-3 px-4 text-center border-b border-black/10">
+          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-black">
+            Welcome to the <span className="underline decoration-2">{showName.replace(/-/g, ' ')}</span> Official Sportswear Hub
+          </p>
+        </div>
+      )}
+
       {/* Commission System Info Box */}
       <div className="bg-blue-600 py-2 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
@@ -44,11 +51,11 @@ const Home: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent"></div>
         <div className="relative max-w-7xl mx-auto px-4 text-white">
           <h1 className="text-6xl md:text-9xl font-black mb-8 leading-[0.85] tracking-tighter italic">
-            {showName ? showName.toUpperCase() : 'LIMITLESS'} <br/> 
+            {showName ? showName.replace(/-/g, ' ').toUpperCase() : 'LIMITLESS'} <br/> 
             <span className="text-blue-500">{showName ? 'OFFICIAL' : 'POTENTIAL.'}</span>
           </h1>
           <p className="text-lg md:text-xl mb-12 max-w-xl text-gray-300 font-medium">
-            Professional sportswear direct from the factory. High-volume manufacturing for {showName ? showName : 'the world\'s elite teams'}.
+            Professional sportswear direct from the factory. High-volume manufacturing for {showName ? showName.replace(/-/g, ' ') : 'the world\'s elite teams'}.
           </p>
           <div className="flex flex-col sm:flex-row gap-6">
             <Link to={getLink('/products')} className="bg-white text-black px-12 py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all transform hover:scale-105 shadow-2xl">
@@ -81,7 +88,7 @@ const Home: React.FC = () => {
                 <h4 className="font-bold text-xs line-clamp-1">{p.name}</h4>
                 <div className="flex justify-between mt-1">
                   <span className="text-blue-600 font-black text-[10px]">${p.price.toFixed(2)}</span>
-                  <span className="text-gray-300 font-bold text-[8px] uppercase">Apex Direct</span>
+                  <span className="text-gray-300 font-bold text-[8px] uppercase">{showName ? 'In Stock' : 'Apex Direct'}</span>
                 </div>
               </div>
             </Link>
