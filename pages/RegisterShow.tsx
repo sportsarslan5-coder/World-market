@@ -83,7 +83,7 @@ Details: ${formData.paymentDetails}
             <button 
               onClick={() => {
                 const showId = formData.showName.toLowerCase().trim().replace(/\s+/g, '-');
-                navigate(`/s/${showId}`);
+                navigate(`/${showId}`);
               }}
               className="w-full bg-black text-white py-5 rounded-xl font-black text-base uppercase tracking-[0.2em] shadow-xl hover:bg-blue-600 transition-all transform active:scale-95"
             >

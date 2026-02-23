@@ -23,9 +23,21 @@ export const detectShowName = () => {
   try {
     const hostname = window.location.hostname;
     const pathname = window.location.pathname;
-    const pathSegments = pathname.split('/').filter(Boolean);
+    const hash = window.location.hash;
+    
+    // 1. Check Hash first (for HashRouter support)
+    if (hash && hash.startsWith('#/')) {
+      const hashSegments = hash.substring(2).split('/').filter(Boolean);
+      if (hashSegments.length > 0) {
+        const firstSegment = hashSegments[0].toLowerCase();
+        if (!RESERVED_NAMES.includes(firstSegment)) {
+          return firstSegment;
+        }
+      }
+    }
 
-    // 1. Check the first path segment (e.g., /arslan/products -> arslan)
+    // 2. Check the first path segment (e.g., /arslan/products -> arslan)
+    const pathSegments = pathname.split('/').filter(Boolean);
     if (pathSegments.length > 0) {
       const firstSegment = pathSegments[0].toLowerCase();
       if (!RESERVED_NAMES.includes(firstSegment)) {
@@ -55,8 +67,8 @@ export const generateProfessionalLink = (showName: string) => {
     const protocol = window.location.protocol;
     const port = window.location.port ? `:${window.location.port}` : '';
     
-    // Generates the exact clean format requested: https://world-market-shop.vercel.app/arslan
-    return `${protocol}//${hostname}${port}/${cleanName}`;
+    // Generates the exact clean format requested: https://world-market-shop.vercel.app/#/arslan
+    return `${protocol}//${hostname}${port}/#/${cleanName}`;
   } catch (e) {
     return `/${showName}`;
   }

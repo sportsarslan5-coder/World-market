@@ -55,9 +55,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center h-20 gap-4 md:gap-8">
             <Link to={getLink('/')} className="flex items-center gap-2 flex-shrink-0 group">
-              <span className="text-3xl font-black font-oswald tracking-tighter text-blue-500 italic group-hover:text-white transition-colors">APEX</span>
+              <span className="text-3xl font-black font-oswald tracking-tighter text-blue-500 italic group-hover:text-white transition-colors">LINKUP</span>
               <span className="text-xl font-bold font-oswald hidden sm:block tracking-widest border-l border-white/20 pl-2 text-gray-400">
-                {currentShow ? currentShow.toUpperCase() : 'MARKET'}
+                {currentShow ? currentShow.toUpperCase() : 'APEX'}
               </span>
             </Link>
 

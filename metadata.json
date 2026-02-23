@@ -1,7 +1,7 @@
 {
-  "name": "Copy of Apex Sportswear Pro",
-  "short_name": "Apex",
-  "description": "Enterprise-grade sportswear manufacturing and e-commerce platform.",
+  "name": "Apex LinkUp Sportswear",
+  "short_name": "LinkUp",
+  "description": "Enterprise-grade sportswear manufacturing and e-commerce platform with professional seller links.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
