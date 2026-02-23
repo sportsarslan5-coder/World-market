@@ -1,15 +1,54 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
+import { ADMIN_WHATSAPP } from '../constants';
 
 const Cart: React.FC = () => {
-  const { cart, removeFromCart, clearCart } = useStore();
+  const { cart, removeFromCart, clearCart, activeShowName } = useStore();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState({
+    name: '',
+    phone: '',
+    address: '',
+    city: '',
+    country: ''
+  });
 
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
   const shipping = subtotal > 100 ? 0 : 15;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
+
+  const handleCheckout = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const itemsList = cart.map(item => `- ${item.name} (x${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}`).join('\n');
+    
+    const message = `NEW ORDER RECEIVED
+---------------------------------
+CUSTOMER DETAILS:
+Name: ${customerInfo.name}
+Phone: ${customerInfo.phone}
+Address: ${customerInfo.address}, ${customerInfo.city}, ${customerInfo.country}
+
+ORDER SUMMARY:
+${itemsList}
+
+Subtotal: $${subtotal.toFixed(2)}
+Shipping: ${shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
+Tax: $${tax.toFixed(2)}
+TOTAL: $${total.toFixed(2)}
+
+Show Context: ${activeShowName || 'Main Store'}
+---------------------------------`;
+
+    const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;
+    window.open(waLink, '_blank');
+    clearCart();
+    setIsCheckingOut(false);
+    alert("Order details sent to WhatsApp! Our team will contact you shortly.");
+  };
 
   if (cart.length === 0) {
     return (
@@ -30,37 +69,111 @@ const Cart: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 items-start">
           {/* Item List */}
           <div className="lg:col-span-2 space-y-8">
-            {cart.map(item => (
-              <div key={item.id} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 group hover:shadow-xl transition-all">
-                <div className="w-full md:w-40 aspect-square bg-gray-100 rounded-2xl overflow-hidden flex-shrink-0">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                </div>
-                <div className="flex-grow">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-xl font-black uppercase tracking-tight mb-1">{item.name}</h3>
-                      <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest">{item.category}</p>
+            {isCheckingOut ? (
+              <div className="bg-white p-10 rounded-[2.5rem] shadow-2xl border border-blue-100 animate-fadeIn">
+                <h2 className="text-3xl font-black uppercase italic tracking-tighter mb-8">Shipping <span className="text-blue-600">Details</span></h2>
+                <form onSubmit={handleCheckout} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Full Name</label>
+                      <input 
+                        required
+                        className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
+                        value={customerInfo.name}
+                        onChange={e => setCustomerInfo({...customerInfo, name: e.target.value})}
+                      />
                     </div>
-                    <span className="text-2xl font-black tracking-tighter">${(item.price * item.quantity).toFixed(2)}</span>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Phone Number</label>
+                      <input 
+                        required
+                        className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
+                        value={customerInfo.phone}
+                        onChange={e => setCustomerInfo({...customerInfo, phone: e.target.value})}
+                      />
+                    </div>
                   </div>
-                  <p className="text-sm text-gray-400 mt-4 line-clamp-2 font-medium">{item.description}</p>
-                  
-                  <div className="mt-8 flex items-center justify-between">
-                    <div className="flex items-center bg-gray-50 rounded-xl px-4 py-2 border">
-                      <span className="text-xs font-black uppercase mr-4 text-gray-400">Qty</span>
-                      <span className="text-sm font-black">{item.quantity}</span>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Shipping Address</label>
+                    <input 
+                      required
+                      className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
+                      value={customerInfo.address}
+                      onChange={e => setCustomerInfo({...customerInfo, address: e.target.value})}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">City</label>
+                      <input 
+                        required
+                        className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
+                        value={customerInfo.city}
+                        onChange={e => setCustomerInfo({...customerInfo, city: e.target.value})}
+                      />
                     </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Country</label>
+                      <input 
+                        required
+                        className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
+                        value={customerInfo.country}
+                        onChange={e => setCustomerInfo({...customerInfo, country: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                  <div className="pt-6 flex gap-4">
                     <button 
-                      onClick={() => removeFromCart(item.id)}
-                      className="text-[10px] font-black uppercase text-red-500 hover:underline tracking-widest"
+                      type="button"
+                      onClick={() => setIsCheckingOut(false)}
+                      className="flex-1 bg-gray-100 text-black py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-gray-200 transition-all"
                     >
-                      Remove Item
+                      Back to Cart
+                    </button>
+                    <button 
+                      type="submit"
+                      className="flex-[2] bg-blue-600 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-blue-500/20 hover:bg-black transition-all"
+                    >
+                      Place Order via WhatsApp
                     </button>
                   </div>
-                </div>
+                </form>
               </div>
-            ))}
-            <button onClick={clearCart} className="text-[10px] font-black uppercase text-gray-400 hover:text-black tracking-[0.3em] transition-colors">Clear All Items</button>
+            ) : (
+              <>
+                {cart.map(item => (
+                  <div key={item.id} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 group hover:shadow-xl transition-all">
+                    <div className="w-full md:w-40 aspect-square bg-gray-100 rounded-2xl overflow-hidden flex-shrink-0">
+                      <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    </div>
+                    <div className="flex-grow">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="text-xl font-black uppercase tracking-tight mb-1">{item.name}</h3>
+                          <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest">{item.category}</p>
+                        </div>
+                        <span className="text-2xl font-black tracking-tighter">${(item.price * item.quantity).toFixed(2)}</span>
+                      </div>
+                      <p className="text-sm text-gray-400 mt-4 line-clamp-2 font-medium">{item.description}</p>
+                      
+                      <div className="mt-8 flex items-center justify-between">
+                        <div className="flex items-center bg-gray-50 rounded-xl px-4 py-2 border">
+                          <span className="text-xs font-black uppercase mr-4 text-gray-400">Qty</span>
+                          <span className="text-sm font-black">{item.quantity}</span>
+                        </div>
+                        <button 
+                          onClick={() => removeFromCart(item.id)}
+                          className="text-[10px] font-black uppercase text-red-500 hover:underline tracking-widest"
+                        >
+                          Remove Item
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <button onClick={clearCart} className="text-[10px] font-black uppercase text-gray-400 hover:text-black tracking-[0.3em] transition-colors">Clear All Items</button>
+              </>
+            )}
           </div>
 
           {/* Order Summary */}
@@ -85,9 +198,14 @@ const Cart: React.FC = () => {
               <span className="text-4xl font-black tracking-tighter">${total.toFixed(2)}</span>
             </div>
             
-            <button className="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-xl uppercase tracking-[0.2em] mt-12 shadow-xl shadow-blue-500/30 hover:bg-white hover:text-black transition-all transform active:scale-95">
-              Secure Checkout
-            </button>
+            {!isCheckingOut && (
+              <button 
+                onClick={() => setIsCheckingOut(true)}
+                className="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-xl uppercase tracking-[0.2em] mt-12 shadow-xl shadow-blue-500/30 hover:bg-white hover:text-black transition-all transform active:scale-95"
+              >
+                Secure Checkout
+              </button>
+            )}
             <div className="mt-8 text-center">
               <span className="text-[9px] font-black uppercase text-gray-500 tracking-widest">Powered by Apex Global Payments</span>
             </div>

@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { ADMIN_WHATSAPP } from '../constants';
 
 const Contact: React.FC = () => {
   const [formState, setFormState] = useState({
@@ -12,8 +13,18 @@ const Contact: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const message = `NEW INQUIRY RECEIVED
+---------------------------------
+Name: ${formState.name}
+Email: ${formState.email}
+Subject: ${formState.subject}
+Message: ${formState.message}
+---------------------------------`;
+
+    const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;
+    window.open(waLink, '_blank');
     setSent(true);
-    // Simulation
   };
 
   if (sent) {
@@ -66,7 +77,7 @@ const Contact: React.FC = () => {
                 <div className="bg-blue-100 p-4 rounded-lg text-blue-600 font-bold text-2xl">📱</div>
                 <div>
                   <h4 className="font-bold uppercase text-gray-400 text-sm">Fast WhatsApp</h4>
-                  <p className="text-xl font-bold">+1 (234) APEX-SPRT</p>
+                  <p className="text-xl font-bold">+{ADMIN_WHATSAPP}</p>
                 </div>
               </div>
             </div>
