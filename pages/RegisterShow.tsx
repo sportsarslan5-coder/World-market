@@ -28,7 +28,7 @@ const RegisterShow: React.FC = () => {
     const proLink = generateProfessionalLink(showId);
     
     // Format WhatsApp message for the Admin
-    const message = `NEW SELLER REGISTERED – Admin Patch Shop
+    const message = `NEW SELLER REGISTERED – World Market Admin
 ---------------------------------
 Name: ${formData.fullName}
 WhatsApp: ${formData.whatsapp}

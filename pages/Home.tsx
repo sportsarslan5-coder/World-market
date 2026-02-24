@@ -95,7 +95,7 @@ const Home: React.FC = () => {
                 <h4 className="font-bold text-xs line-clamp-1">{p.name}</h4>
                 <div className="flex justify-between mt-1">
                   <span className="text-blue-600 font-black text-[10px]">${p.price.toFixed(2)}</span>
-                  <span className="text-gray-300 font-bold text-[8px] uppercase">{showName ? 'In Stock' : 'Apex Direct'}</span>
+                  <span className="text-gray-300 font-bold text-[8px] uppercase">{showName ? 'In Stock' : 'World Market Direct'}</span>
                 </div>
               </div>
             </Link>

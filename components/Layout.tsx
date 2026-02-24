@@ -55,16 +55,22 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center h-20 gap-4 md:gap-8">
             <Link to={getLink('/')} className="flex items-center gap-2 flex-shrink-0 group">
-              <span className="text-3xl font-black font-oswald tracking-tighter text-blue-500 italic group-hover:text-white transition-colors">LINKUP</span>
+              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-2xl shadow-lg shadow-blue-500/20 group-hover:bg-white transition-all">
+                🌍
+              </div>
+              <div className="flex flex-col leading-none">
+                <span className="text-xl font-black font-oswald tracking-tighter text-blue-500 italic group-hover:text-white transition-colors">WORLD</span>
+                <span className="text-xl font-black font-oswald tracking-tighter text-white italic group-hover:text-blue-500 transition-colors">MARKET</span>
+              </div>
               <span className="text-xl font-bold font-oswald hidden sm:block tracking-widest border-l border-white/20 pl-2 text-gray-400">
-                {currentShow ? currentShow.toUpperCase() : 'APEX'}
+                {currentShow ? currentShow.toUpperCase() : 'SHOP'}
               </span>
             </Link>
 
             <form onSubmit={handleSearch} className="flex flex-grow relative max-w-3xl">
               <input 
                 type="text" 
-                placeholder={`Search ${currentShow ? currentShow : 'Apex'} catalog...`}
+                placeholder={`Search ${currentShow ? currentShow : 'World Market'} catalog...`}
                 className="w-full bg-white/5 border border-white/10 rounded-full py-2.5 pl-6 pr-12 focus:bg-white focus:text-black focus:ring-4 focus:ring-blue-500/30 transition-all outline-none text-sm font-semibold"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -161,8 +167,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
 
         <div className="bg-black py-12 border-t border-white/5 text-center">
-          <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest px-4">
-            © 2025 {currentShow ? currentShow.toUpperCase() : 'Apex'} & Apex Sportswear Mfg. All Rights Reserved.
+            <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest px-4">
+            © 2025 {currentShow ? currentShow.toUpperCase() : 'World Market'} & Global Sportswear Mfg. All Rights Reserved.
           </p>
         </div>
       </footer>

@@ -1,7 +1,7 @@
 {
-  "name": "Apex LinkUp Sportswear",
-  "short_name": "LinkUp",
-  "description": "Enterprise-grade sportswear manufacturing and e-commerce platform with professional seller links.",
+  "name": "World Market Shop",
+  "short_name": "WorldMarket",
+  "description": "Global sportswear manufacturing and professional e-commerce platform.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",

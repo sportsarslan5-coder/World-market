@@ -37,7 +37,7 @@ export const PRODUCTS: Product[] = CLOUDINARY_IMAGES.map((img, idx) => {
     price: 35.00, // Updated price to 35$ as requested
     rating: (4.5 + Math.random() * 0.5).toFixed(1),
     stock: 500,
-    description: `High-performance professional uniform manufactured by Apex. Durable fabric, moisture-wicking technology, and custom export quality.`,
+    description: `High-performance professional uniform manufactured by World Market. Durable fabric, moisture-wicking technology, and custom export quality.`,
     image: img,
     datePosted: new Date().toISOString()
   };

@@ -34,7 +34,7 @@ Message: ${formState.message}
           <div className="text-6xl mb-6">✅</div>
           <h2 className="text-3xl font-black mb-4">INQUIRY RECEIVED</h2>
           <p className="text-gray-600 mb-8">
-            Thank you for reaching out to Apex Manufacturing. Our export specialist will contact you within 24 hours with a custom quote.
+            Thank you for reaching out to World Market Shop. Our export specialist will contact you within 24 hours with a custom quote.
           </p>
           <button 
             onClick={() => setSent(false)}
@@ -63,14 +63,14 @@ Message: ${formState.message}
                 <div className="bg-blue-100 p-4 rounded-lg text-blue-600 font-bold text-2xl">📧</div>
                 <div>
                   <h4 className="font-bold uppercase text-gray-400 text-sm">Email Us</h4>
-                  <p className="text-xl font-bold">inbox@apexsports.com</p>
+                  <p className="text-xl font-bold">sales@worldmarketshop.com</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <div className="bg-blue-100 p-4 rounded-lg text-blue-600 font-bold text-2xl">📍</div>
                 <div>
                   <h4 className="font-bold uppercase text-gray-400 text-sm">Global HQ</h4>
-                  <p className="text-xl font-bold">Apex Industrial Zone, PK 54000</p>
+                  <p className="text-xl font-bold">World Market Industrial Zone, PK 54000</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">

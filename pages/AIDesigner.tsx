@@ -80,7 +80,7 @@ const AIDesigner: React.FC = () => {
             {loading && (
               <div className="text-center space-y-4">
                 <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <p className="text-blue-500 font-black animate-pulse">APEX AI IS WORKING...</p>
+                <p className="text-blue-500 font-black animate-pulse">WORLD MARKET AI IS WORKING...</p>
               </div>
             )}
 
