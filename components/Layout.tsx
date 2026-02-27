@@ -129,7 +129,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           Back to Top
         </button>
         
-        <div className="max-w-7xl mx-auto px-4 py-20 grid grid-cols-1 md:grid-cols-4 gap-12 text-center md:text-left">
+        <div className="max-w-7xl mx-auto px-4 py-20 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-12 text-center md:text-left">
           <div className="flex flex-col items-center md:items-start">
             <h4 className="font-black uppercase text-sm mb-6 text-blue-500 tracking-widest">Commission System</h4>
             <div className="bg-white/5 p-4 rounded-xl border border-white/10 w-full max-w-[250px]">
@@ -156,6 +156,13 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <ul className="space-y-4 text-sm text-gray-400 font-bold">
               <li><span className="text-xs">Global: Bank Transfer / IBAN</span></li>
               <li><span className="text-xs">Pakistan: JazzCash</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-black uppercase text-sm mb-6 text-blue-500 tracking-widest">Legal</h4>
+            <ul className="space-y-4 text-sm text-gray-400 font-bold">
+              <li><Link to={getLink('/privacy-policy')} className="hover:underline">Privacy Policy</Link></li>
+              <li><Link to={getLink('/shipping-policy')} className="hover:underline">Shipping Policy</Link></li>
             </ul>
           </div>
           <div className="flex flex-col items-center md:items-start">
