@@ -1,4 +1,21 @@
 
+export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'AED' | 'PKR';
+export type LanguageCode = 'en' | 'ar' | 'fr' | 'es' | 'de';
+
+export interface Currency {
+  code: CurrencyCode;
+  symbol: string;
+  rate: number; // Rate relative to USD
+  name: string;
+}
+
+export interface Language {
+  code: LanguageCode;
+  name: string;
+  flag: string;
+  dir: 'ltr' | 'rtl';
+}
+
 export interface Review {
   id: string;
   user: string;
@@ -23,6 +40,7 @@ export interface Product {
   sizes?: string[];
   colors?: string[];
   reviews?: Review[];
+  shippingCountry?: string;
 }
 
 export interface CartItem extends Product {

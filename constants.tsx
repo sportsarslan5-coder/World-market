@@ -1,10 +1,30 @@
 
-import { Product, Customer } from './types';
+import { Product, Customer, Currency, Language } from './types';
 
 export const ADMIN_WHATSAPP = "923187536795"; 
 
+export const CURRENCIES: Currency[] = [
+  { code: 'USD', symbol: '$', rate: 1, name: 'United States Dollar' },
+  { code: 'EUR', symbol: '€', rate: 0.92, name: 'Euro' },
+  { code: 'GBP', symbol: '£', rate: 0.79, name: 'British Pound' },
+  { code: 'AED', symbol: 'د.إ', rate: 3.67, name: 'UAE Dirham' },
+  { code: 'PKR', symbol: 'Rs', rate: 278, name: 'Pakistani Rupee' },
+];
+
+export const LANGUAGES: Language[] = [
+  { code: 'en', name: 'English', flag: '🇺🇸', dir: 'ltr' },
+  { code: 'ar', name: 'Arabic', flag: '🇦🇪', dir: 'rtl' },
+  { code: 'fr', name: 'French', flag: '🇫🇷', dir: 'ltr' },
+  { code: 'es', name: 'Spanish', flag: '🇪🇸', dir: 'ltr' },
+  { code: 'de', name: 'German', flag: '🇩🇪', dir: 'ltr' },
+];
+
 export const CATEGORIES = [
   "Clothing", "Shoes", "Sportswear", "Bags", "Outdoor", "Accessories", "Electronics Accessories"
+];
+
+export const SHIPPING_COUNTRIES = [
+  "United States", "United Kingdom", "United Arab Emirates", "Pakistan", "Germany", "France", "Spain", "Canada", "Australia"
 ];
 
 const CLOUDINARY_IMAGES = [
@@ -45,6 +65,7 @@ export const PRODUCTS: Product[] = CLOUDINARY_IMAGES.map((img, idx) => {
     quality: idx % 3 === 0 ? 'Export Quality' : (idx % 3 === 1 ? 'Premium' : 'Standard'),
     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
     colors: ['Red', 'Blue', 'Black', 'White', 'Navy'],
+    shippingCountry: SHIPPING_COUNTRIES[idx % SHIPPING_COUNTRIES.length],
     reviews: [
       { id: 'r1', user: 'Mike T.', rating: 5, comment: 'Excellent quality, fits perfectly!', date: '2025-02-15' },
       { id: 'r2', user: 'Sarah K.', rating: 4, comment: 'Good material, but shipping took a bit longer.', date: '2025-02-10' },

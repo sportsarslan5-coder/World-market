@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Product, CartItem, SaleRecord, Customer } from '../types';
-import { PRODUCTS, MOCK_CUSTOMERS } from '../constants';
+import { Product, CartItem, SaleRecord, Customer, Currency, Language, CurrencyCode, LanguageCode } from '../types';
+import { PRODUCTS, MOCK_CUSTOMERS, CURRENCIES, LANGUAGES } from '../constants';
 import { detectShowName } from '../services/routingUtils';
 
 interface StoreContextType {
@@ -10,8 +10,15 @@ interface StoreContextType {
   sales: SaleRecord[];
   customers: Customer[];
   activeShowName: string | null;
+  currency: Currency;
+  language: Language;
+  quickViewProduct: Product | null;
+  setCurrency: (code: CurrencyCode) => void;
+  setLanguage: (code: LanguageCode) => void;
+  setQuickViewProduct: (product: Product | null) => void;
+  formatPrice: (amount: number) => string;
   addProduct: (product: Omit<Product, 'id' | 'datePosted'>) => void;
-  addToCart: (product: Product) => void;
+  addToCart: (product: Product, quantity?: number) => void;
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
 }
@@ -24,12 +31,40 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [sales, setSales] = useState<SaleRecord[]>([]);
   const [activeShowName, setActiveShowName] = useState<string | null>(detectShowName());
+  
+  const [currency, setCurrencyState] = useState<Currency>(CURRENCIES[0]);
+  const [language, setLanguageState] = useState<Language>(LANGUAGES[0]);
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
   useEffect(() => {
-    // Re-check show name on mount
     const detected = detectShowName();
     if (detected) setActiveShowName(detected);
+    
+    // Simple auto-detection simulation for currency/language
+    // In a real app, we'd use a geolocation API or browser settings
+    const browserLang = navigator.language.split('-')[0];
+    const foundLang = LANGUAGES.find(l => l.code === browserLang);
+    if (foundLang) setLanguageState(foundLang);
   }, []);
+
+  const setCurrency = (code: CurrencyCode) => {
+    const found = CURRENCIES.find(c => c.code === code);
+    if (found) setCurrencyState(found);
+  };
+
+  const setLanguage = (code: LanguageCode) => {
+    const found = LANGUAGES.find(l => l.code === code);
+    if (found) {
+      setLanguageState(found);
+      document.documentElement.dir = found.dir;
+      document.documentElement.lang = found.code;
+    }
+  };
+
+  const formatPrice = (amount: number) => {
+    const converted = amount * currency.rate;
+    return `${currency.symbol}${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  };
 
   // Generate initial sales data based on products
   useEffect(() => {
@@ -59,13 +94,13 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setProducts([fullProduct, ...products]);
   };
 
-  const addToCart = (product: Product) => {
+  const addToCart = (product: Product, quantity: number = 1) => {
     setCart(prev => {
       const exists = prev.find(item => item.id === product.id);
       if (exists) {
-        return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
+        return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item);
       }
-      return [...prev, { ...product, quantity: 1 }];
+      return [...prev, { ...product, quantity }];
     });
   };
 
@@ -78,6 +113,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <StoreContext.Provider value={{ 
       products, cart, sales, customers, activeShowName,
+      currency, language, quickViewProduct,
+      setCurrency, setLanguage, setQuickViewProduct, formatPrice,
       addProduct, addToCart, removeFromCart, clearCart 
     }}>
       {children}
