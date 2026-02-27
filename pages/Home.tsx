@@ -4,6 +4,19 @@ import { Link, useParams } from 'react-router-dom';
 import { CATEGORIES, PRODUCTS } from '../constants';
 import { useStore } from '../context/StoreContext';
 import { getEnvironmentMode } from '../services/routingUtils';
+import { 
+  Globe, 
+  ShieldCheck, 
+  Factory, 
+  Headphones, 
+  Truck, 
+  ArrowRight, 
+  Star, 
+  Mail, 
+  CheckCircle2,
+  TrendingUp,
+  Users
+} from 'lucide-react';
 
 const Home: React.FC = () => {
   const { showName: pathShowName } = useParams();
@@ -36,73 +49,151 @@ const Home: React.FC = () => {
     <div className="animate-fadeIn bg-white">
       {/* Dynamic Show Banner */}
       {showName && (
-        <div className="bg-yellow-400 py-3 px-4 text-center border-b border-black/10">
-          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-black">
-            Welcome to the <span className="underline decoration-2">{showName.replace(/-/g, ' ')}</span> Official Sportswear Hub
+        <div className="bg-blue-600 py-2 px-4 text-center">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
+            Official Show: <span className="underline">{showName.replace(/-/g, ' ')}</span> | Global Marketplace Partner
           </p>
         </div>
       )}
 
-      {/* Commission System Info Box */}
-      <div className="bg-blue-600 py-2 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4">
-          <p className="text-[10px] font-black text-white uppercase tracking-[0.3em] flex items-center justify-center gap-4 animate-pulse">
-            <span>Commission System:</span>
-            <span className="bg-white/20 px-2 py-0.5 rounded">Seller Earns 5%</span>
-            <span className="bg-white/20 px-2 py-0.5 rounded">Admin Earns 95%</span>
-          </p>
+      {/* Hero Section */}
+      <section className="relative h-[90vh] flex items-center overflow-hidden bg-black">
+        <div className="absolute inset-0">
+          <img 
+            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=2070" 
+            className="w-full h-full object-cover opacity-40 scale-105"
+            alt="Marketplace Background"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
         </div>
-      </div>
-
-      <section className="relative h-[80vh] flex items-center overflow-hidden bg-black">
-        <video 
-          autoPlay loop muted playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-60 scale-105"
-          poster="https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&q=80&w=2070"
-        >
-          <source src="https://assets.mixkit.co/videos/preview/mixkit-athlete-running-on-track-field-in-slow-motion-42521-large.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent"></div>
-        <div className="relative max-w-7xl mx-auto px-4 text-white">
-          <h1 className="text-6xl md:text-9xl font-black mb-8 leading-[0.85] tracking-tighter italic">
-            {showName ? showName.replace(/-/g, ' ').toUpperCase() : 'LIMITLESS'} <br/> 
-            <span className="text-blue-500">{showName ? 'OFFICIAL' : 'POTENTIAL.'}</span>
-          </h1>
-          <p className="text-lg md:text-xl mb-12 max-w-xl text-gray-300 font-medium">
-            Professional sportswear direct from the factory. High-volume manufacturing for {showName ? showName.replace(/-/g, ' ') : 'the world\'s elite teams'}.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-6">
-            <Link to={getLink('/products')} className="bg-white text-black px-12 py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all transform hover:scale-105 shadow-2xl">
-              Shop Collection
-            </Link>
-            {!showName && (
-              <Link to="/register-show" className="bg-blue-600 text-white px-12 py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-white hover:text-black transition-all shadow-2xl">
-                Become a Seller
+        
+        <div className="relative max-w-7xl mx-auto px-4 text-white w-full">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 bg-blue-600/20 backdrop-blur-md border border-blue-500/30 px-4 py-2 rounded-full mb-8">
+              <Globe size={16} className="text-blue-500" />
+              <span className="text-[10px] font-black uppercase tracking-widest">Global Marketplace Now Open</span>
+            </div>
+            <h1 className="text-6xl md:text-8xl font-black mb-8 leading-[0.85] tracking-tighter italic uppercase">
+              Buy <span className="text-blue-500">Anything.</span> <br/> 
+              Sell <span className="text-white underline decoration-blue-600">Everywhere.</span>
+            </h1>
+            <p className="text-lg md:text-xl mb-12 max-w-xl text-gray-300 font-medium leading-relaxed">
+              Global marketplace with factory direct pricing and worldwide shipping. Access premium goods from verified manufacturers across the globe.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6">
+              <Link to={getLink('/products')} className="bg-blue-600 text-white px-12 py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-white hover:text-black transition-all transform hover:scale-105 shadow-2xl flex items-center justify-center gap-2">
+                Shop Now <ArrowRight size={18} />
               </Link>
-            )}
+              {!showName && (
+                <Link to="/register-show" className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-12 py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2">
+                  Become a Seller <Users size={18} />
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Trending Grid */}
+      {/* Trust Badges */}
+      <section className="bg-black border-y border-white/5 py-10">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+            <div className="flex flex-col items-center text-center gap-3 group">
+              <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                <Truck size={24} />
+              </div>
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Worldwide Shipping</span>
+            </div>
+            <div className="flex flex-col items-center text-center gap-3 group">
+              <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                <ShieldCheck size={24} />
+              </div>
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Secure Shopping</span>
+            </div>
+            <div className="flex flex-col items-center text-center gap-3 group">
+              <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                <Factory size={24} />
+              </div>
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Factory Direct</span>
+            </div>
+            <div className="flex flex-col items-center text-center gap-3 group">
+              <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                <Headphones size={24} />
+              </div>
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">24/7 Support</span>
+            </div>
+            <div className="flex flex-col items-center text-center gap-3 group col-span-2 md:col-span-1">
+              <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                <TrendingUp size={24} />
+              </div>
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Bulk Orders</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Top Categories */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-black italic tracking-tighter uppercase mb-4">Top <span className="text-blue-600">Categories</span></h2>
+            <p className="text-gray-400 font-bold uppercase text-xs tracking-widest">Explore our global marketplace inventory</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            {CATEGORIES.slice(0, 6).map((cat, idx) => (
+              <Link 
+                to={getLink(`/products?cat=${cat}`)} 
+                key={cat}
+                className="group relative aspect-[4/5] rounded-3xl overflow-hidden bg-black shadow-xl"
+              >
+                <img 
+                  src={`https://images.unsplash.com/photo-${[
+                    '1523381210434-271e8be1f52b', // Clothing
+                    '1542291026-7eec264c27ff', // Shoes
+                    '1517836357463-d25dfeac3438', // Sportswear
+                    '1544816155-12df9643f363', // Bags
+                    '1501555088652-021faa106b9b', // Outdoor
+                    '1617137968427-85924c800a22'  // Accessories
+                  ][idx]}?auto=format&fit=crop&q=80&w=800`} 
+                  className="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700"
+                  alt={cat}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                <div className="absolute bottom-6 left-6">
+                  <h4 className="text-white font-black uppercase italic tracking-tighter text-xl">{cat}</h4>
+                  <span className="text-blue-500 text-[10px] font-black uppercase tracking-widest">Shop Now</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Trending Products */}
       <section className="py-24 max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-end mb-12">
           <div>
-            <h2 className="text-5xl font-black italic tracking-tighter uppercase">Trending <span className="text-blue-500">Gear</span></h2>
-            <p className="text-gray-400 font-bold uppercase text-xs tracking-widest mt-2">Admin-Added Premium Styles</p>
+            <h2 className="text-5xl font-black italic tracking-tighter uppercase">Trending <span className="text-blue-600">Now</span></h2>
+            <p className="text-gray-400 font-bold uppercase text-xs tracking-widest mt-2">Most popular items globally</p>
           </div>
+          <Link to={getLink('/products')} className="text-blue-600 font-black uppercase text-xs tracking-widest hover:underline flex items-center gap-2">
+            View All <ArrowRight size={14} />
+          </Link>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
           {PRODUCTS.slice(0, 6).map(p => (
-            <Link to={getProductLink(p.id)} key={p.id} className="group flex flex-col gap-3">
-              <div className="aspect-[4/5] bg-gray-50 rounded-2xl overflow-hidden relative border border-gray-100">
+            <Link to={getProductLink(p.id)} key={p.id} className="group flex flex-col gap-4">
+              <div className="aspect-square bg-gray-50 rounded-3xl overflow-hidden relative border border-gray-100">
                 <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg text-[10px] font-black shadow-sm">
+                  ⭐ {p.rating}
+                </div>
               </div>
               <div>
-                <h4 className="font-bold text-xs line-clamp-1">{p.name}</h4>
-                <div className="flex justify-between mt-1">
-                  <span className="text-blue-600 font-black text-[10px]">${p.price.toFixed(2)}</span>
-                  <span className="text-gray-300 font-bold text-[8px] uppercase">{showName ? 'In Stock' : 'World Market Direct'}</span>
+                <h4 className="font-bold text-sm line-clamp-1 group-hover:text-blue-600 transition-colors">{p.name}</h4>
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-gray-900 font-black text-lg tracking-tighter">${p.price.toFixed(2)}</span>
+                  <span className="text-blue-600 font-black text-[8px] uppercase tracking-widest bg-blue-50 px-2 py-1 rounded">Verified</span>
                 </div>
               </div>
             </Link>
@@ -110,21 +201,136 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Industrial Advantage */}
-      <section className="bg-gray-50 py-20 border-y">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-black tracking-tighter mb-8">TRANSPARENT PARTNERSHIP</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
-            <div className="bg-white p-10 rounded-3xl shadow-xl border border-gray-100">
-              <span className="text-5xl block mb-4">🏆</span>
-              <h4 className="font-black uppercase text-xl mb-2">95% ADMIN SHARE</h4>
-              <p className="text-gray-500 text-sm">Managing production, logistics, global exports, and quality control.</p>
+      {/* Become a Seller Section */}
+      {!showName && (
+        <section className="py-24 bg-black relative overflow-hidden">
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-0 left-0 w-96 h-96 bg-blue-600 rounded-full blur-[120px]"></div>
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-900 rounded-full blur-[120px]"></div>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 relative z-10">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[3rem] p-12 md:p-20 text-center">
+              <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter uppercase text-white mb-8 leading-tight">
+                Start Your Global <br/> <span className="text-blue-500 underline">E-Commerce Business</span>
+              </h2>
+              <p className="text-gray-400 max-w-2xl mx-auto mb-12 text-lg font-medium">
+                Join our network of professional sellers. We handle manufacturing, logistics, and quality control. You focus on building your brand and earning commissions.
+              </p>
+              <Link to="/register-show" className="inline-flex items-center gap-3 bg-blue-600 text-white px-12 py-6 rounded-full font-black text-lg uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all transform hover:scale-105 shadow-2xl shadow-blue-600/20">
+                Launch Your Show <ArrowRight size={24} />
+              </Link>
             </div>
-            <div className="bg-white p-10 rounded-3xl shadow-xl border border-gray-100">
-              <span className="text-5xl block mb-4">⭐</span>
-              <h4 className="font-black uppercase text-xl mb-2">5% SELLER SHARE</h4>
-              <p className="text-gray-500 text-sm">Empowering sellers to build their brand with our world-class inventory.</p>
+          </div>
+        </section>
+      )}
+
+      {/* Why Choose World Market */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div>
+              <h2 className="text-5xl font-black italic tracking-tighter uppercase mb-8 leading-tight">
+                Why Choose <br/> <span className="text-blue-600">World Market?</span>
+              </h2>
+              <div className="space-y-8">
+                <div className="flex gap-6">
+                  <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 flex-shrink-0">
+                    <Factory size={28} />
+                  </div>
+                  <div>
+                    <h4 className="font-black uppercase text-lg mb-2">Direct From Factory</h4>
+                    <p className="text-gray-500 font-medium">Skip the middlemen. We source directly from top-tier manufacturers to ensure the best pricing and quality.</p>
+                  </div>
+                </div>
+                <div className="flex gap-6">
+                  <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 flex-shrink-0">
+                    <Globe size={28} />
+                  </div>
+                  <div>
+                    <h4 className="font-black uppercase text-lg mb-2">Global Logistics Network</h4>
+                    <p className="text-gray-500 font-medium">Our integrated shipping network ensures your products reach any corner of the world safely and quickly.</p>
+                  </div>
+                </div>
+                <div className="flex gap-6">
+                  <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 flex-shrink-0">
+                    <CheckCircle2 size={28} />
+                  </div>
+                  <div>
+                    <h4 className="font-black uppercase text-lg mb-2">Quality Guaranteed</h4>
+                    <p className="text-gray-500 font-medium">Every item undergoes rigorous quality control checks before being dispatched from our global hubs.</p>
+                  </div>
+                </div>
+              </div>
             </div>
+            <div className="relative">
+              <img 
+                src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=2070" 
+                className="rounded-[3rem] shadow-2xl"
+                alt="Logistics"
+              />
+              <div className="absolute -bottom-10 -left-10 bg-blue-600 p-10 rounded-[2.5rem] shadow-2xl hidden md:block">
+                <span className="text-6xl font-black text-white block mb-2">200+</span>
+                <span className="text-white/80 font-black uppercase text-xs tracking-widest">Countries Served</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Customer Reviews */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-black italic tracking-tighter uppercase mb-4">Global <span className="text-blue-600">Feedback</span></h2>
+            <p className="text-gray-400 font-bold uppercase text-xs tracking-widest">Trusted by thousands of customers worldwide</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { name: "James Wilson", country: "United Kingdom", text: "The factory direct pricing is unbeatable. Quality is exactly as described.", rating: 5 },
+              { name: "Elena Rodriguez", country: "Spain", text: "Fast shipping to Europe. The sportswear collection is professional grade.", rating: 5 },
+              { name: "Ahmed Al-Sayed", country: "UAE", text: "Excellent bulk order support for our academy. Highly recommended.", rating: 5 }
+            ].map((review, i) => (
+              <div key={i} className="bg-white p-10 rounded-[2.5rem] shadow-xl border border-gray-100">
+                <div className="flex gap-1 text-yellow-400 mb-6">
+                  {[...Array(review.rating)].map((_, i) => <Star key={i} size={16} fill="currentColor" />)}
+                </div>
+                <p className="text-gray-600 font-medium italic mb-8 leading-relaxed">"{review.text}"</p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-black">
+                    {review.name[0]}
+                  </div>
+                  <div>
+                    <h5 className="font-black uppercase text-sm">{review.name}</h5>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{review.country}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Signup */}
+      <section className="py-24 bg-blue-600">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+            <div className="text-white text-center lg:text-left">
+              <h2 className="text-4xl font-black italic tracking-tighter uppercase mb-4">Join the <span className="text-black">World Market</span></h2>
+              <p className="text-blue-100 font-medium text-lg">Subscribe for exclusive deals and global marketplace updates.</p>
+            </div>
+            <form className="flex w-full max-w-xl bg-white rounded-full p-2 shadow-2xl">
+              <div className="flex items-center pl-6 text-gray-400">
+                <Mail size={20} />
+              </div>
+              <input 
+                type="email" 
+                placeholder="Enter your email address" 
+                className="flex-grow bg-transparent border-none outline-none px-4 py-4 font-bold text-gray-900"
+              />
+              <button className="bg-black text-white px-8 py-4 rounded-full font-black uppercase text-sm tracking-widest hover:bg-blue-800 transition-all">
+                Subscribe
+              </button>
+            </form>
           </div>
         </div>
       </section>

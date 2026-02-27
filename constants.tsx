@@ -4,7 +4,7 @@ import { Product, Customer } from './types';
 export const ADMIN_WHATSAPP = "923187536795"; 
 
 export const CATEGORIES = [
-  "Basketball", "Soccer", "Football", "Baseball", "Gym Wear", "TrackSuits", "Hoodies"
+  "Clothing", "Shoes", "Sportswear", "Bags", "Outdoor", "Accessories", "Electronics Accessories"
 ];
 
 const CLOUDINARY_IMAGES = [
@@ -29,12 +29,12 @@ const CLOUDINARY_IMAGES = [
 ];
 
 export const PRODUCTS: Product[] = CLOUDINARY_IMAGES.map((img, idx) => {
-  const isBasketball = idx < 5; // First few as primary basketball
+  const category = CATEGORIES[idx % CATEGORIES.length];
   return {
-    id: `apex-post-${idx}`,
-    name: isBasketball ? `Elite Basketball Uniform V${idx + 1}` : `Pro Sportswear Series #${idx + 100}`,
-    category: isBasketball ? "Basketball" : CATEGORIES[idx % CATEGORIES.length],
-    price: 35.00, // Updated price to 35$ as requested
+    id: `wm-post-${idx}`,
+    name: `${category} Premium Item #${idx + 100}`,
+    category: category,
+    price: 35.00,
     rating: (4.5 + Math.random() * 0.5).toFixed(1),
     stock: 500,
     description: `High-performance professional uniform manufactured by World Market. Durable fabric, moisture-wicking technology, and custom export quality. Designed for elite athletes who demand the best in comfort and performance.`,

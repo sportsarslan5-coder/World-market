@@ -110,8 +110,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <button className="flex items-center gap-1 hover:text-blue-500">☰ All</button>
             <Link to={getLink('/products')} className="hover:text-blue-500">Today's Deals</Link>
             <Link to={getLink('/ai-designer')} className="text-blue-500 hover:underline">AI Design Studio</Link>
-            <Link to={getLink('/products?cat=Soccer')} className="hover:text-blue-500">Soccer</Link>
-            <Link to={getLink('/products?cat=Basketball')} className="hover:text-blue-500">Basketball</Link>
+            <Link to={getLink('/products?cat=Clothing')} className="hover:text-blue-500">Clothing</Link>
+            <Link to={getLink('/products?cat=Shoes')} className="hover:text-blue-500">Shoes</Link>
+            <Link to={getLink('/products?cat=Sportswear')} className="hover:text-blue-500">Sportswear</Link>
+            <Link to={getLink('/products?cat=Bags')} className="hover:text-blue-500">Bags</Link>
+            <Link to={getLink('/products?cat=Outdoor')} className="hover:text-blue-500">Outdoor</Link>
             <Link to="/admin" className="ml-auto text-gray-400 hover:text-white">Seller Dashboard</Link>
           </div>
         </div>
