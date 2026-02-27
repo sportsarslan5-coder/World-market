@@ -1,14 +1,28 @@
 
+export interface Review {
+  id: string;
+  user: string;
+  rating: number;
+  comment: string;
+  date: string;
+}
+
 export interface Product {
   id: string;
   name: string;
   category: string;
   description: string;
   image: string;
+  images?: string[];
   price: number;
   rating: string;
   stock: number;
   datePosted: string;
+  fabric?: string;
+  quality?: 'Standard' | 'Premium' | 'Export Quality';
+  sizes?: string[];
+  colors?: string[];
+  reviews?: Review[];
 }
 
 export interface CartItem extends Product {

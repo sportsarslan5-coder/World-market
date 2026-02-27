@@ -25,6 +25,13 @@ const Home: React.FC = () => {
     return to;
   };
 
+  const getProductLink = (id: string) => {
+    if (showName) {
+      return `/${showName}/products/${id}`;
+    }
+    return `/products/${id}`;
+  };
+
   return (
     <div className="animate-fadeIn bg-white">
       {/* Dynamic Show Banner */}
@@ -87,7 +94,7 @@ const Home: React.FC = () => {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {PRODUCTS.slice(0, 6).map(p => (
-            <Link to={getLink('/products')} key={p.id} className="group flex flex-col gap-3">
+            <Link to={getProductLink(p.id)} key={p.id} className="group flex flex-col gap-3">
               <div className="aspect-[4/5] bg-gray-50 rounded-2xl overflow-hidden relative border border-gray-100">
                 <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
               </div>

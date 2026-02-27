@@ -9,6 +9,7 @@ import Contact from './pages/Contact';
 import Admin from './pages/Admin';
 import Cart from './pages/Cart';
 import RegisterShow from './pages/RegisterShow';
+import ProductDetail from './pages/ProductDetail';
 
 const App: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ const App: React.FC = () => {
           {/* Main Global Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/products/:productId" element={<ProductDetail />} />
           <Route path="/ai-designer" element={<AIDesigner />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/admin" element={<Admin />} />
@@ -27,6 +29,7 @@ const App: React.FC = () => {
           {/* Clean Dynamic Multi-Show Routing (e.g. /arslan, /arslan/products) */}
           <Route path="/:showName" element={<Home />} />
           <Route path="/:showName/products" element={<Products />} />
+          <Route path="/:showName/products/:productId" element={<ProductDetail />} />
           <Route path="/:showName/ai-designer" element={<AIDesigner />} />
           <Route path="/:showName/cart" element={<Cart />} />
           <Route path="/:showName/contact" element={<Contact />} />

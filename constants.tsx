@@ -37,9 +37,19 @@ export const PRODUCTS: Product[] = CLOUDINARY_IMAGES.map((img, idx) => {
     price: 35.00, // Updated price to 35$ as requested
     rating: (4.5 + Math.random() * 0.5).toFixed(1),
     stock: 500,
-    description: `High-performance professional uniform manufactured by World Market. Durable fabric, moisture-wicking technology, and custom export quality.`,
+    description: `High-performance professional uniform manufactured by World Market. Durable fabric, moisture-wicking technology, and custom export quality. Designed for elite athletes who demand the best in comfort and performance.`,
     image: img,
-    datePosted: new Date().toISOString()
+    images: [img, ...CLOUDINARY_IMAGES.slice((idx + 1) % CLOUDINARY_IMAGES.length, (idx + 4) % CLOUDINARY_IMAGES.length)],
+    datePosted: new Date().toISOString(),
+    fabric: "100% Breathable Polyester Mesh",
+    quality: idx % 3 === 0 ? 'Export Quality' : (idx % 3 === 1 ? 'Premium' : 'Standard'),
+    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+    colors: ['Red', 'Blue', 'Black', 'White', 'Navy'],
+    reviews: [
+      { id: 'r1', user: 'Mike T.', rating: 5, comment: 'Excellent quality, fits perfectly!', date: '2025-02-15' },
+      { id: 'r2', user: 'Sarah K.', rating: 4, comment: 'Good material, but shipping took a bit longer.', date: '2025-02-10' },
+      { id: 'r3', user: 'David L.', rating: 5, comment: 'Best uniform we have ever had for our team.', date: '2025-01-28' }
+    ]
   };
 });
 

@@ -3,6 +3,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES, ADMIN_WHATSAPP } from '../constants';
 import { Product } from '../types';
+import { Link } from 'react-router-dom';
 
 const Products: React.FC = () => {
   const { products } = useStore();
@@ -23,8 +24,17 @@ const Products: React.FC = () => {
     });
   }, [activeCategory, query, products]);
 
-  const handleOrderNow = (product: Product) => {
-    const message = `NEW ORDER INQUIRY - Apex Sportswear
+  const getProductLink = (id: string) => {
+    if (showName) {
+      return `/${showName}/products/${id}`;
+    }
+    return `/products/${id}`;
+  };
+
+  const handleOrderNow = (e: React.MouseEvent, product: Product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const message = `NEW ORDER INQUIRY - World Market Shop
 ---------------------------------
 SOURCE SHOW: ${showName ? showName.toUpperCase() : 'MAIN STORE'}
 Item: ${product.name}
@@ -82,7 +92,11 @@ Please fill the above data to proceed with manufacturing.`;
         {/* Dense Product Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {filteredProducts.map(p => (
-            <div key={p.id} className="group flex flex-col h-full bg-white border border-gray-100 rounded-2xl p-3 hover:shadow-2xl hover:border-blue-100 transition-all duration-500">
+            <Link 
+              to={getProductLink(p.id)} 
+              key={p.id} 
+              className="group flex flex-col h-full bg-white border border-gray-100 rounded-2xl p-3 hover:shadow-2xl hover:border-blue-100 transition-all duration-500"
+            >
               <div className="aspect-square bg-gray-50 rounded-xl overflow-hidden relative mb-4">
                 <img 
                   src={p.image} 
@@ -90,7 +104,7 @@ Please fill the above data to proceed with manufacturing.`;
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                 />
                 <div className="absolute top-2 left-2 flex flex-col gap-1">
-                  <span className="bg-blue-600 text-white text-[8px] font-black px-2 py-1 rounded uppercase shadow-lg">Apex Original</span>
+                  <span className="bg-blue-600 text-white text-[8px] font-black px-2 py-1 rounded uppercase shadow-lg">World Market Original</span>
                 </div>
                 <div className="absolute bottom-2 right-2 bg-black/70 backdrop-blur-md px-2 py-1 rounded text-[10px] font-black text-white">
                   ⭐ {p.rating}
@@ -107,14 +121,14 @@ Please fill the above data to proceed with manufacturing.`;
                     <span className="text-[8px] font-bold text-green-600 uppercase">✓ Factory Stock</span>
                   </div>
                   <button 
-                    onClick={() => handleOrderNow(p)}
+                    onClick={(e) => handleOrderNow(e, p)}
                     className="w-full bg-black text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-600 transition-all transform active:scale-95 shadow-lg shadow-black/5"
                   >
                     ORDER NOW
                   </button>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

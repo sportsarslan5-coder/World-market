@@ -20,6 +20,13 @@ const Cart: React.FC = () => {
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
 
+  const getProductLink = (id: string) => {
+    if (activeShowName) {
+      return `/${activeShowName}/products/${id}`;
+    }
+    return `/products/${id}`;
+  };
+
   const handleCheckout = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -143,15 +150,15 @@ Show Context: ${activeShowName || 'Main Store'}
               <>
                 {cart.map(item => (
                   <div key={item.id} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 group hover:shadow-xl transition-all">
-                    <div className="w-full md:w-40 aspect-square bg-gray-100 rounded-2xl overflow-hidden flex-shrink-0">
+                    <Link to={getProductLink(item.id)} className="w-full md:w-40 aspect-square bg-gray-100 rounded-2xl overflow-hidden flex-shrink-0">
                       <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    </div>
+                    </Link>
                     <div className="flex-grow">
                       <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="text-xl font-black uppercase tracking-tight mb-1">{item.name}</h3>
+                        <Link to={getProductLink(item.id)}>
+                          <h3 className="text-xl font-black uppercase tracking-tight mb-1 hover:text-blue-600 transition-colors">{item.name}</h3>
                           <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest">{item.category}</p>
-                        </div>
+                        </Link>
                         <span className="text-2xl font-black tracking-tighter">${(item.price * item.quantity).toFixed(2)}</span>
                       </div>
                       <p className="text-sm text-gray-400 mt-4 line-clamp-2 font-medium">{item.description}</p>
