@@ -1,5 +1,4 @@
-
-import { Product, Customer, Currency, Language } from './types';
+import { Product, Customer, Currency, Language, SellerInfo, BlogPost } from './types';
 
 export const ADMIN_WHATSAPP = "923187536795"; 
 
@@ -25,6 +24,45 @@ export const CATEGORIES = [
 
 export const SHIPPING_COUNTRIES = [
   "United States", "United Kingdom", "United Arab Emirates", "Pakistan", "Germany", "France", "Spain", "Canada", "Australia"
+];
+
+export const SELLERS: SellerInfo[] = [
+  {
+    id: 'seller-1',
+    fullName: 'Global Sportswear Mfg',
+    whatsapp: '923187536795',
+    email: 'mfg@worldmarket.com',
+    country: 'Pakistan',
+    city: 'Sialkot',
+    contactNumber: '+92 318 7536795',
+    paymentDetails: 'Bank Transfer / JazzCash',
+    showName: 'globalsports',
+    rank: 'Gold',
+    rating: 4.9,
+    totalSales: 1250,
+    responseTime: '< 1 hour',
+    isVerified: true,
+    joinedDate: '2023-01-15',
+    balance: 4500.50
+  },
+  {
+    id: 'seller-2',
+    fullName: 'Elite Apparel Co.',
+    whatsapp: '923001234567',
+    email: 'elite@worldmarket.com',
+    country: 'United Arab Emirates',
+    city: 'Dubai',
+    contactNumber: '+971 50 123 4567',
+    paymentDetails: 'Bank Transfer / IBAN',
+    showName: 'eliteapparel',
+    rank: 'Silver',
+    rating: 4.2,
+    totalSales: 450,
+    responseTime: '< 4 hours',
+    isVerified: true,
+    joinedDate: '2023-06-20',
+    balance: 1200.00
+  }
 ];
 
 const CLOUDINARY_IMAGES = [
@@ -55,7 +93,7 @@ export const PRODUCTS: Product[] = CLOUDINARY_IMAGES.map((img, idx) => {
     name: `${category} Premium Item #${idx + 100}`,
     category: category,
     price: 35.00,
-    rating: (4.5 + Math.random() * 0.5).toFixed(1),
+    rating: parseFloat((4.5 + Math.random() * 0.5).toFixed(1)),
     stock: 500,
     description: `High-performance professional uniform manufactured by World Market. Durable fabric, moisture-wicking technology, and custom export quality. Designed for elite athletes who demand the best in comfort and performance.`,
     image: img,
@@ -66,6 +104,8 @@ export const PRODUCTS: Product[] = CLOUDINARY_IMAGES.map((img, idx) => {
     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
     colors: ['Red', 'Blue', 'Black', 'White', 'Navy'],
     shippingCountry: SHIPPING_COUNTRIES[idx % SHIPPING_COUNTRIES.length],
+    sellerId: idx % 2 === 0 ? 'seller-1' : 'seller-2',
+    sales: 10 + Math.floor(Math.random() * 100),
     reviews: [
       { id: 'r1', user: 'Mike T.', rating: 5, comment: 'Excellent quality, fits perfectly!', date: '2025-02-15' },
       { id: 'r2', user: 'Sarah K.', rating: 4, comment: 'Good material, but shipping took a bit longer.', date: '2025-02-10' },
@@ -73,6 +113,33 @@ export const PRODUCTS: Product[] = CLOUDINARY_IMAGES.map((img, idx) => {
     ]
   };
 });
+
+export const BLOG_POSTS: BlogPost[] = [
+  {
+    id: 'blog-1',
+    title: 'Why Factory Direct Pricing is Changing the Game',
+    slug: 'factory-direct-pricing-benefits',
+    excerpt: 'Discover how buying directly from manufacturers saves you up to 70% on premium sportswear.',
+    content: 'Buying directly from the source eliminates middlemen, reducing costs significantly while maintaining high quality...',
+    category: 'Industry News',
+    image: 'https://picsum.photos/seed/industry/800/400',
+    date: '2025-02-20',
+    author: 'World Market Team',
+    tags: ['Factory Direct', 'Savings', 'Ecommerce']
+  },
+  {
+    id: 'blog-2',
+    title: 'Top 5 Trends in Global Sportswear for 2025',
+    slug: 'sportswear-trends-2025',
+    excerpt: 'From sustainable fabrics to smart integration, here is what is trending in the world of sports apparel.',
+    content: 'The sportswear industry is evolving rapidly. Sustainability is no longer an option but a requirement...',
+    category: 'Trends',
+    image: 'https://picsum.photos/seed/trends/800/400',
+    date: '2025-02-25',
+    author: 'Design Team',
+    tags: ['Trends', 'Sportswear', '2025']
+  }
+];
 
 export const MOCK_SALES = Array.from({ length: 12 }).map((_, i) => ({
   month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i],

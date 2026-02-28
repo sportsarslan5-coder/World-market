@@ -1,6 +1,7 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import SEO from './SEO';
 import { useStore } from '../context/StoreContext';
 import { detectShowName } from '../services/routingUtils';
 import { CURRENCIES, LANGUAGES, PRODUCTS } from '../constants';
@@ -15,7 +16,11 @@ import {
   X,
   Star,
   Clock,
-  ArrowRight
+  ArrowRight,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin
 } from 'lucide-react';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -81,6 +86,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <div className={`min-h-screen flex flex-col font-sans selection:bg-blue-600 selection:text-white bg-white ${language.dir === 'rtl' ? 'rtl' : 'ltr'}`}>
+      <SEO />
       {/* Top Bar */}
       <div className="bg-gray-900 py-2 px-4 text-[10px] flex justify-between items-center uppercase font-bold text-gray-400 tracking-widest border-b border-white/5">
         <div className="flex items-center gap-4">
@@ -404,62 +410,85 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       )}
 
       {/* Footer */}
-      <footer className="bg-gray-950 text-white">
-        <button 
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="w-full bg-gray-900 py-4 text-xs font-bold uppercase tracking-[0.3em] hover:bg-gray-800 transition-colors border-b border-white/5"
-        >
-          Back to Top
-        </button>
-        
-        <div className="max-w-7xl mx-auto px-4 py-20 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-12 text-center md:text-left">
-          <div className="flex flex-col items-center md:items-start">
-            <h4 className="font-black uppercase text-sm mb-6 text-blue-500 tracking-widest">Commission System</h4>
-            <div className="bg-white/5 p-4 rounded-xl border border-white/10 w-full max-w-[250px]">
-              <div className="flex justify-between mb-2">
-                <span className="text-[10px] font-bold text-gray-400 uppercase">Seller Share</span>
-                <span className="text-sm font-black text-green-500">5%</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[10px] font-bold text-gray-400 uppercase">Admin Share</span>
-                <span className="text-sm font-black text-blue-500">95%</span>
+      <footer className="bg-gray-950 text-white pt-24 pb-12">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-24">
+            {/* Brand & Newsletter */}
+            <div className="space-y-8">
+              <Link to="/" className="text-3xl font-black italic uppercase tracking-tighter">
+                World <span className="text-blue-500">Market</span>
+              </Link>
+              <p className="text-gray-400 text-sm font-medium leading-relaxed">
+                The global marketplace for factory-direct products. Buy anything, sell everywhere.
+              </p>
+              <div className="space-y-4">
+                <h4 className="text-xs font-black uppercase tracking-widest text-white">Newsletter</h4>
+                <div className="relative">
+                  <input 
+                    type="email" 
+                    placeholder="Your email address"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-600 transition-all outline-none"
+                  />
+                  <button className="absolute right-2 top-2 bottom-2 bg-blue-600 text-white px-4 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all">
+                    Join
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <div>
-            <h4 className="font-black uppercase text-sm mb-6 text-blue-500 tracking-widest">Seller Links</h4>
-            <ul className="space-y-4 text-sm text-gray-400 font-bold">
-              <li><Link to="/register-show" className="hover:underline">Create Your Show</Link></li>
-              <li><Link to="/admin" className="hover:underline">Admin Center</Link></li>
-              <li><Link to="/contact" className="hover:underline">Contact Support</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-black uppercase text-sm mb-6 text-blue-500 tracking-widest">Payments</h4>
-            <ul className="space-y-4 text-sm text-gray-400 font-bold">
-              <li><span className="text-xs">Global: Bank Transfer / IBAN</span></li>
-              <li><span className="text-xs">Pakistan: JazzCash</span></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-black uppercase text-sm mb-6 text-blue-500 tracking-widest">Legal</h4>
-            <ul className="space-y-4 text-sm text-gray-400 font-bold">
-              <li><Link to={getLink('/privacy-policy')} className="hover:underline">Privacy Policy</Link></li>
-              <li><Link to={getLink('/shipping-policy')} className="hover:underline">Shipping Policy</Link></li>
-            </ul>
-          </div>
-          <div className="flex flex-col items-center md:items-start">
-            <h4 className="font-black uppercase text-sm mb-6 text-blue-500 tracking-widest">Social</h4>
-            <div className="flex gap-4 text-xl">
-              <span>📱</span> <span>📘</span> <span>📸</span>
-            </div>
-          </div>
-        </div>
 
-        <div className="bg-black py-12 border-t border-white/5 text-center">
-            <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest px-4">
-            © 2025 {currentShow ? currentShow.toUpperCase() : 'World Market'} & Global Sportswear Mfg. All Rights Reserved.
-          </p>
+            {/* Quick Links */}
+            <div className="space-y-8">
+              <h4 className="text-xs font-black uppercase tracking-widest text-blue-500">Quick Links</h4>
+              <ul className="space-y-4">
+                <li><Link to="/about-us" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">About Us</Link></li>
+                <li><Link to="/products" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">Shop All</Link></li>
+                <li><Link to="/blog" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">Our Blog</Link></li>
+                <li><Link to="/faq" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">FAQ</Link></li>
+              </ul>
+            </div>
+
+            {/* Seller Links */}
+            <div className="space-y-8">
+              <h4 className="text-xs font-black uppercase tracking-widest text-blue-500">Seller Central</h4>
+              <ul className="space-y-4">
+                <li><Link to="/become-seller" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">Become a Seller</Link></li>
+                <li><Link to="/seller-dashboard" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">Seller Dashboard</Link></li>
+                <li><Link to="/seller-ranking" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">Ranking System</Link></li>
+                <li><Link to="/terms" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">Seller Terms</Link></li>
+              </ul>
+            </div>
+
+            {/* Customer Support */}
+            <div className="space-y-8">
+              <h4 className="text-xs font-black uppercase tracking-widest text-blue-500">Support</h4>
+              <ul className="space-y-4">
+                <li><Link to="/contact-us" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">Contact Us</Link></li>
+                <li><Link to="/track-order" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">Track Order</Link></li>
+                <li><Link to="/shipping-policy" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">Shipping Policy</Link></li>
+                <li><Link to="/refund-policy" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">Refund & Returns</Link></li>
+                <li><Link to="/privacy-policy" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">Privacy Policy</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div className="flex items-center gap-6">
+              <a href="#" className="text-gray-500 hover:text-white transition-colors"><Facebook size={20} /></a>
+              <a href="#" className="text-gray-500 hover:text-white transition-colors"><Twitter size={20} /></a>
+              <a href="#" className="text-gray-500 hover:text-white transition-colors"><Instagram size={20} /></a>
+              <a href="#" className="text-gray-500 hover:text-white transition-colors"><Linkedin size={20} /></a>
+            </div>
+
+            <div className="flex items-center gap-4 opacity-50 grayscale">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-4" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-6" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-5" />
+            </div>
+
+            <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest">
+              © 2025 World Market. All rights reserved.
+            </p>
+          </div>
         </div>
       </footer>
     </div>

@@ -1,101 +1,69 @@
-
 import React from 'react';
+import { useStore } from '../context/StoreContext';
+import { useTranslation } from '../src/translations';
+import { Truck, Globe, Clock, ShieldCheck } from 'lucide-react';
 
 const ShippingPolicy: React.FC = () => {
+  const { language } = useStore();
+  const { t } = useTranslation(language.code);
+
   return (
-    <div className="bg-white min-h-screen py-20">
-      <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-5xl font-black italic tracking-tighter uppercase mb-12 underline decoration-blue-600">Shipping <span className="text-blue-600">Policy</span></h1>
+    <div className="min-h-screen bg-gray-50 py-24 px-4">
+      <div className="max-w-4xl mx-auto bg-white p-12 md:p-20 rounded-[4rem] shadow-2xl shadow-blue-600/5 border border-gray-100">
+        <h1 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter mb-12">
+          Shipping <span className="text-blue-600 underline">Policy</span>
+        </h1>
         
-        <div className="prose prose-lg max-w-none text-gray-700 space-y-10">
+        <div className="grid md:grid-cols-2 gap-8 mb-20">
+          <div className="bg-blue-50 p-10 rounded-3xl">
+            <Globe className="text-blue-600 mb-6" size={32} />
+            <h3 className="text-xl font-black uppercase tracking-tighter mb-4">Worldwide Shipping</h3>
+            <p className="text-sm text-gray-500 font-bold leading-relaxed">
+              We deliver to over 150 countries worldwide, partnering with top logistics providers like DHL, FedEx, and Aramex.
+            </p>
+          </div>
+          <div className="bg-green-50 p-10 rounded-3xl">
+            <Clock className="text-green-600 mb-6" size={32} />
+            <h3 className="text-xl font-black uppercase tracking-tighter mb-4">Delivery Times</h3>
+            <p className="text-sm text-gray-500 font-bold leading-relaxed">
+              Estimated delivery is 5-15 business days depending on your location. Order processing takes 1-3 business days.
+            </p>
+          </div>
+        </div>
+
+        <div className="prose prose-blue max-w-none space-y-12">
           <section>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">1. Worldwide Shipping</h2>
-            <p className="font-medium leading-relaxed">
-              World Market Shop is proud to offer international shipping services to over 200 countries and islands worldwide. Nothing means more to us than bringing our customers great value and service. We will continue to grow to meet the needs of all our customers, delivering a service beyond all expectation anywhere in the world.
+            <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">1. Order Processing</h2>
+            <p className="text-gray-600 leading-relaxed font-medium">
+              All orders are processed within 1-3 business days. Orders are not shipped or delivered on weekends or holidays. If we are experiencing a high volume of orders, shipments may be delayed by a few days.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">2. Estimated Delivery Times</h2>
-            <p className="font-medium leading-relaxed">
-              Delivery times vary by location. These are our estimates:
-            </p>
-            <div className="mt-4 overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b-2 border-gray-200">
-                    <th className="py-3 font-black uppercase text-sm">Location</th>
-                    <th className="py-3 font-black uppercase text-sm">Estimated Shipping Time</th>
-                  </tr>
-                </thead>
-                <tbody className="font-medium">
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3">United States & Canada</td>
-                    <td className="py-3">7-12 Business Days</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3">Europe</td>
-                    <td className="py-3">5-10 Business Days</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3">Australia & New Zealand</td>
-                    <td className="py-3">10-15 Business Days</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3">Central & South America</td>
-                    <td className="py-3">12-20 Business Days</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3">Asia & Middle East</td>
-                    <td className="py-3">5-10 Business Days</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3">Africa</td>
-                    <td className="py-3">15-25 Business Days</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <p className="mt-4 text-sm italic text-gray-500">*This doesn’t include our 2-5 day processing time.</p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">3. Order Processing Time</h2>
-            <p className="font-medium leading-relaxed">
-              All orders are processed within 2-5 business days. Orders are not shipped or delivered on weekends or holidays. If we are experiencing a high volume of orders, shipments may be delayed by a few days. Please allow additional days in transit for delivery.
+            <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">2. Shipping Rates & Delivery Estimates</h2>
+            <p className="text-gray-600 leading-relaxed font-medium">
+              Shipping charges for your order will be calculated and displayed at checkout. Delivery delays can occasionally occur due to customs or high seasonal demand.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">4. Tracking Information</h2>
-            <p className="font-medium leading-relaxed">
-              You will receive a shipment confirmation email once your order has shipped containing your tracking number(s). The tracking information will be active within 24-48 hours. For many international shipments, tracking is available until the package leaves the origin country and upon arrival in the destination country.
+            <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">3. Shipment Confirmation & Order Tracking</h2>
+            <p className="text-gray-600 leading-relaxed font-medium">
+              You will receive a Shipment Confirmation email once your order has shipped containing your tracking number(s). The tracking number will be active within 24 hours.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">5. Customs, Duties, & Taxes</h2>
-            <p className="font-medium leading-relaxed">
-              World Market Shop is not responsible for any customs and taxes applied to your order. All fees imposed during or after shipping are the responsibility of the customer (tariffs, taxes, etc.).
+            <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">4. Customs, Duties & Taxes</h2>
+            <p className="text-gray-600 leading-relaxed font-medium">
+              World Market is not responsible for any customs and taxes applied to your order. All fees imposed during or after shipping are the responsibility of the customer (tariffs, taxes, etc.).
             </p>
           </section>
 
-          <section>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">6. Bulk Shipping Details</h2>
-            <p className="font-medium leading-relaxed">
-              For large-scale team orders or wholesale inquiries, we offer specialized cargo shipping rates. Bulk orders may require additional processing time for manufacturing and quality control. Please contact our export department directly for a custom logistics quote.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">7. Shipping Support</h2>
-            <p className="font-medium leading-relaxed">
-              If you have any questions about the shipping and delivery of your order, please contact our support team:
-            </p>
-            <div className="mt-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
-              <p className="font-black uppercase text-sm">Email: logistics@worldmarketshop.com</p>
-              <p className="font-black uppercase text-sm mt-2">WhatsApp Support: +923187536795</p>
-            </div>
+          <section className="bg-gray-900 p-12 rounded-[3rem] text-white text-center">
+            <h2 className="text-2xl font-black uppercase tracking-tighter mb-4">Bulk Shipping</h2>
+            <p className="text-gray-400 font-medium mb-8">For large orders or wholesale inquiries, please contact our bulk shipping department.</p>
+            <p className="text-blue-500 font-black uppercase tracking-widest text-xs">bulk@worldmarket.com</p>
           </section>
         </div>
       </div>

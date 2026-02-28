@@ -1,6 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import SEO from '../components/SEO';
 import { useStore } from '../context/StoreContext';
 import { ADMIN_WHATSAPP } from '../constants';
 import { Star, Truck, ShieldCheck, RotateCcw, MessageCircle, ShoppingCart, ChevronRight, Share2, Heart, CheckCircle2 } from 'lucide-react';
@@ -51,7 +52,7 @@ Please fill the above data to proceed with manufacturing.`;
   };
 
   const handleAddToCart = () => {
-    addToCart({ ...product, quantity });
+    addToCart(product, quantity);
     // Optional: show a toast or redirect to cart
     // navigate('/cart');
   };
@@ -66,6 +67,12 @@ Please fill the above data to proceed with manufacturing.`;
 
   return (
     <div className="bg-white min-h-screen pb-20">
+      <SEO 
+        title={product.name}
+        description={product.description}
+        image={product.image}
+        keywords={[product.category, 'factory direct', 'wholesale', product.name]}
+      />
       {/* Breadcrumbs */}
       <div className="bg-gray-50 border-b">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 overflow-x-auto whitespace-nowrap scrollbar-hide">

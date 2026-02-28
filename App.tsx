@@ -12,6 +12,17 @@ import RegisterShow from './pages/RegisterShow';
 import ProductDetail from './pages/ProductDetail';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ShippingPolicy from './pages/ShippingPolicy';
+import AboutUs from './pages/info/AboutUs';
+import ContactUs from './pages/info/ContactUs';
+import FAQ from './pages/info/FAQ';
+import TrackOrder from './pages/info/TrackOrder';
+import Terms from './pages/info/Terms';
+import RefundPolicy from './pages/info/RefundPolicy';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
+import SellerProfile from './pages/SellerProfile';
+import SellerDashboard from './pages/SellerDashboard';
+import SellerRanking from './pages/SellerRanking';
 
 const App: React.FC = () => {
   return (
@@ -29,6 +40,17 @@ const App: React.FC = () => {
           <Route path="/register-show" element={<RegisterShow />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/shipping-policy" element={<ShippingPolicy />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/track-order" element={<TrackOrder />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/seller/:sellerId" element={<SellerProfile />} />
+          <Route path="/seller-dashboard" element={<SellerDashboard />} />
+          <Route path="/seller-ranking" element={<SellerRanking />} />
 
           {/* Clean Dynamic Multi-Show Routing (e.g. /arslan, /arslan/products) */}
           <Route path="/:showName" element={<Home />} />

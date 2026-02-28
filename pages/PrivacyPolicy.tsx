@@ -1,98 +1,69 @@
-
 import React from 'react';
+import { useStore } from '../context/StoreContext';
+import { useTranslation } from '../src/translations';
+import { Lock, Eye, ShieldCheck, UserCheck } from 'lucide-react';
 
 const PrivacyPolicy: React.FC = () => {
+  const { language } = useStore();
+  const { t } = useTranslation(language.code);
+
   return (
-    <div className="bg-white min-h-screen py-20">
-      <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-5xl font-black italic tracking-tighter uppercase mb-12 underline decoration-blue-600">Privacy <span className="text-blue-600">Policy</span></h1>
+    <div className="min-h-screen bg-gray-50 py-24 px-4">
+      <div className="max-w-4xl mx-auto bg-white p-12 md:p-20 rounded-[4rem] shadow-2xl shadow-blue-600/5 border border-gray-100">
+        <h1 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter mb-12">
+          Privacy <span className="text-blue-600 underline">Policy</span>
+        </h1>
         
-        <div className="prose prose-lg max-w-none text-gray-700 space-y-10">
+        <div className="grid md:grid-cols-2 gap-8 mb-20">
+          <div className="bg-blue-50 p-10 rounded-3xl">
+            <Lock className="text-blue-600 mb-6" size={32} />
+            <h3 className="text-xl font-black uppercase tracking-tighter mb-4">Data Protection</h3>
+            <p className="text-sm text-gray-500 font-bold leading-relaxed">
+              We use industry-standard encryption to protect your personal and payment data at all times.
+            </p>
+          </div>
+          <div className="bg-green-50 p-10 rounded-3xl">
+            <ShieldCheck className="text-green-600 mb-6" size={32} />
+            <h3 className="text-xl font-black uppercase tracking-tighter mb-4">Your Rights</h3>
+            <p className="text-sm text-gray-500 font-bold leading-relaxed">
+              You have the right to access, correct, or delete your personal information at any time.
+            </p>
+          </div>
+        </div>
+
+        <div className="prose prose-blue max-w-none space-y-12">
           <section>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">1. Introduction</h2>
-            <p className="font-medium leading-relaxed">
-              World Market Shop ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our marketplace services.
+            <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">1. Information Collection</h2>
+            <p className="text-gray-600 leading-relaxed font-medium">
+              We collect information you provide directly to us, such as when you create an account, place an order, or contact us. This includes your name, email, shipping address, and payment information.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">2. Information Collection</h2>
-            <p className="font-medium leading-relaxed">
-              We collect information that you provide directly to us when you:
-            </p>
-            <ul className="list-disc pl-6 mt-4 space-y-2 font-medium">
-              <li>Register for an account or create a seller "Show".</li>
-              <li>Place an order or make a purchase.</li>
-              <li>Fill out a contact or inquiry form.</li>
-              <li>Communicate with us via WhatsApp or email.</li>
-            </ul>
-            <p className="mt-4 font-medium">
-              This information may include your name, email address, phone number, shipping address, and payment information.
+            <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">2. Use of Personal Data</h2>
+            <p className="text-gray-600 leading-relaxed font-medium">
+              We use your information to process orders, provide customer support, and send you updates about our services. We do not sell your personal data to third parties.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">3. Use of Personal Data</h2>
-            <p className="font-medium leading-relaxed">
-              We use the information we collect to:
-            </p>
-            <ul className="list-disc pl-6 mt-4 space-y-2 font-medium">
-              <li>Process and fulfill your orders.</li>
-              <li>Manage your account and seller profile.</li>
-              <li>Improve our marketplace and customer service.</li>
-              <li>Send you administrative information and marketing communications.</li>
-              <li>Comply with legal obligations and prevent fraud.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">4. Cookies Usage</h2>
-            <p className="font-medium leading-relaxed">
-              We use cookies and similar tracking technologies to track activity on our marketplace and hold certain information. Cookies are files with a small amount of data which may include an anonymous unique identifier. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent.
+            <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">3. Cookies Usage</h2>
+            <p className="text-gray-600 leading-relaxed font-medium">
+              We use cookies to enhance your browsing experience, analyze site traffic, and personalize content. You can manage your cookie preferences in your browser settings.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">5. Payment Data Protection</h2>
-            <p className="font-medium leading-relaxed">
-              We prioritize the security of your payment data. All payment transactions are processed through secure, encrypted gateways. We do not store your full credit card or bank account details on our servers. Our payment processing partners comply with PCI-DSS standards to ensure the safe handling of your financial information.
+            <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">4. Third-Party Sharing</h2>
+            <p className="text-gray-600 leading-relaxed font-medium">
+              We share your information with trusted third-party service providers who assist us in operating our platform, such as payment processors and shipping companies.
             </p>
           </section>
 
-          <section>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">6. Third-Party Sharing Policy</h2>
-            <p className="font-medium leading-relaxed">
-              We do not sell or rent your personal information to third parties. We may share your information with:
-            </p>
-            <ul className="list-disc pl-6 mt-4 space-y-2 font-medium">
-              <li>Service providers who assist in our operations (e.g., shipping carriers, payment processors).</li>
-              <li>Sellers on our platform, only to the extent necessary to fulfill your orders.</li>
-              <li>Law enforcement or regulatory bodies when required by law.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">7. Customer Rights</h2>
-            <p className="font-medium leading-relaxed">
-              Depending on your location, you may have the following rights regarding your personal data:
-            </p>
-            <ul className="list-disc pl-6 mt-4 space-y-2 font-medium">
-              <li>The right to access the data we hold about you.</li>
-              <li>The right to request correction of inaccurate data.</li>
-              <li>The right to request deletion of your data.</li>
-              <li>The right to object to or restrict processing of your data.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">8. Contact for Privacy Concerns</h2>
-            <p className="font-medium leading-relaxed">
-              If you have any questions about this Privacy Policy or our data practices, please contact our Data Protection Officer at:
-            </p>
-            <div className="mt-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
-              <p className="font-black uppercase text-sm">Email: privacy@worldmarketshop.com</p>
-              <p className="font-black uppercase text-sm mt-2">WhatsApp: +923187536795</p>
-            </div>
+          <section className="bg-gray-50 p-10 rounded-3xl border border-gray-100">
+            <h2 className="text-xl font-black uppercase tracking-tighter mb-4">Privacy Concerns</h2>
+            <p className="text-sm text-gray-500 font-bold mb-4">If you have any questions or concerns regarding your privacy, please contact our data protection officer.</p>
+            <p className="text-blue-600 font-black uppercase tracking-widest text-xs">privacy@worldmarket.com</p>
           </section>
         </div>
       </div>

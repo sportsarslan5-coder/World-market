@@ -1,6 +1,7 @@
 
 export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'AED' | 'PKR';
 export type LanguageCode = 'en' | 'ar' | 'fr' | 'es' | 'de';
+export type SellerRank = 'Gold' | 'Silver' | 'Standard';
 
 export interface Currency {
   code: CurrencyCode;
@@ -32,7 +33,7 @@ export interface Product {
   image: string;
   images?: string[];
   price: number;
-  rating: string;
+  rating: number;
   stock: number;
   datePosted: string;
   fabric?: string;
@@ -41,6 +42,8 @@ export interface Product {
   colors?: string[];
   reviews?: Review[];
   shippingCountry?: string;
+  sellerId?: string;
+  sales?: number;
 }
 
 export interface CartItem extends Product {
@@ -56,6 +59,7 @@ export interface SaleRecord {
   amount: number;
   date: string;
   status: 'Delivered' | 'Processing' | 'Shipped';
+  sellerId?: string;
 }
 
 export interface Customer {
@@ -69,6 +73,7 @@ export interface Customer {
 }
 
 export interface SellerInfo {
+  id: string;
   fullName: string;
   whatsapp: string;
   email: string;
@@ -77,4 +82,24 @@ export interface SellerInfo {
   contactNumber: string;
   paymentDetails: string;
   showName: string;
+  rank: SellerRank;
+  rating: number;
+  totalSales: number;
+  responseTime: string;
+  isVerified: boolean;
+  joinedDate: string;
+  balance: number;
+}
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  image: string;
+  date: string;
+  author: string;
+  tags: string[];
 }

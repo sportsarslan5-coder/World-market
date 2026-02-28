@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import SEO from '../components/SEO';
 import { CATEGORIES, PRODUCTS } from '../constants';
 import { useStore } from '../context/StoreContext';
 import { getEnvironmentMode } from '../services/routingUtils';
@@ -47,6 +48,10 @@ const Home: React.FC = () => {
 
   return (
     <div className="animate-fadeIn bg-white">
+      <SEO 
+        title={showName ? `${showName.toUpperCase()} Marketplace` : "Global Factory-Direct Marketplace"}
+        description={showName ? `Shop factory-direct products from ${showName.toUpperCase()} on World Market.` : "World Market connects you with verified global sellers for the best pricing and quality."}
+      />
       {/* Dynamic Show Banner */}
       {showName && (
         <div className="bg-blue-600 py-2 px-4 text-center">
