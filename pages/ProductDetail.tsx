@@ -68,10 +68,10 @@ Please fill the above data to proceed with manufacturing.`;
   return (
     <div className="bg-white min-h-screen pb-20">
       <SEO 
-        title={product.name}
-        description={product.description}
+        title={product.metaTitle || product.name}
+        description={product.metaDescription || product.description}
         image={product.image}
-        keywords={[product.category, 'factory direct', 'wholesale', product.name]}
+        keywords={[product.category, 'factory direct', 'wholesale', product.name, ...(product.metaKeywords?.split(',') || [])]}
       />
       {/* Breadcrumbs */}
       <div className="bg-gray-50 border-b">
@@ -130,6 +130,13 @@ Please fill the above data to proceed with manufacturing.`;
           {/* Middle: Product Info (4 cols) */}
           <div className="lg:col-span-4 space-y-6">
             <div>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {product.badges?.map(badge => (
+                  <span key={badge} className="bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-md">
+                    {badge}
+                  </span>
+                ))}
+              </div>
               <h1 className="text-3xl font-black uppercase italic tracking-tighter leading-tight mb-2">{product.name}</h1>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1 text-yellow-400">

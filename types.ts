@@ -44,6 +44,11 @@ export interface Product {
   shippingCountry?: string;
   sellerId?: string;
   sales?: number;
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string;
+  imageAlt?: string;
+  badges?: string[];
 }
 
 export interface CartItem extends Product {

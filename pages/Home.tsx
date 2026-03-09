@@ -193,6 +193,15 @@ const Home: React.FC = () => {
                 <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg text-[10px] font-black shadow-sm">
                   ⭐ {p.rating}
                 </div>
+                {p.badges && p.badges.length > 0 && (
+                  <div className="absolute top-3 left-3 flex flex-col gap-1">
+                    {p.badges.map(badge => (
+                      <span key={badge} className="bg-blue-600 text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-lg">
+                        {badge}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
               <div>
                 <h4 className="font-bold text-sm line-clamp-1 group-hover:text-blue-600 transition-colors">{p.name}</h4>

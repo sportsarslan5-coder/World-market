@@ -250,6 +250,16 @@ const Products: React.FC = () => {
                           Out of Stock
                         </div>
                       )}
+
+                      {p.badges && p.badges.length > 0 && (
+                        <div className="absolute top-4 left-4 flex flex-col gap-1">
+                          {p.badges.map(badge => (
+                            <span key={badge} className="bg-blue-600 text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-lg">
+                              {badge}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     <div className="px-2">
