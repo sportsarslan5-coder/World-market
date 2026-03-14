@@ -335,36 +335,36 @@ const NEW_POLOS: Product[] = POLO_IMAGES.map((img, idx) => ({
 
 const NEW_SNEAKERS: Product[] = SNEAKER_IMAGES.map((img, idx) => ({
   id: `sneaker-${idx}`,
-  name: `Velocity Street Sneakers #${idx + 401}`,
+  name: `Sneakers #${idx + 401}`,
   category: "Shoes",
-  price: [99, 105, 110, 115, 120][idx % 5],
+  price: [25, 28, 30, 32, 38][idx % 5],
   rating: 4.9,
   stock: 15,
-  description: `Step into the future of footwear with Velocity Street Sneakers. Combining cutting-edge comfort technology with a bold urban design.
+  description: `Premium quality sneakers designed for style and comfort. Perfect for everyday wear and athletic activities.
   
   ### Features:
-  - Responsive cushioning for all-day comfort
-  - Breathable mesh and leather upper
-  - High-traction rubber outsole
-  - Lightweight construction
+  - Durable construction
+  - Comfortable fit for all-day use
+  - Modern aesthetic design
+  - High-quality materials
   
-  **Material:** Mesh, Synthetic Leather, Rubber
+  **Material:** Premium Blend
   **Shipping:** Securely packaged and shipped worldwide with insurance.`,
   image: img,
   images: [img],
   datePosted: new Date().toISOString(),
-  fabric: "Mesh & Synthetic Leather",
+  fabric: "Premium Materials",
   quality: "Premium",
   sizes: ['38', '39', '40', '41', '42', '43', '44', '45'],
-  colors: ['Triple Black', 'Cloud White', 'Neon/Grey', 'Red/Black'],
+  colors: ['Black', 'White', 'Grey', 'Multi-color'],
   shippingCountry: "Worldwide",
   sellerId: 'seller-2',
   sales: 320,
   badges: ['Best Seller'],
-  metaTitle: `Velocity Street Sneakers - Modern Urban Footwear | World Market`,
-  metaDescription: `Discover Velocity Street Sneakers. Ultimate comfort, stylish design, and durable construction. Free shipping on select orders.`,
-  metaKeywords: `sneakers, street footwear, urban shoes, comfortable sneakers, fashion shoes`,
-  imageAlt: `Velocity Street Sneaker Design ${idx + 1}`
+  metaTitle: `Sneakers - Premium Footwear | World Market`,
+  metaDescription: `Shop our collection of premium sneakers. Stylish, comfortable, and durable. Worldwide shipping available.`,
+  metaKeywords: `sneakers, shoes, footwear, fashion shoes, comfortable sneakers`,
+  imageAlt: `Sneakers Style ${idx + 1}`
 }));
 
 const NEW_BOOTS: Product[] = BOOT_IMAGES.map((img, idx) => ({
