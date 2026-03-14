@@ -193,8 +193,7 @@ const POLO_IMAGES = [
   "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096363/MC1511_m05thm.jpg"
 ];
 
-const SNEAKER_IMAGES = [
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098463/0097603260303NEW_00_052_rrewhl.jpg",
+const GRAPHIC_TSHIRT_IMAGES = [
   "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098462/unisex-staple-t-shirt-black-front-6539555f90a93_uxb5q7.jpg",
   "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098410/Black-Front_f7fa258b-d95c-490e-acb8-61068ede2088_gdkyju.jpg",
   "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098360/61JANzsUXQL._AC_UY1000__ek0exu.jpg",
@@ -217,6 +216,17 @@ const SNEAKER_IMAGES = [
   "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098305/61ETIupdWLL._AC_UY1000__xrohof.jpg",
   "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098306/FD207245-CREA_MAIN_n81lak.png",
   "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098306/DP0629202313020933M_hql5hy.jpg"
+];
+
+const SNEAKER_IMAGES = [
+  "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1560769129-d85247551200?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1605348532760-6753d2c43329?auto=format&fit=crop&w=800&q=80"
 ];
 
 const BOOT_IMAGES = [
@@ -333,6 +343,40 @@ const NEW_POLOS: Product[] = POLO_IMAGES.map((img, idx) => ({
   imageAlt: `Classic Heritage Polo Shirt Color ${idx + 1}`
 }));
 
+const NEW_GRAPHIC_TSHIRTS: Product[] = GRAPHIC_TSHIRT_IMAGES.map((img, idx) => ({
+  id: `graphic-tshirt-${idx}`,
+  name: `Graphic T-shirt #${idx + 601}`,
+  category: "Clothing",
+  price: [18, 20, 22, 25, 28][idx % 5],
+  rating: 4.6,
+  stock: 60,
+  description: `Express yourself with our premium Graphic T-shirts. Featuring unique designs and high-quality prints on soft, breathable cotton.
+  
+  ### Features:
+  - 100% Combed Cotton
+  - High-definition graphic prints
+  - Comfortable unisex fit
+  - Pre-shrunk fabric
+  
+  **Material:** 100% Cotton
+  **Shipping:** Worldwide shipping available.`,
+  image: img,
+  images: [img],
+  datePosted: new Date().toISOString(),
+  fabric: "100% Cotton",
+  quality: "Premium",
+  sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+  colors: ['Black', 'White', 'Navy', 'Grey'],
+  shippingCountry: "Worldwide",
+  sellerId: 'seller-2',
+  sales: 450,
+  badges: ['Trending'],
+  metaTitle: `Graphic T-shirts - Unique Streetwear Designs | World Market`,
+  metaDescription: `Shop our exclusive Graphic T-shirts. High-quality prints, soft cotton, and unique designs. Perfect for casual streetwear.`,
+  metaKeywords: `t-shirt, graphic tee, streetwear, cotton shirt, printed t-shirt`,
+  imageAlt: `Graphic T-shirt Design ${idx + 1}`
+}));
+
 const NEW_SNEAKERS: Product[] = SNEAKER_IMAGES.map((img, idx) => ({
   id: `sneaker-${idx}`,
   name: `Sneakers #${idx + 401}`,
@@ -432,6 +476,7 @@ export const PRODUCTS: Product[] = [
   ...NEW_HOODIES,
   ...NEW_TRACKSUITS,
   ...NEW_POLOS,
+  ...NEW_GRAPHIC_TSHIRTS,
   ...NEW_SNEAKERS,
   ...NEW_BOOTS
 ];
