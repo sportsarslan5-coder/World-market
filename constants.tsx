@@ -162,71 +162,475 @@ const TRACKSUIT_IMAGES = [
 ];
 
 const POLO_IMAGES = [
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096512/11390304-WHIT_alamna.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096517/1b9649bb87faed7e096cdea7dcb366fa_mhrtki.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096534/MC1511_p6ga9f.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096535/-473Wx593H-410456774-wht-MODEL_zb7bda.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096538/0W2A6470_puhz1i.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096479/U-S-Polo-Assn-Men-s-Short-Sleeve-Crew-T-Shirt_b4b79b71-4740-49e6-9604-dd3f02e690d8.6cd8285b5c3adce8062b5aa8f6fa1968_ii8emp.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096479/black-ash_bocsml.webp",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096480/5_vJgp79x_dru5na.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096511/NavyBlueCPModel_7826c75b-86ce-4ab0-8d44-4540c2c0e4e4_jdzl8j.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096512/2240101914-19-38_1_ndni7m.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096465/WUTS1125S_1_hc5foh.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096478/blank-collared-shirt-mock-up-template-front-and-back-view-plain-white-t-shirt-isolated-on_mz9tej.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096478/white-polo-shirt-mockup-png_atiomm.png",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096479/7_a4d3182c-987e-4147-aba4-cdd044567da3_uokirf.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096479/67e0d3b7bd774b5a6c68cfd0-button-down-t-shirts-for-mens-polo_pzwspn.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096441/polo-t-shirt-559323_skfias.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096441/outfmvch-polo-shirts-for-men-male-summer-solid-print-t-shirt-turn-down-collar-short-sleeve-t-shirt-womens-tops-grey_fd5b3fa8-56d4-40a7-8b6f-ec1307b752ab.b1927c945864aa1de64664f019e9205f_eozbfl.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096442/6209244-HQ154602-SPWIN24130424_01-2100_h8jnmv.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096442/TS-11-1_xszvqq.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096442/202303-2210-468-model-fv-1_4b5f4fe7-abcd-453d-945a-50aed27f323b_q9fmr8.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096407/nologo-navy-pure-cotton-polo-t-shirt_qzoqb4.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096365/711268-14605036_yhhcyu.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096367/grey-polo-shirt-mockup-front-used-as-design-template-tee-shirt-blank-isolated-on-white_ebofe8.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096406/K90236s_fc4htm.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096406/blank-black-t-shirt-template-front-and-back-view_k2img1.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096406/white-polo-t-shirt-mockup-template-medium-re-design-4964ba095ea76fb3449a6b4937f73618_screen_sdfi56.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096362/GhostMannequinsPOLOBlack_x600_ge3nnk.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096362/7684e8af4b3d912d447a4d780ac85799f2167fa24564a0faf6d46f2297fd937f_woyaay.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096363/MC1511_m05thm.jpg"
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096678/NavyBlueCPModel_7826c75b-86ce-4ab0-8d44-4540c2c0e4e4_jiakte.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096713/0922-KN-BPOLO-176-23_1_gwqcab.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096713/2240101914-19-38_1_j9te4j.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096713/11390304-WHIT_srvwsv.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096714/-473Wx593H-410456774-wht-MODEL_uongow.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096676/67e0d3b7bd774b5a6c68cfd0-button-down-t-shirts-for-mens-polo_hfnzsl.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096677/U-S-Polo-Assn-Men-s-Short-Sleeve-Crew-T-Shirt_b4b79b71-4740-49e6-9604-dd3f02e690d8.6cd8285b5c3adce8062b5aa8f6fa1968_ipo3e2.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096677/7_a4d3182c-987e-4147-aba4-cdd044567da3_kudmgf.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096677/5_vJgp79x_lkulmv.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096677/1_71340bc5-9984-4f82-8028-ea2fe0bf70c0_ibzvuu.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096645/d6373c_cc49130c5df6485884724e15c855dc46_mv2_atj7yz.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096646/WUTS1125S_1_foyscf.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096646/blank-collared-shirt-mock-up-template-front-and-back-view-plain-white-t-shirt-isolated-on_zxktau.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096648/black-ash_w5y4wb.webp",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096652/white-polo-shirt-mockup-png_u8pt23.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096623/6209244-HQ154602-SPWIN24130424_01-2100_vmz74x.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096623/202303-2210-468-model-fv-1_4b5f4fe7-abcd-453d-945a-50aed27f323b_o85bev.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096623/plp-header-polo-men-02_xtghoy.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096623/TS-11-1_bjy4zu.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096623/26816077_56536485_600_iajrvl.webp",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096596/polo-shirt-illustration-template-front-and-back-views-apparel-polo-t-shirt-mock-up-cad-free-vector_c4qlt4.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096596/nologo-navy-pure-cotton-polo-t-shirt_oopogq.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096596/polo-t-shirt-559323_zvzuew.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096622/outfmvch-polo-shirts-for-men-male-summer-solid-print-t-shirt-turn-down-collar-short-sleeve-t-shirt-womens-tops-grey_fd5b3fa8-56d4-40a7-8b6f-ec1307b752ab.b1927c945864aa1de64664f019e9205f_c0fj7m.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096565/blank-black-t-shirt-template-front-and-back-view_i3i1ul.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096573/28909-2830-AW24-F-20_oa4scl.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096595/gray-collared-shirt-design-template_w6hi7k.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096595/61xJm9OFDeL._AC_UY1000__m2uhn8.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096595/yellow-collared-shirt-design-template_bhfou3.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096563/711268-14605036_gqtlqn.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096563/New-Polo_Flat_wrp7ci.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096563/grey-polo-shirt-mockup-front-used-as-design-template-tee-shirt-blank-isolated-on-white_m5of8i.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096564/white-polo-t-shirt-mockup-template-medium-re-design-4964ba095ea76fb3449a6b4937f73618_screen_vnegj3.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096564/K90236s_ekqqmk.jpg"
 ];
 
 const GRAPHIC_TSHIRT_IMAGES = [
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098531/61xrPXnaTSL._AC_UY1000__a9g5o2.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098531/161431509-dynamic1-pdp_rndkfv.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098532/873730228-dynamic1-pdp_etpzyg.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098550/mens_take_it_slow_vintage_inspired_triblend_kelly_with_cool_funny_turtle_graphic_on_model_1600x_duv5t2.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098550/goods_09_479030_3x4_jxsnyo.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098508/61ETIupdWLL._AC_UY1000__wxoo41.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098509/71aJNnIUSBL._AC_UY1000__jlgrgr.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098509/DP0629202313020933M_ihx0lf.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098509/71QMsrys-lL._AC_UY1000__biambw.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098463/LILBHABYYY_ezzkng.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098488/il_570xN.2024844281_jcs4_yiqklf.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098488/goods_27_461415_3x4_rz7gra.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098493/ClevelandArtworkTshirtBack_miwfif.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098462/DP0522202411095759M_ftknur.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098463/AY1753s_haciyc.jpg",
   "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098462/unisex-staple-t-shirt-black-front-6539555f90a93_uxb5q7.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098410/Black-Front_f7fa258b-d95c-490e-acb8-61068ede2088_gdkyju.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098360/61JANzsUXQL._AC_UY1000__ek0exu.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098359/cbum_gymthark_new_vytoqv.png",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098360/images-FadeGraphicT_ShirtGSBlackA4C1V_BB2J_0737_V2_3840x_uebpiu.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098368/900749701_g0_nlkv0y.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098463/0097603260303NEW_00_052_rrewhl.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098433/RMS2423PG337_ay0mfg.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098433/Tee-NL3600-White-GraphicDesignIsMyPassion_vtoa19.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098433/kobeblack_ixzjsr.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098440/Y2K-Locked-In-Graphic-T-Shirt_oflhch.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098401/carhartt-relaxed-fit-lightweight-pocket-dog-graphic-t-shirt-men-beach-brown-106778-A33-BEACH-3_ctaybl.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098401/ai_creative_0000_Layer_6_t6r8jr.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098401/M_J_AIR_JDN_WM_85_AOP_SS_CR_f2ptvl.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098402/berry-fresh-sweet-graphic-tshirt-t-shirt-mure-grand-290973_eqmcnh.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098402/NIR130080_600x_oylpnx.png",
   "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098379/mens_reflections_vintage_inspired_triblend_gold_tee_shirt_with_cool_colorful_lake_graphic_1600x_eiw5sw.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098307/goods_09_479030_3x4_wrg52p.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098307/unisex-staple-t-shirt-black-front-6536f14d08c7a_2048x_pdflhr.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098307/873730228-dynamic1-pdp_ock6zr.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098312/161431507-dynamic1-pdp_kvesvi.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098359/image_dd0n4d.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098306/71aJNnIUSBL._AC_UY1000__xfryxs.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098306/61xrPXnaTSL._AC_UY1000__lzk4ui.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098306/71QMsrys-lL._AC_UY1000__zlmg7e.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098307/161431509-dynamic1-pdp_iv6dxi.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098307/mens_take_it_slow_vintage_inspired_triblend_kelly_with_cool_funny_turtle_graphic_on_model_1600x_oqun6b.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098305/volt-dragon-heavyweight-mens-graphic-tshirt-1_fxpzgh.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098305/ClevelandArtworkTshirtBack_smpjwr.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098305/61ETIupdWLL._AC_UY1000__xrohof.jpg",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098306/FD207245-CREA_MAIN_n81lak.png",
-  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098306/DP0629202313020933M_hql5hy.jpg"
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098379/0097522800388NEW_00_010_v5xj3d.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098383/mens_reflections_graphic_v_neck_tee_cool_artistic_nature_t_shirt_solid_threads_5000x_cjx2h5.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098384/654178059791ea32b474167b-into-the-am-premium-graphic-tees-men_zxjjh5.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772098400/0120522800643NEW_00_010_pazkf7.jpg"
 ];
 
 const SNEAKER_IMAGES = [
-  "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1560769129-d85247551200?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1605348532760-6753d2c43329?auto=format&fit=crop&w=800&q=80"
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774285040/uomo-basse-sneakers-scarpe-bianco_jvtays.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774285040/1_7e937f13-bb80-49cb-a6f1-301c87ccf63a_acjybx.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774285040/112402.Best-Of-All-White-Sneakers__copy_2_600x.progressive_aye8yh.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774285041/Jansen_retro_sneaker_textile-Sneakers-WO1017-048_Grey-2_1080x_yst6ue.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774285046/white-sneakers_2_vijcen.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774285030/gettyimages-2209615002_dntiuy.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774285039/Suede-Classic-Sneakers_beweap.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774285039/Y03796_P7476_T8013_F_hrrgsn.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284890/ff8c627fe9b5511d49db50c11273d5996c6ef23d7a9c4377cd2ce3800f0920e9_svu4yl.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284981/Mens-Motion-Access-Mid-Waterproof-Sneaker-TBL-HERO_xc8nfn.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774285001/10455_WBWB_101_kfzlre.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774285006/Platinum_Stairs_2_h6adfy.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774285027/BeauToday-Chunky-Sole-Lace-Up-Sneakers-for-Women-BEAU-TODAY-231_1080x_hzk0na.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284889/4e939778-9be4-4ca7-bbef-fd922b25579f1717216485904ASIANMenSneakers1_pqeo7i.webp",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284889/4410029-2307_1_juamgm.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284890/side_wirnet.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284890/OG-30_22G-1249_BLU.BELL_WHT_7_xsdiip.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284887/757892_AACAG_9055_001_100_0000_Light_dgtpom.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284887/PUMA-Club-II-Era-Sneakers-Unisex_jm5ub1.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284888/954_b5347d8644-1887-9-full_fgk8ae.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284888/0000s_0016_DSC07362.ARW_twtv7i.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284887/Untitled_design_8_a5jakw.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284884/MG_9335_jgs12u.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284885/aa500205-ba8a-4b5b-83b3-6fbeef678ddc.480f707bdd92c6873286f95a0e4d324a_oxblfo.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284885/cloud-white-brown-standard.1600_fise9t.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284886/28954-1009-AW24_0101-4_fyuqcj.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284883/Grand_Court_Shoes_White_GW9214_HM1_s7jmsj.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284883/index-68cc54bc00b60.jpg_govhpa.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284883/28954-1009-AW24_0111-5_gmaquy.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284884/2505-GQR-Inlines-WhiteSneakers-Salomon-0560_gxvuml.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284881/Womens_Cardinal_Sneaker_Latte-WCCSC23NSP_LAT_Side_gbzckw.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284882/WF-4001-WHT_Pair_Front_cxkmjt.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284882/sneaker-uomo-blu-avellino-ciccone-1_tjsgyk.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284882/bouncing-sneaker--242250Z_2002-front-wm-1-0-0-800-800_g_poayu9.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774284883/0000s_0016_DSC07362.ARW_fb98wg.jpg"
+];
+
+const SPORTS_BRA_IMAGES = [
+  "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1617624936564-4d53b7c38394?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1518310383802-640c2de311b2?auto=format&fit=crop&w=800&q=80"
+];
+
+const YOGA_PANTS_IMAGES = [
+  "https://images.unsplash.com/photo-1506629082925-034bd3bbad4e?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80"
+];
+
+const WINTER_JACKET_IMAGES = [
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101523/65680b6361bfca1302070f83-men-sherpa-lined-jacket-men-39-s_uxjn28.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101523/VPO_Fjallraven_Expedition_Mid_Winter_Jacket__Mens_navy__un_blue_5_y3qxgx.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101523/moncler-maya-hooded-short-down-jacket-men-black-moncler-0_ji1xin.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101523/658bf5ae7c3860705c5bf4fc-lezmore-cuff-heavy-lapel-jacket-winter_kenxtc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101568/8dfadbf752786cd5fd445bcaa4623eb7_rbsors.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101469/545387a_nmoxvq.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101469/REI_20Co-op_20650_20Down_20Jacket_20_28view_20from_20front_20-_20m_29_0_mvqc3d.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101490/downjackets-2048px-9083-3x2-1_tl6kjh.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101491/523050_1_41_x2x13g.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101522/greenland_winter_jacket_m_87122-550_c_model_fjr_dm3jxc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101391/montana-jacket-men-beige-3_uikbdw.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101395/RB1176B0001_iixzjn.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101436/Delta-ComPac-Winter-Jacket-browngrey-hero-0475-LR_mv8ox4.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101468/41774_698-1-onbody1_hy1pmd.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101421/711WEMJ8h6L_esgtvf.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101436/LEEy-world-Winter-Coats-For-Men-Men-s-Hoodie-Jacket-6-Zip-Pockets-Warm-Winter-Jacket-Tactical-Jacket-Black-XL_132341ac-9114-40e2-a20e-9926005266b3.e6dc3e2b47ad7221111014b5a8f5fa5b_yootkv.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101443/downjackets-2048px-9083-3x2-1_yu5ym1.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101414/Ajaton_1080x1080_lkdp1b.webp",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101414/Mission-Workshop-Westward-Advanced-Pea-Coat-feature_ba3d6i.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101415/6939840de4cb16f9280a44bf-yozai-men-s-winter-coat-warm-jackets_vhjvpc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101323/erjjk03547_roxy_l_crc0_frt1_rizwlz.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101325/square_fw24_fjallraven_33132_gjrl1j.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101361/s-l1200_t4nmip.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101389/The_20North_20Face_20Gotham_20III_20_28m_29_cmprud.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101390/Mountain_20Hardwear_20Stretchdown_20Parka_pnavlt.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101303/HR-FW24-EDITORIAL-HowLongShouldYourWinterCoatBe-ArticleAssets-standalone-medium-3691x2953_n2hihl.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101303/7f8d7937-91a2-4053-943f-d3df2bb2ffd2.__CR0_0_300_400_PT0_SX300_V1____y7rdww.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101321/41b1oVj7E3L_mdiljv.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101323/81E5sFpv8EL._AC_UY1000__qpke14.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101275/downjackets-2048px-9071-2x1-1_ni3bx3.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101280/woodpecker-mens-long-winter-coat-penguin-blue-diamond-5_rp0sgl.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101302/s-l1200_jxzyhf.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101302/AW25_Jacket_Infographic_with_Kupponen_bmjbhg.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101275/81bZglvaBXL._AC_UY1000__ma8jgb.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101274/61iBJGpSSVL._AC_UY1000__yosfxb.jpg"
+];
+
+const SHORTS_IMAGES = [
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772097155/Indie-Training-Short-Black-Front-2_y0k0gc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772097156/71016ePWLfL._AC_UY1000__qnbvus.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772097156/G_NK_DF_ONE_5IN_BIKE_SHORT_jlp6iw.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772097156/FAKKDUK-Athletic-Shorts-Womens-Casual-Yoga-Pants-Teen-Girls-High-Waisted-Shorts-Comfy-Lounge-Workout-Sports-Shorts-Summer-Baggy-Shorts-Pockets-Black_40da3202-4f8f-4127-9ce0-0c4a39d86098.85df6caf7dd8a36a86b9b5198fdca7a1_mwqlof.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772097157/61sKmxNDBOL._AC_UY1000__prsm1q.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772097008/71e6OF7k8WL._AC_UY1000__wthyis.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772097006/erjfb03441_roxy_l_kvj0_frt1_s3ahej.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772097007/719363s3_ji5vbg.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772097007/What_Length_Shorts_Should_I_Buy_lap3mz.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772097007/Sport7ShortsGsBlack-GsBlackA1B3L-BB2J-1015-Edit_fff8fb45-65e0-4e83-a465-131f730fb80a_3840x_ltcw59.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096910/61sKmxNDBOL._AC_UY1000__lknf4w.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096972/images-Arrival5ShortsBlackA2A1M_BBBB_1826_A_Edit_3840x_sf4qh3.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096973/5200ccc262d65fd3531932b36a91bef681d4fee8_ybhcyu.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096974/mens-athletic-workout-shorts-334514_vsmh42.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096974/M_NK_DF_FORM_5IN_UL_SHORT_tniahh.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096903/163253s_so4bdh.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096903/W_J_SPT_DF_PRCT_HR_6IN_SHRT_cako6c.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096905/images-A1B3M_GB7X_1_229b84d9-5424-45f8-befb-52fd95589e4c_3840x_p98egy.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096905/Indie-Training-Short-Black-Front-2_nvmm9u.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096906/G_NK_DF_ONE_5IN_BIKE_SHORT_lgsovo.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096902/What_Length_Shorts_Should_I_Buy_p6x9sj.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096902/Sport7ShortsGsBlack-GsBlackA1B3L-BB2J-1015-Edit_fff8fb45-65e0-4e83-a465-131f730fb80a_3840x_syalre.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772096903/719363s3_kbqvr5.jpg"
+];
+
+const GYM_TANK_IMAGES = [
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766820/5100OSJ621L._AC_UY1000__kvkzsh.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766821/jed_north-image-1589387845666_1_wjuggv.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766821/61QfDZ1pCRS._AC_UY1000__zjauiw.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766827/mhl-wrkout-lululemon-6899f738a1c84_twb59u.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766832/LegacyDropArmTankGSStoneGreyA5A2Z-GB7S-1606-0171_818e2dd5-068d-457e-aaad-100e37ac42a2_rxohh3.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766771/1214_grande_x8j0ue.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766796/81UqS3qebYL._AC_UY1000__smsuqx.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766797/51bUj-jz1bL._AC_UY1000__p3au4n.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766803/s-l400_ic0mvf.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766815/Mens-Tank-Top-Beach-Men-Casual-Solid-Tight-Fitting-Sports-Stripe-Gym-Tank-Tops-Vest_a9a2bd48-432d-4f30-bd44-24e72e22662e.e2fc724dab946b5bcace9397b20f5e53_t4lkq9.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766759/61jiQWznpqS._AC_UY1000__orn1hp.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766759/basic-stringer-tank-top-tuffwraps-30344532557912_bcnhob.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766759/Gold_s_Gym_Classic_Joe_Stringer_Yellow_Gold_Color_b5y3or.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766760/whm240109-digital-ecomm-workout-tank-top-lead-66e9e3443df3e.png_t6lidy.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766760/029e8452-eb28-4c4c-979a-a930bff34eee.573360bdd5b0962a18a07aba5b984110_m7ebdd.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766714/womens_golds_gym_tank_top_ug1ssf.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766714/gray_1_g6bn6t.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766728/mens-stringer-gym-tank-top-98f6eb_fyv8jv.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766714/mens_stringer_tank_top_gym_shirt_golds_gym_black_y30rpl.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766759/mens_stringer_tank_top_gym_shirt_yellow_golds_gym_2048x2048_m6fru7.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766689/GOLDS-GYM-60TH-ANNIVERSARY-COLLECTION-70S-DECADE-BODYBUILDING-YELLOW-STRINGER_ft9dct.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766713/MensVintageGymShorts-18_h3ge0a.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766713/images-GFXLifting1RDETankGSBlackA2C1R_BB2J_1230_0009_gty8ee.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766713/029e8452-eb28-4c4c-979a-a930bff34eee.573360bdd5b0962a18a07aba5b984110_qy0gpm.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766714/51cW1T8o_3L._AC_UY1000__xzfeoj.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766612/221205_GG_Classic_MEN_Stringer_Muscle_Joe_Gelb-1124_1142x1142_2x_gfzfgr.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766619/golds-gym-classic-stringer-tank-top-army-marl-orange_2_tkw4mc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766679/classic-tanktop-dunkelgrau-3xl_jlqngy.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766688/mhl-wrkout-lululemon-6899f738a1c84.jpg_kwnvvb.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766611/1785455447_max_bhxwfa.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766611/Custom-Blank-Low-Cut-Tank-Top-Cotton-Y-Back-Gym-Stringers-for-Men_yebn0v.webp",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766611/DBZ3_grande_ebasgn.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766612/arnie-t-back-emerald-clothing-ryderwear-478832_500x_opbqvg.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766612/maxresdefault_isclno.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766584/AQB19_saq8ey.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766585/LANCE_0041-Gym-Tank_MGrey_u4k2dz.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766585/performance-tank-black-main-min_l13b15.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766585/gym-tank-rib-white-167215_ijeuah.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766586/1734_gr_yhueba.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766551/amazon-large-2-4_kafhfp.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766552/tank-top-don-t-look-back-men_cfhmlx.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766552/IMPACT-ORANGE-Gym-Tank-Top-Men-Workout-CrossFit-DC2-Bang-Clothing-Miami-1_vw4mtg.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766553/1_e1a5c7da-aa9c-4be0-9d99-92af3af59d84_jhdhtw.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766562/s-l1200_apleao.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766525/1734_kl_gyps8s.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766550/Design-Your-Own-Cotton-Plain-Bodybuilding-Custom-Fitness-Stringer-Gym-Tank-Top-for-Men_vla4ji.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766551/Gym-Wear-Loose-Drop-Arm-Vest-Custom-Men-Tank-Top_ymo1mb.webp",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766529/Plain-Blank-Deep-Cut-Gym-Tank-Top_id5hmv.webp",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766511/images-RibbedTank1PKWhiteA5A8H_WB57_1076_3840x_dwqo29.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766519/black_yoscvh.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766521/golds-gym-classic-stringer-tank-top-turq-yellow_mq29qc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766520/s-l400_xnp9wc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766493/1800-viscose-oversized-cutoff-gym-workout-stringer-tank-for-men-black_4_vm6bef.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766494/Plain-Blank-Deep-Cut-Gym-Tank-Top_faetna.webp",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766494/312_20brown_20chase_enkpa6.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766503/baller-tank-white-clothing-ryderwear-493188_500x_vogg9h.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766463/gators_gear-9_1024x1024_2x_ojo7bq.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766466/1708000486-14680308-9345101754643675.jpg_tivtg5.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766466/mens-stringer-gym-tank-top-8-9ed1_vnr2pc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766472/11_26_24_Golds_eComm2119_qwcjbp.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766493/DBZ_grande_nqeaph.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766443/mens-just-gym-tank-top-709587_yeakdg.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766461/adviicd-Men-Tops-Long-Sleeve-Mens-Tank-Top-Men-s-Muscular-Cut-Open-Sides-Bodybuilding-Tank-Top-Gym-Workout-Stringer-T-Shirt-Black-3XL_ad711061-0f45-43ee-9d29-ec81af778417.78323cce5dc07bc00947f7e7406bbde4_mbxwdo.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766462/CriticalDropArmTankGSBlackA1A2R-BB2J-0638_symqc4.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766462/OKBOP-Ribbed-Tank-Top-Men-Men-Casual-Solid-Tight-Fitting-Sports-Stripe-Gym-Tank-Tops-Vest-White-L-US-6_479f1834-ca72-4596-8658-71b9fd5deee7.5f53a23d1f33eb2505f025ea795141ec_j18muk.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766462/images-A1A2P_BB2J_1_bhnyz9.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766436/Herrnalise-Men-s-Muscle-Gym-Workout-Men-Casual-Solid-Tight-Fitting-Sports-Stripe-Gym-Tank-Tops-Vest_6382ec25-2aa0-456f-bdce-7bc7802dae30.c513455000d301fff4f227528540b858_t2ttni.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766436/TOPS_ACTIVE_TOPS_fmh4xr.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766437/womens-performance-tank-black-front_yem8ov.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766437/OLYMPIC-BLUE-Gym-Tank-Top-Men-Workout-CrossFit-Bang-Clothing-Miami-2_arfbyk.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766437/LA-BEACH-EN-ROSE-Gym-Tank-Top-Men-Workout-CrossFit-Bang-Clothing-Miami-4copy_ozou8b.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766411/jed_north-image-1589387845666_1_ula7mn.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766411/61QfDZ1pCRS._AC_UY1000__fiyz6d.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766410/5100OSJ621L._AC_UY1000__ymulyv.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766411/mhl-wrkout-lululemon-6899f738a1c84_kq8ey3.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766412/LegacyDropArmTankGSStoneGreyA5A2Z-GB7S-1606-0171_818e2dd5-068d-457e-aaad-100e37ac42a2_kgamqm.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766323/s-l1200_occy4b.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766326/51bUj-jz1bL._AC_UY1000__sfuxog.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766395/s-l400_qkg5n5.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766285/womens_golds_gym_tank_top_hmwvhl.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766285/gray_1_rqatjc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766322/whm240109-digital-ecomm-workout-tank-top-lead-66e9e3443df3e.png_fbtphr.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766291/61jiQWznpqS._AC_UY1000__fnl1u4.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766323/029e8452-eb28-4c4c-979a-a930bff34eee.573360bdd5b0962a18a07aba5b984110_ndu6dr.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766284/029e8452-eb28-4c4c-979a-a930bff34eee.573360bdd5b0962a18a07aba5b984110_y77cwz.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766284/mens_stringer_tank_top_gym_shirt_golds_gym_black_yjutvn.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766284/images-GFXLifting1RDETankGSBlackA2C1R_BB2J_1230_0009_z6dfm0.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766284/MensVintageGymShorts-18_ypsmgz.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773766285/51cW1T8o_3L._AC_UY1000__iuvzvr.jpg"
+];
+
+const JOGGERS_IMAGES = [
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824971/Mens-Reaxion-20-Joggers-TNF-MODEL34_m6pcu3.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824978/images-CrestJoggersBlackA2A4H_BBBB_1833_A_Edit_qivrty.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824978/Bonkerscorner_Midnight_Miles_Loose_Fit_Joggers_men4_r4ez65.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824978/M_NK_DF_UV_PRIMARY_JOGGER_PANT_au52dl.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824978/EssentialOversizedJoggersBlackA2A7T-BBBB-0277-Edit_426d5cf9-16da-43c4-b696-a4049a446850_idsbct.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824794/images_wm7joc.webp",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824795/-473Wx593H-467290457-grey-MODEL_aipcz5.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824970/M_NSW_CLUB_JGGR_BB_b0nq9f.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824970/EssentialOversizedJoggersBlackA2A7T-BBBB-0266-Edit_b995243f-2726-422e-ac83-fffee1c9749f_j668j6.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824970/TrainingFleeceTallJoggerGSBlackB2C6D-BB2J989-0061_ntsxya.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824506/American-Tall-Men-Fleece-Jogger-CharcoalMix-front_opklkr.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824793/502.182995_C5493_00_HR_nz4roz.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824793/2994-BK_579c2e80-5421-4d90-8695-d7f491cf98b7_tjxrde.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824793/images-TrainingFleeceJoggerGSBlackB7A4D_BB2J_0126_0024_guabyg.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824794/SportJoggersGSBlackA1B3K-BB2J-1824_A-Edit_cgbx0q.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824247/Bonkerscorner_Midnight_Miles_Loose_Fit_Joggers_men4_wfskon.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824247/images-CrestJoggersBlackA2A4H_BBBB_1833_A_Edit_oytfjy.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824248/EssentialOversizedJoggersBlackA2A7T-BBBB-0277-Edit_426d5cf9-16da-43c4-b696-a4049a446850_biypt3.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824250/30.09.20243001_xqg7o3.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824253/EssentialOversizedJoggersBlackA2A7T-BBBB-1813_A-Edit_c6bf255b-24b3-4ce1-ab83-7957acc28b9d_fey7s0.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773822178/images_avnmna.webp",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824247/Mens-Reaxion-20-Joggers-TNF-MODEL34_lcrkg7.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824247/Mens-Wander-Joggers-20-TNF-MODEL34_htvjdv.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824247/EssentialOversizedJoggersBlackA2A7T-BBBB-0266-Edit_b995243f-2726-422e-ac83-fffee1c9749f_t7mryz.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773824247/M_NK_DF_UV_PRIMARY_JOGGER_PANT_xfbq0t.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773822169/30.09.20243001_ttlexz.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773822169/American-Tall-Men-Fleece-Jogger-CharcoalMix-front_olletr.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773822173/2994-BK_579c2e80-5421-4d90-8695-d7f491cf98b7_pp4mno.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773822175/502.182995_C5493_00_HR_zax5dc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773822175/-473Wx593H-467290457-grey-MODEL_lirv5x.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773822117/M_NK_DF_UV_PRIMARY_JOGGER_PANT_xef3fp.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773822117/Bonkerscorner_Midnight_Miles_Loose_Fit_Joggers_men4_et44h4.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773822168/EssentialOversizedJoggersBlackA2A7T-BBBB-0277-Edit_426d5cf9-16da-43c4-b696-a4049a446850_cfeinm.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773822168/EssentialOversizedJoggersBlackA2A7T-BBBB-1813_A-Edit_c6bf255b-24b3-4ce1-ab83-7957acc28b9d_gs9iyr.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773822168/images-CrestJoggersBlackA2A4H_BBBB_1833_A_Edit_onssxf.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821933/M_NSW_CLUB_JGGR_BB_rm5vro.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773822110/2016_black_002_01_15_rudy_ecomm_ztsmpm.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773822110/Mens-Wander-Joggers-20-TNF-MODEL34_zehcwg.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773822110/EssentialOversizedJoggersBlackA2A7T-BBBB-0266-Edit_b995243f-2726-422e-ac83-fffee1c9749f_lm7upz.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773822116/Mens-Reaxion-20-Joggers-TNF-MODEL34_wieku9.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821899/2994-BK_579c2e80-5421-4d90-8695-d7f491cf98b7_mg96je.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821901/-473Wx593H-467290457-grey-MODEL_vlyg5i.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821901/SportJoggersGSBlackA1B3K-BB2J-1824_A-Edit_opm84c.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821902/images_wtzzgh.webp",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821902/TrainingFleeceTallJoggerGSBlackB2C6D-BB2J989-0061_whyhbj.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821898/30.09.20243001_she9ug.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821898/American-Tall-Men-Fleece-Jogger-CharcoalMix-front_bzzkds.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821899/502.182995_C5493_00_HR_g2vclm.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821899/images-TrainingFleeceJoggerGSBlackB7A4D_BB2J_0126_0024_dslbls.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821667/3236c9a4-96e9-469f-abc0-29a9c6302f5a_ofy7ra.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821667/FLEECE_JOGGER_pepper-sq2__67224.1732205390_yxwd4i.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821668/TRAININGWOVENJOGGERSBlackB1A1D-BBBB-1630_ulqm9q.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821668/HNS_745V_LightSteel_Front_ubfwjv.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821897/EssentialOversizedJoggersBlackA2A7T-BBBB-1813_A-Edit_c6bf255b-24b3-4ce1-ab83-7957acc28b9d_adfjly.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821666/GUEST_0d3b58dd-0a5c-4528-8914-89e3f5a160e3_uyz1el.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821666/61kg1iWpoOL._AC_UY1000__o1kpjp.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821666/lululemonJoggers_hero_yfbtny.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821667/American-Tall-Women-Hybrid-Jogger-Black-side_dakfa3.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821574/RS07-5-Cyn-NEW-1_hlr826.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821575/03042025_ARNE_WOMENS_ECOM_ROSS_COOKE_BLACK_RELAXED_ZIP_THROUGH_HOODIIE_AND_FLARED_JOGGER_348_JPEG_a8c9f161-feca-4aec-b603-cb9d81698f79_gkqtu4.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821582/61rMItvkYRL._AC_UY1000__zrbnim.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821589/Scrubs_HW_Jogger_Pants_A_RS_BLACK_TOP1_Full-Body-Front-Tucked-In_1027_2021_circular_element_zas1ss.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821666/Sweatpants_vs_Joggers-843979-144830_b4fd63a6-9f9f-4443-9898-3917c5e246b1-188576_2048x2048_khh0rj.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821531/554c49e2-504d-4b4a-8c9c-6a1de19cadd7_imw4a6.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821531/d783e7a1-493a-478b-9b2f-bb6ce9d48a6b_vdicoe.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821531/American-Tall-Women-Wearever-French-Terry-Joggers-Black-front_pckepe.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821539/03042025_ARNE_WOMENS_ECOM_ROSS_COOKE_GREY_RELAXED_FLARED_JOGGER_031_JPEG_cd162286-b05f-40d9-b185-335344636ac9_whqyjy.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821573/Athletic-Works-Womens-Super-Soft-Jogger-Size-XS-XXXL_bdb0490a-c130-4c37-84af-ccb1131014f5.40375eb26ac4c1055c54e892315dd7d8_szhc0g.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821470/BG_OF_04197_Black_568_FW21_ydlzr7.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821470/507476_1704_44_qqavck.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821478/71-WH8rthPL._AC_UY1000__rwsz6l.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821530/711QygUwPZL._AC_UY1000__duyr7b.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821531/61g1G020daL._AC_UY1000__ik7zlo.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821468/TRAININGWOVENJOGGERSBlackB1A1D-BBBB-1630_wikel2.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821469/61WVlMFtmGL._AC_UY1000__qmuixq.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821469/American-Tall-Women-Hybrid-Jogger-Black-front_y9szsj.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821469/617yEeufCNL._AC_UY1000__uqexre.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821470/W_NK_ONE_TF_JOGGER_PANT_uwpcqj.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821386/3236c9a4-96e9-469f-abc0-29a9c6302f5a_mfrzh9.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821385/lululemonJoggers_hero_tttwam.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821388/FLEECE_JOGGER_pepper-sq2__67224.1732205390_skdag0.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821468/HNS_745V_LightSteel_Front_gnhrtd.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821313/American-Tall-Women-WEAREVER-SLIM-HIGH-WAISTED-SWEATPANTS-Grey-Mix-Front_tudxry.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821329/Scrubs_HW_Jogger_Pants_A_RS_BLACK_TOP1_Full-Body-Front-Tucked-In_1027_2021_circular_element_bwr10v.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821385/61kg1iWpoOL._AC_UY1000__dlnmbc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821385/GUEST_0d3b58dd-0a5c-4528-8914-89e3f5a160e3_qy1fss.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821385/American-Tall-Women-Hybrid-Jogger-Black-side_p4dxbq.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821312/03042025_ARNE_WOMENS_ECOM_ROSS_COOKE_GREY_RELAXED_FLARED_JOGGER_031_JPEG_cd162286-b05f-40d9-b185-335344636ac9_v4dxff.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821312/Athletic-Works-Womens-Super-Soft-Jogger-Size-XS-XXXL_bdb0490a-c130-4c37-84af-ccb1131014f5.40375eb26ac4c1055c54e892315dd7d8_wsgex4.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821313/RS07-5-Cyn-NEW-1_sx8rjs.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821313/03042025_ARNE_WOMENS_ECOM_ROSS_COOKE_BLACK_RELAXED_ZIP_THROUGH_HOODIIE_AND_FLARED_JOGGER_348_JPEG_a8c9f161-feca-4aec-b603-cb9d81698f79_wnckap.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773820907/711QygUwPZL._AC_UY1000__kvjb1o.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773820907/American-Tall-Women-Wearever-French-Terry-Joggers-Black-front_epaxwc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773820996/61g1G020daL._AC_UY1000__l1utj6.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821312/554c49e2-504d-4b4a-8c9c-6a1de19cadd7_ivgjtj.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773821312/d783e7a1-493a-478b-9b2f-bb6ce9d48a6b_xqvrxz.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773820905/617yEeufCNL._AC_UY1000__ejon3g.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773820905/American-Tall-Women-Hybrid-Jogger-Black-front_gtj5ml.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773820905/BG_OF_04197_Black_568_FW21_f3rd51.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773820906/W_NK_ONE_TF_JOGGER_PANT_za1ps7.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773820906/71-WH8rthPL._AC_UY1000__njg8in.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773820905/61WVlMFtmGL._AC_UY1000__bnl9nz.jpg"
+];
+
+const BACKPACK_IMAGES = [
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508817/LU9CLES_031382_3_cwkpfh.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508817/travel-laptop-backpack-mygoo-haven-MH48A-89-CBK-side_qqfcpg.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508818/TNF-FW25-BackToCampus-backpack-ingrid-carousel-5_n34e6b.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508819/11544-00007-OS_01_v29psm.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508816/TB205-Olive-2_qj7om2.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508816/travel-backpack-black-30-2_a2e7f7f7-8159-47b8-a216-730bcf386960_abbcgp.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508817/Travel-Backpack-30L-Ocean-1270_qmzn9h.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508819/stadium-4-backpack_gftkv8.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508843/Ecom-Model-Ivy-Black-1_dcf56ab8-16b0-47b5-a061-589f8a4630cf_d71u1x.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508815/PDP_Featherlight_Backpack_Large_Olive_02_dicttx.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508815/The-Transit-Backpack-Pro_HG-1_nplrlx.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508816/Antler-01-Discovery-Backpack-Black-Angle_dxrlwi.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508813/1024x1024-Men-Backpack-Toscanello-082324-3.4Straps_1024x1024_szhqji.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508812/STB1957_KaneKidsTravel_Navy_Neon_TT_FRONT_1_yr5a1d.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508814/61sufLjWbHL._AC_UY1000__nvt2ay.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508814/Travel-Backpack-30L-Eclipse-1287_t5aued.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508812/MetrosafeX_25LBackpack_30645100_Black_1_lz0i14.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508812/71E4O25QXKL._AC_UY1000__ai3gb7.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1773508812/4dc82491-e6a1-41b7-91db-84485d7231e1.db56d94109d8e1633ad3b47163a0d01d_npaung.jpg"
+];
+
+const WOOL_SWEATER_IMAGES = [
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101090/sweaters_xxeijh.png",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101089/CAK0129-035094M_b358fab2-bd27-4321-a7fe-4f040e65bf78_yeid1w.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101090/w36iub170j7a1_msrgfn.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101090/Wizard_100__Wool_Fairisle_V-Neck_Sweater_Vest_zyfw0w.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101133/IMG_6906-768x1024_wfbsuq.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101069/il_570xN.3524091241_mpea_yoywkx.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101073/4911-GREEN-MODEL-MENS-BRITISH-WOOL-JARVIS-ARAN-JUMPER-2_538418ba-6621-4fda-b1c4-1b7fb29ca33e_iir94c.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101078/anatoly-sons-sweater-blue-lupetto-cable-knit-sweater-32810689724495_q6hpxe.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101089/Womens-Wool-Sweater-A191-162_iekxai.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101049/2e3b6c4bc56d06767af42853fa0c8bf3fdd3cbdb_xxl-1_sdjd72.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101052/1755175641-asket_hws-ma-clm_thumbnail_kuvvuw.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101053/SGE04589_clipped_rev_1_bppcji.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101057/Journal_-_Washing_merino_sweater_4_go7poo.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101065/Gray-Wool-Sweater_wp4qhl.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101026/DSCF2932_aium1z.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101026/65fd88d51b14b94fcc15c7ce-aran-woollen-mills-womens-aran-knit_ndkbms.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101026/285174_33018_41_ybpzvq.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101026/B951_-_Sunflower_Yellow_1__22413.1744297261.560.850_kt7jjb.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101034/518403_292_44_kcuatb.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100991/ARAN-WOOLLEN-MILLS-Women-s-Aran-Knit-Sweater-Merino-Wool-Cowl-Neck-Ca_50902283-ea03-4da1-a757-3a59b3ef7caf.efa9cbb3a4ea2b30ce05462e613c43f7_vufne7.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101010/A222_Parsnip__49889.1749547816_q9peqr.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101016/Brownish_Hiutaleneule_Snowflake_Wool_sweater_knitting_kit_uygcpu.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101021/1755175638-asket_hws-ma-clm_slideshow_2_v524gh.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101025/517593_44596_44_pyb1t5.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100970/icelandic_jumper_sweater_man_near_sea_bf52edca09_yp0i2z.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100990/285174_0_44_bduka8.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100990/LUCIEMARIONMOHAIRAMBERAW248_qaxmhh.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100991/STEPHANIEMERINOCHOCOLATEAW249-min_nxvgho.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100991/517593_44596_41_s7klwj.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100968/34-09_Garri_ifcrwv.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100968/285174_33018_44_udwwbg.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100968/knitted-wool-chunky-cabled-sweater-turtleneck-pullover-oversized-gray-dukyana-650x972_xcvzra.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100969/Irish-Wool-Sweater-Gray_ett93v.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100969/511548_179_48_dqjbsc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100950/Fishline_Oatmeal_Womens_aomthf.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100951/r836-oatmeal-1-59896_yumsjx.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100951/Coarvegiella_Green_Winter_Alafoss_Wool_Sweater_Knitting_kit_tcumgs.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100951/298259_7030_41_ray5i1.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100968/Irish-Wool-Sweater-Gray-A825-045_d8skmc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100894/285174_33018_46_sdw2ij.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100895/Aran-wool-Sweater-Misty-Grey-2_gvvncg.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100899/Aran-Wool-Sweater_hecnbm.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100938/511548_179_44_gfzvsd.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100950/Stardust_Scottish_Shetland_Wool_Sweater_h5wnx5.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100894/C1347_Mlead__00972__76376.1518007484_fcdciu.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100894/a823-wicker-3-73209_ic0h1r.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100894/d100300af73c307a2ccea238f61ac3ede787c2c9ff2ebe6aac92222e66630483_sisqqd.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1772100894/Blueprint_Scottish_Shetland_Wool_Sweater_jydfdo.jpg"
+];
+
+const BLAZER_IMAGES = [
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203538/686f74cbbae39ffc3698fc6e_s7-1339457_alternate10_twqcdi.webp",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203538/s7-AI715928571001_alternate10_jrcjmh.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203541/OBL11-PWH_Ecomm_02_0176_bx4alt.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203609/20241023_SWY_325__websize_ogksu8.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203643/image_tskjuy.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203536/19918-404_1_h6fj2n.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203537/31083f2f_764e_jf3p2m.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203537/Q99543s5_ncualz.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203537/61aeS5su5PL._AC_UY1000__vw7eup.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203538/A_010224f3-e54b-4401-bb2d-78885be19de0_ytjpf4.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203534/61VFfcRcyOL._AC_UY1000__ubf0cc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203534/15023140_0_0_zxlpsc.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203535/s7-1135845_alternate10_swb0jz.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203536/TravelBlazer_clipped_rev_1_yjzq7t.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203536/PerformanceBlazer-Blue-Front_srs4hv.png"
 ];
 
 const BOOT_IMAGES = [
@@ -243,25 +647,27 @@ const BOOT_IMAGES = [
 
 const NEW_HOODIES: Product[] = HOODIE_IMAGES.map((img, idx) => ({
   id: `hoodie-${idx}`,
-  name: `Urban Elite Fashion Hoodie #${idx + 101}`,
+  name: `Core Essential Performance Hoodie #${idx + 101}`,
   category: "Clothing",
-  price: [49, 52, 55, 58, 61][idx % 5],
+  price: [30, 32, 35, 38, 40][idx % 5],
   rating: 4.8,
   stock: 45,
-  description: `Experience ultimate comfort with our Urban Elite Fashion Hoodie. Designed for the modern trendsetter, this hoodie combines premium materials with a sleek aesthetic. Perfect for casual outings or lounging in style.
+  description: `The Core Essential Performance Hoodie is your go-to layer for every season. Engineered with a soft-touch cotton blend and a modern athletic cut, it provides exceptional warmth and versatility. From early morning runs to late-night lounge sessions, this hoodie delivers comfort that lasts.
   
-  ### Features:
-  - Ultra-soft fleece lining
-  - Adjustable drawstring hood
-  - Spacious kangaroo pocket
-  - Ribbed cuffs and hem for a perfect fit
+  ### Key Features:
+  - **Soft-Touch Fleece:** Incredible interior softness for maximum comfort.
+  - **Athletic Cut:** Designed to move with you without feeling restrictive.
+  - **Reinforced Kangaroo Pocket:** Durable storage for your essentials.
+  - **Adjustable Scuba Hood:** Provides extra coverage and a modern look.
+  - **Ribbed Cuffs & Hem:** Secure fit that retains its shape.
   
-  **Material:** 100% Organic Cotton
+  **Material:** 80% Cotton, 20% Polyester
+  **Quality:** Premium Athletic Grade
   **Shipping:** Express worldwide shipping. Tracking provided.`,
   image: img,
   images: [img],
   datePosted: new Date().toISOString(),
-  fabric: "100% Organic Cotton",
+  fabric: "Premium Cotton Blend",
   quality: "Premium",
   sizes: ['S', 'M', 'L', 'XL', 'XXL'],
   colors: ['Black', 'Midnight Blue', 'Heather Grey', 'Forest Green'],
@@ -269,10 +675,10 @@ const NEW_HOODIES: Product[] = HOODIE_IMAGES.map((img, idx) => ({
   sellerId: 'seller-1',
   sales: 240,
   badges: ['Best Seller', 'Trending Product'],
-  metaTitle: `Urban Elite Fashion Hoodie - Premium Streetwear | World Market`,
-  metaDescription: `Shop our Urban Elite Fashion Hoodie. Premium cotton, worldwide shipping, and modern design. Best seller in streetwear.`,
-  metaKeywords: `hoodie, fashion hoodie, streetwear, organic cotton hoodie, premium clothing`,
-  imageAlt: `Urban Elite Fashion Hoodie Style ${idx + 1}`
+  metaTitle: `Core Essential Performance Hoodie - Premium Athletic Sweatshirt | World Market`,
+  metaDescription: `Shop the Core Essential Performance Hoodie. Soft fleece lining, athletic fit, and durable design. The ultimate versatile layer for fitness and casual wear.`,
+  metaKeywords: `hoodie, performance hoodie, athletic sweatshirt, gym hoodie, fleece hoodie, men's sweatshirt`,
+  imageAlt: `Core Essential Performance Hoodie Style ${idx + 1}`
 }));
 
 const NEW_TRACKSUITS: Product[] = TRACKSUIT_IMAGES.map((img, idx) => ({
@@ -311,20 +717,22 @@ const NEW_TRACKSUITS: Product[] = TRACKSUIT_IMAGES.map((img, idx) => ({
 
 const NEW_POLOS: Product[] = POLO_IMAGES.map((img, idx) => ({
   id: `polo-${idx}`,
-  name: `Classic Heritage Polo Shirt #${idx + 301}`,
+  name: `Elite Heritage Pique Polo Shirt #${idx + 301}`,
   category: "Clothing",
   price: [25, 28, 30, 33, 35][idx % 5],
   rating: 4.7,
   stock: 100,
-  description: `The Classic Heritage Polo Shirt is a timeless staple for any wardrobe. Featuring a refined fit and breathable pique knit, it transitions seamlessly from the office to the weekend.
+  description: `Elevate your everyday style with the Elite Heritage Pique Polo Shirt. Combining classic sophistication with modern comfort, this polo is crafted from premium breathable pique cotton. Whether you're on the golf course or in a casual business meeting, this shirt ensures you look sharp and feel cool.
   
-  ### Features:
-  - Breathable pique cotton knit
-  - Classic two-button placket
-  - Signature embroidered logo
-  - Fade-resistant colors
+  ### Key Features:
+  - **Premium Pique Knit:** Breathable and durable fabric for all-day wear.
+  - **Classic Ribbed Collar:** Maintains its shape wash after wash.
+  - **Athletic Slim Fit:** Modern silhouette that flatters your physique.
+  - **Double-Stitched Hem:** Enhanced durability for long-lasting use.
+  - **Fade-Resistant Dye:** Vibrant colors that stay true over time.
   
   **Material:** 100% Pique Cotton
+  **Quality:** Premium Export Grade
   **Shipping:** Standard and Express options available globally.`,
   image: img,
   images: [img],
@@ -336,30 +744,32 @@ const NEW_POLOS: Product[] = POLO_IMAGES.map((img, idx) => ({
   shippingCountry: "Worldwide",
   sellerId: 'seller-2',
   sales: 890,
-  badges: ['Trending Product'],
-  metaTitle: `Classic Heritage Polo Shirt - Timeless Men's Fashion | World Market`,
-  metaDescription: `Shop our collection of Classic Heritage Polo Shirts. 100% Pique cotton, breathable and stylish. Factory direct.`,
-  metaKeywords: `polo shirt, men's polo, pique cotton, classic fashion, collared shirt`,
-  imageAlt: `Classic Heritage Polo Shirt Color ${idx + 1}`
+  badges: ['Trending Product', 'Best Seller'],
+  metaTitle: `Elite Heritage Pique Polo Shirt - Premium Men's Casual Wear | World Market`,
+  metaDescription: `Shop our Elite Heritage Pique Polo Shirt. 100% breathable pique cotton, modern slim fit, and classic design. Perfect for golf, work, and casual outings.`,
+  metaKeywords: `polo shirt, pique polo, men's fashion, collared shirt, premium polo, casual wear`,
+  imageAlt: `Elite Heritage Pique Polo Shirt Color ${idx + 1}`
 }));
 
 const NEW_GRAPHIC_TSHIRTS: Product[] = GRAPHIC_TSHIRT_IMAGES.map((img, idx) => ({
   id: `graphic-tshirt-${idx}`,
-  name: `Graphic T-shirt #${idx + 601}`,
+  name: `Signature Urban Graphic T-Shirt #${idx + 601}`,
   category: "Clothing",
-  price: [18, 20, 22, 25, 28][idx % 5],
+  price: [20, 22, 25, 28, 30][idx % 5],
   rating: 4.6,
   stock: 60,
-  description: `Express yourself with our premium Graphic T-shirts. Featuring unique designs and high-quality prints on soft, breathable cotton.
+  description: `Make a statement with our Signature Urban Graphic T-Shirt. Featuring exclusive high-definition artwork on our softest premium cotton, this tee is designed to stand out. With a comfortable modern fit and fade-resistant prints, it's the perfect centerpiece for your streetwear collection.
   
-  ### Features:
-  - 100% Combed Cotton
-  - High-definition graphic prints
-  - Comfortable unisex fit
-  - Pre-shrunk fabric
+  ### Key Features:
+  - **100% Premium Combed Cotton:** Superior softness and breathability.
+  - **High-Definition Prints:** Vibrant, detailed graphics that won't fade.
+  - **Modern Unisex Fit:** Flattering silhouette for all body types.
+  - **Tagless Neck Label:** Eliminates irritation for all-day comfort.
+  - **Reinforced Shoulder Seams:** Enhanced durability for frequent wear.
   
   **Material:** 100% Cotton
-  **Shipping:** Worldwide shipping available.`,
+  **Quality:** Premium Boutique Grade
+  **Shipping:** Worldwide shipping available. Tracking provided.`,
   image: img,
   images: [img],
   datePosted: new Date().toISOString(),
@@ -370,45 +780,47 @@ const NEW_GRAPHIC_TSHIRTS: Product[] = GRAPHIC_TSHIRT_IMAGES.map((img, idx) => (
   shippingCountry: "Worldwide",
   sellerId: 'seller-2',
   sales: 450,
-  badges: ['Trending'],
-  metaTitle: `Graphic T-shirts - Unique Streetwear Designs | World Market`,
-  metaDescription: `Shop our exclusive Graphic T-shirts. High-quality prints, soft cotton, and unique designs. Perfect for casual streetwear.`,
-  metaKeywords: `t-shirt, graphic tee, streetwear, cotton shirt, printed t-shirt`,
-  imageAlt: `Graphic T-shirt Design ${idx + 1}`
+  badges: ['Trending', 'Limited Stock'],
+  metaTitle: `Signature Urban Graphic T-Shirt - Exclusive Streetwear Designs | World Market`,
+  metaDescription: `Shop our Signature Urban Graphic T-Shirts. Premium combed cotton, high-definition prints, and unique streetwear art. Elevate your casual style today.`,
+  metaKeywords: `graphic t-shirt, streetwear tee, printed t-shirt, cotton graphic tee, urban fashion, designer t-shirt`,
+  imageAlt: `Signature Urban Graphic T-shirt Design ${idx + 1}`
 }));
 
 const NEW_SNEAKERS: Product[] = SNEAKER_IMAGES.map((img, idx) => ({
   id: `sneaker-${idx}`,
-  name: `Sneakers #${idx + 401}`,
+  name: `Elite Urban Performance Sneakers #${idx + 401}`,
   category: "Shoes",
-  price: [25, 28, 30, 32, 38][idx % 5],
+  price: [105, 110, 120, 130, 135][idx % 5],
   rating: 4.9,
   stock: 15,
-  description: `Premium quality sneakers designed for style and comfort. Perfect for everyday wear and athletic activities.
+  description: `Step into the future of footwear with our Elite Urban Performance Sneakers. Combining cutting-edge design with unparalleled support, these sneakers are engineered for those who move. Whether you're hitting the gym or the city streets, experience the perfect blend of style and performance.
   
-  ### Features:
-  - Durable construction
-  - Comfortable fit for all-day use
-  - Modern aesthetic design
-  - High-quality materials
+  ### Key Features:
+  - **Advanced Cushioning:** High-rebound sole for maximum impact protection.
+  - **Breathable Mesh Upper:** Keeps your feet cool and dry during intense activity.
+  - **Dynamic Traction:** Multi-surface grip pattern for superior stability.
+  - **Lightweight Construction:** Designed for agility and all-day wearability.
+  - **Sleek Aesthetic:** Modern silhouette that complements any athletic or casual outfit.
   
-  **Material:** Premium Blend
-  **Shipping:** Securely packaged and shipped worldwide with insurance.`,
+  **Material:** Premium Synthetic & Breathable Mesh
+  **Quality:** Professional Grade
+  **Shipping:** Securely packaged and shipped worldwide with real-time tracking.`,
   image: img,
   images: [img],
   datePosted: new Date().toISOString(),
-  fabric: "Premium Materials",
+  fabric: "Breathable Tech Mesh",
   quality: "Premium",
-  sizes: ['38', '39', '40', '41', '42', '43', '44', '45'],
-  colors: ['Black', 'White', 'Grey', 'Multi-color'],
+  sizes: ['7', '8', '9', '10', '11', '12'],
+  colors: ['Cloud White', 'Stealth Black', 'Slate Grey', 'Royal Blue'],
   shippingCountry: "Worldwide",
   sellerId: 'seller-2',
-  sales: 320,
-  badges: ['Best Seller'],
-  metaTitle: `Sneakers - Premium Footwear | World Market`,
-  metaDescription: `Shop our collection of premium sneakers. Stylish, comfortable, and durable. Worldwide shipping available.`,
-  metaKeywords: `sneakers, shoes, footwear, fashion shoes, comfortable sneakers`,
-  imageAlt: `Sneakers Style ${idx + 1}`
+  sales: 1200,
+  badges: ['Best Seller', 'Top Rated'],
+  metaTitle: `Elite Urban Performance Sneakers - Premium Athletic Footwear | World Market`,
+  metaDescription: `Discover the ultimate in comfort and style with our Elite Urban Performance Sneakers. Advanced cushioning, breathable mesh, and superior traction for every move.`,
+  metaKeywords: `sneakers, athletic shoes, running shoes, urban footwear, premium sneakers, comfortable shoes`,
+  imageAlt: `Elite Urban Performance Sneakers Style ${idx + 1}`
 }));
 
 const NEW_BOOTS: Product[] = BOOT_IMAGES.map((img, idx) => ({
@@ -445,6 +857,366 @@ const NEW_BOOTS: Product[] = BOOT_IMAGES.map((img, idx) => ({
   imageAlt: `Signature Suede Chelsea Boot ${idx + 1}`
 }));
 
+const NEW_SPORTS_BRAS: Product[] = SPORTS_BRA_IMAGES.map((img, idx) => ({
+  id: `sports-bra-${idx}`,
+  name: `Pro-Support High-Impact Sports Bra #${idx + 701}`,
+  category: "Sportswear",
+  price: [28, 30, 32, 34, 36][idx % 5],
+  rating: 4.9,
+  stock: 50,
+  description: `Achieve your fitness goals with the Pro-Support High-Impact Sports Bra. Designed for maximum stability and comfort during your most intense workouts, this bra features advanced moisture-wicking technology and an ergonomic fit that moves with you.
+  
+  ### Key Features:
+  - **Maximum Support:** Ideal for running, HIIT, and high-impact training.
+  - **Moisture-Wicking Fabric:** Keeps you cool and dry by pulling sweat away from the skin.
+  - **Breathable Mesh Panels:** Enhanced airflow in high-heat zones.
+  - **Adjustable Straps:** Personalized fit for all-day comfort.
+  - **Chafe-Free Design:** Flatlock seams prevent irritation during movement.
+  
+  **Material:** 85% Nylon, 15% Spandex
+  **Quality:** Professional Athletic Grade
+  **Shipping:** Fast global delivery with tracking.`,
+  image: img,
+  images: [img],
+  datePosted: new Date().toISOString(),
+  fabric: "Nylon/Spandex Performance Blend",
+  quality: "Premium",
+  sizes: ['S', 'M', 'L', 'XL'],
+  colors: ['Midnight Black', 'Slate Grey', 'Deep Teal'],
+  shippingCountry: "Worldwide",
+  sellerId: 'seller-1',
+  sales: 180,
+  badges: ['Best Seller', 'High Support'],
+  metaTitle: `Pro-Support High-Impact Sports Bra - Professional Gym Wear | World Market`,
+  metaDescription: `Shop our high-impact sports bra for maximum support. Breathable, moisture-wicking, and perfect for intense training. Experience the best in athletic support.`,
+  metaKeywords: `sports bra, high impact bra, gym wear, athletic apparel, fitness bra, support bra`,
+  imageAlt: `Pro-Support Sports Bra Style ${idx + 1}`
+}));
+
+const NEW_OVERSIZED_HOODIES: Product[] = HOODIE_IMAGES.slice(0, 5).map((img, idx) => ({
+  id: `oversized-hoodie-${idx}`,
+  name: `Urban Luxe Oversized Hoodie #${idx + 801}`,
+  category: "Clothing",
+  price: [44, 47, 50, 53, 56][idx % 5],
+  rating: 4.7,
+  stock: 40,
+  description: `Redefine comfort with the Urban Luxe Oversized Hoodie. Crafted from premium heavyweight cotton blend, this hoodie offers a relaxed, modern silhouette that's perfect for layering or making a statement on its own. It's the ultimate fusion of cozy warmth and streetwear style.
+  
+  ### Key Features:
+  - **Heavyweight Fabric:** Premium feel that provides exceptional warmth and durability.
+  - **Relaxed Oversized Fit:** Modern streetwear silhouette for maximum comfort.
+  - **Double-Lined Hood:** Extra warmth and a structured look.
+  - **Drop Shoulder Design:** Enhances the relaxed aesthetic.
+  - **Soft-Brushed Interior:** Incredible softness against the skin.
+  
+  **Material:** 70% Cotton, 30% Polyester Heavyweight Fleece
+  **Quality:** Premium Boutique Quality
+  **Shipping:** Worldwide shipping with real-time tracking.`,
+  image: img,
+  images: [img],
+  datePosted: new Date().toISOString(),
+  fabric: "Heavyweight Cotton Fleece",
+  quality: "Premium",
+  sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+  colors: ['Desert Sand', 'Charcoal Grey', 'Olive Drab', 'Classic Black'],
+  shippingCountry: "Worldwide",
+  sellerId: 'seller-1',
+  sales: 310,
+  badges: ['Trending', 'Must Have'],
+  metaTitle: `Urban Luxe Oversized Hoodie - Premium Streetwear Comfort | World Market`,
+  metaDescription: `Shop our premium oversized hoodies. Heavyweight cotton blend, relaxed fit, and modern streetwear style. The perfect blend of comfort and fashion.`,
+  metaKeywords: `oversized hoodie, streetwear, relaxed fit hoodie, heavyweight hoodie, premium sweatshirt`,
+  imageAlt: `Urban Luxe Oversized Hoodie Style ${idx + 1}`
+}));
+
+const NEW_YOGA_PANTS: Product[] = YOGA_PANTS_IMAGES.map((img, idx) => ({
+  id: `yoga-pants-${idx}`,
+  name: `Zen-Flex Sculpt High-Waist Yoga Pants #${idx + 901}`,
+  category: "Sportswear",
+  price: [34, 36, 38, 40, 42][idx % 5],
+  rating: 4.8,
+  stock: 75,
+  description: `Experience total freedom of movement with the Zen-Flex Sculpt High-Waist Yoga Pants. Engineered with our signature four-way stretch fabric and squat-proof technology, these leggings provide a supportive, sculpted fit that stays in place from your first downward dog to your final savasana.
+  
+  ### Key Features:
+  - **High-Waist Support:** Wide waistband for a secure, flattering fit.
+  - **Squat-Proof Technology:** Opaque fabric ensures confidence during any movement.
+  - **Four-Way Stretch:** Maximum flexibility and shape retention.
+  - **Moisture-Wicking:** Keeps you dry and comfortable during intense sessions.
+  - **Hidden Pocket:** Convenient storage for keys or cards.
+  
+  **Material:** 75% Nylon, 25% Elastane
+  **Quality:** Premium Studio Grade
+  **Shipping:** Global shipping with tracking.`,
+  image: img,
+  images: [img],
+  datePosted: new Date().toISOString(),
+  fabric: "Zen-Flex Performance Blend",
+  quality: "Premium",
+  sizes: ['XS', 'S', 'M', 'L', 'XL'],
+  colors: ['Midnight Black', 'Deep Plum', 'Navy Blue'],
+  shippingCountry: "Worldwide",
+  sellerId: 'seller-1',
+  sales: 420,
+  badges: ['Trending Product', 'Squat Proof'],
+  metaTitle: `Zen-Flex Sculpt High-Waist Yoga Pants - Premium Leggings | World Market`,
+  metaDescription: `Shop our high-waist yoga pants for ultimate flexibility and support. Squat-proof, moisture-wicking, and perfectly sculpted. Ideal for yoga and fitness.`,
+  metaKeywords: `yoga pants, leggings, high waist leggings, fitness wear, squat proof leggings, yoga apparel`,
+  imageAlt: `Zen-Flex Yoga Pants Style ${idx + 1}`
+}));
+
+const NEW_WINTER_JACKETS: Product[] = WINTER_JACKET_IMAGES.map((img, idx) => ({
+  id: `winter-jacket-${idx}`,
+  name: `Arctic Shield Pro Insulated Winter Jacket #${idx + 1001}`,
+  category: "Outdoor",
+  price: [44, 47, 50, 53, 56][idx % 5],
+  rating: 4.9,
+  stock: 25,
+  description: `Conquer the cold with the Arctic Shield Pro Insulated Winter Jacket. Designed for extreme weather, this jacket features a high-performance waterproof shell and advanced thermal insulation to keep you warm and dry in the harshest conditions.
+  
+  ### Key Features:
+  - **Waterproof & Windproof:** High-density nylon shell for total weather protection.
+  - **Thermal Insulation:** High-loft synthetic down for superior warmth without the weight.
+  - **Adjustable Storm Hood:** Protects against wind and snow.
+  - **Multiple Secure Pockets:** Including internal tech pocket and fleece-lined hand warmers.
+  - **Reinforced Seams:** Enhanced durability for outdoor adventures.
+  
+  **Material:** 100% Waterproof Nylon Shell, Synthetic Down Fill
+  **Quality:** Heavy-Duty Export Quality
+  **Shipping:** Securely packaged for worldwide delivery.`,
+  image: img,
+  images: [img],
+  datePosted: new Date().toISOString(),
+  fabric: "Waterproof Tech Nylon",
+  quality: "Export Quality",
+  sizes: ['M', 'L', 'XL', 'XXL'],
+  colors: ['Onyx Black', 'Deep Navy', 'Stealth Grey', 'Forest Green'],
+  shippingCountry: "Worldwide",
+  sellerId: 'seller-1',
+  sales: 245,
+  badges: ['Limited Stock', 'Extreme Warmth', 'Winter Essential'],
+  metaTitle: `Arctic Shield Pro Winter Jacket - Waterproof & Insulated | World Market`,
+  metaDescription: `Shop our professional winter jackets for extreme cold. Waterproof shell, high-loft insulation, and durable design. Stay warm this winter.`,
+  metaKeywords: `winter jacket, parka, insulated coat, waterproof jacket, outdoor apparel, extreme cold gear`,
+  imageAlt: `Arctic Shield Winter Jacket Style ${idx + 1}`
+}));
+
+const NEW_SHORTS: Product[] = SHORTS_IMAGES.map((img, idx) => ({
+  id: `shorts-${idx}`,
+  name: `Active-Flow Pro Training Shorts #${idx + 1101}`,
+  category: "Sportswear",
+  price: [25, 28, 30, 33, 35][idx % 5],
+  rating: 4.7,
+  stock: 120,
+  description: `Push your limits with the Active-Flow Pro Training Shorts. Designed for high-intensity movement, these shorts feature a lightweight, breathable fabric and a built-in compression liner for maximum support and comfort during any workout.
+  
+  ### Key Features:
+  - **Lightweight Performance Fabric:** Breathable and quick-drying for all-day comfort.
+  - **Built-in Compression Liner:** Provides support and prevents chafing.
+  - **Side Mesh Panels:** Enhanced ventilation in high-heat areas.
+  - **Elastic Waistband:** Secure fit with internal drawstring.
+  - **Zip Security Pocket:** Keep your essentials safe while you move.
+  
+  **Material:** 90% Recycled Polyester, 10% Spandex
+  **Quality:** Professional Sport Grade
+  **Shipping:** Worldwide shipping with tracking.`,
+  image: img,
+  images: [img],
+  datePosted: new Date().toISOString(),
+  fabric: "Recycled Tech Polyester",
+  quality: "Premium",
+  sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+  colors: ['Stealth Black', 'Electric Blue', 'Iron Grey', 'Navy Blue'],
+  shippingCountry: "Worldwide",
+  sellerId: 'seller-1',
+  sales: 850,
+  badges: ['Best Seller', 'Quick Dry', 'High Performance'],
+  metaTitle: `Active-Flow Pro Training Shorts - High-Performance Gym Wear | World Market`,
+  metaDescription: `Shop our professional training shorts. Lightweight, breathable, and featuring a built-in liner. Perfect for running, gym, and outdoor sports.`,
+  metaKeywords: `training shorts, gym shorts, running shorts, athletic wear, performance shorts`,
+  imageAlt: `Active-Flow Training Shorts Style ${idx + 1}`
+}));
+
+const NEW_GYM_TANK_TOPS: Product[] = GYM_TANK_IMAGES.map((img, idx) => ({
+  id: `gym-tank-${idx}`,
+  name: `Iron-Core Elite Gym Tank Top #${idx + 1201}`,
+  category: "Sportswear",
+  price: [20, 22, 25, 28, 30][idx % 5],
+  rating: 4.6,
+  stock: 150,
+  description: `Built for the dedicated athlete, the Iron-Core Elite Gym Tank Top offers a tapered fit and dropped armholes for unrestricted movement. Crafted from a premium cotton-poly blend, it provides the perfect balance of softness and durability for your heaviest lifting sessions.
+  
+  ### Key Features:
+  - **Tapered Athletic Fit:** Highlights your physique while allowing full range of motion.
+  - **Dropped Armholes:** Maximum ventilation and freedom for shoulder movements.
+  - **Soft-Touch Fabric:** Breathable blend that stays comfortable during intense training.
+  - **Reinforced Seams:** Built to withstand the rigors of the gym.
+  - **Minimalist Branding:** Clean, modern look for in and out of the gym.
+  
+  **Material:** 60% Cotton, 40% Polyester
+  **Quality:** Professional Bodybuilding Grade
+  **Shipping:** Worldwide shipping available.`,
+  image: img,
+  images: [img],
+  datePosted: new Date().toISOString(),
+  fabric: "Cotton/Poly Performance Blend",
+  quality: "Standard",
+  sizes: ['S', 'M', 'L', 'XL'],
+  colors: ['Onyx Black', 'Pure White', 'Crimson Red'],
+  shippingCountry: "Worldwide",
+  sellerId: 'seller-1',
+  sales: 890,
+  badges: ['Trending', 'Athlete Choice'],
+  metaTitle: `Iron-Core Elite Gym Tank Top - Professional Bodybuilding Apparel | World Market`,
+  metaDescription: `Shop our elite gym tank tops. Tapered fit, dropped armholes, and breathable fabric. Perfect for bodybuilding and heavy lifting.`,
+  metaKeywords: `gym tank top, bodybuilding shirt, fitness tank, stringer, athletic apparel`,
+  imageAlt: `Iron-Core Gym Tank Top Style ${idx + 1}`
+}));
+
+const NEW_JOGGERS: Product[] = JOGGERS_IMAGES.map((img, idx) => ({
+  id: `joggers-${idx}`,
+  name: `Urban Flex Tech-Fleece Joggers #${idx + 1301}`,
+  category: "Clothing",
+  price: [35, 38, 40, 43, 45][idx % 5],
+  rating: 4.8,
+  stock: 80,
+  description: `Experience the perfect fusion of athletic performance and urban style with our Urban Flex Tech-Fleece Joggers. Designed for maximum mobility and comfort, these joggers feature a streamlined tapered fit and premium moisture-wicking fabric. Ideal for intense training sessions or a relaxed day in the city.
+  
+  ### Key Features:
+  - **Tech-Fleece Fabric:** Lightweight warmth without the bulk.
+  - **Tapered Athletic Fit:** Modern look with unrestricted movement.
+  - **Secure Zip Pockets:** Keep your phone and keys safe during activity.
+  - **Adjustable Drawcord:** Elastic waistband for a personalized, secure fit.
+  - **Breathable Gusset:** Enhanced ventilation where you need it most.
+  
+  **Material:** 80% Cotton, 20% Polyester Soft French Terry
+  **Quality:** Premium Export Quality
+  **Shipping:** Worldwide shipping with real-time tracking.`,
+  image: img,
+  images: [img],
+  datePosted: new Date().toISOString(),
+  fabric: "Soft French Terry",
+  quality: "Premium",
+  sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+  colors: ['Grey', 'Black', 'Navy', 'Charcoal'],
+  shippingCountry: "Worldwide",
+  sellerId: 'seller-1',
+  sales: 560,
+  badges: ['Best Seller', 'High Comfort'],
+  metaTitle: `Urban Flex Tech-Fleece Joggers - High-Performance Tapered Sweatpants | World Market`,
+  metaDescription: `Discover the Urban Flex Tech-Fleece Joggers. Lightweight warmth, tapered fit, and secure zip pockets. Engineered for training and lifestyle comfort.`,
+  metaKeywords: `joggers, tech fleece joggers, tapered sweatpants, gym joggers, athletic pants, streetwear`,
+  imageAlt: `Urban Flex Tech-Fleece Joggers Style ${idx + 1}`
+}));
+
+const NEW_BACKPACKS: Product[] = BACKPACK_IMAGES.map((img, idx) => ({
+  id: `backpack-${idx}`,
+  name: `Nomad Elite Multi-Functional Backpack #${idx + 1401}`,
+  category: "Bags",
+  price: [48, 52, 55, 58, 62][idx % 5],
+  rating: 4.9,
+  stock: 35,
+  description: `Navigate your daily journey with the Nomad Elite Multi-Functional Backpack. Crafted from high-density water-resistant materials, this backpack is designed to protect your tech and organize your life. With dedicated compartments for everything from your laptop to your water bottle, it's the ultimate tool for the modern commuter.
+  
+  ### Key Features:
+  - **Water-Resistant Exterior:** Protects your gear from the elements.
+  - **Padded 16" Laptop Sleeve:** Shock-absorbent protection for your tech.
+  - **Ergonomic Air-Mesh Back:** Maximum breathability and comfort during long carries.
+  - **Hidden Anti-Theft Pocket:** Securely store your passport and valuables.
+  - **Expandable Side Pockets:** Perfect for water bottles or umbrellas.
+  
+  **Material:** 1680D Ballistic Nylon
+  **Quality:** Heavy-Duty Premium Grade
+  **Shipping:** Securely packaged and shipped worldwide with insurance.`,
+  image: img,
+  images: [img],
+  datePosted: new Date().toISOString(),
+  fabric: "Ballistic Nylon",
+  quality: "Premium",
+  sizes: ['One Size'],
+  colors: ['Black', 'Grey', 'Navy Blue'],
+  shippingCountry: "Worldwide",
+  sellerId: 'seller-2',
+  sales: 210,
+  badges: ['Trending Product', 'Durable'],
+  metaTitle: `Nomad Elite Multi-Functional Backpack - Water-Resistant Commuter Bag | World Market`,
+  metaDescription: `Discover the Nomad Elite Multi-Functional Backpack. Padded laptop protection, water-resistant shell, and ergonomic comfort. The best bag for work and travel.`,
+  metaKeywords: `backpack, laptop backpack, travel bag, commuter backpack, water resistant backpack, multi-functional bag`,
+  imageAlt: `Nomad Elite Multi-Functional Backpack Style ${idx + 1}`
+}));
+
+const NEW_WOOL_SWEATERS: Product[] = WOOL_SWEATER_IMAGES.map((img, idx) => ({
+  id: `wool-sweater-${idx}`,
+  name: `Heritage Pure Merino Wool Sweater #${idx + 1501}`,
+  category: "Clothing",
+  price: [48, 52, 55, 58, 62][idx % 5],
+  rating: 4.8,
+  stock: 30,
+  description: `Experience the pinnacle of natural warmth with our Heritage Pure Merino Wool Sweater. Crafted from 100% premium Merino wool, this sweater offers a luxurious feel, exceptional breathability, and a timeless aesthetic. It's the perfect layering piece for the sophisticated modern wardrobe.
+  
+  ### Key Features:
+  - **100% Pure Merino Wool:** Naturally soft, warm, and odor-resistant.
+  - **Temperature Regulating:** Keeps you warm in the cold and cool when it's mild.
+  - **Refined Knit Pattern:** Classic design that works for both casual and formal settings.
+  - **Ribbed Neck, Cuffs, and Hem:** Ensures a perfect fit and shape retention.
+  - **Lightweight yet Warm:** Ideal for layering without the bulk.
+  
+  **Material:** 100% Premium Merino Wool
+  **Quality:** Boutique Premium Knitwear
+  **Shipping:** Worldwide shipping with real-time tracking.`,
+  image: img,
+  images: [img],
+  datePosted: new Date().toISOString(),
+  fabric: "100% Merino Wool",
+  quality: "Premium",
+  sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+  colors: ['Classic Cream', 'Deep Navy', 'Heather Charcoal', 'Oatmeal', 'Forest Green'],
+  shippingCountry: "Worldwide",
+  sellerId: 'seller-2',
+  sales: 245,
+  badges: ['Limited Stock', 'Pure Wool', 'Eco-Friendly'],
+  metaTitle: `Heritage Pure Merino Wool Sweater - Luxury Knitwear | World Market`,
+  metaDescription: `Shop our 100% pure Merino wool sweaters. Soft, warm, and elegantly designed. Experience the best in natural knitwear.`,
+  metaKeywords: `wool sweater, merino wool, knitwear, luxury sweater, men's knitwear, premium wool`,
+  imageAlt: `Heritage Wool Sweater Style ${idx + 1}`
+}));
+
+const NEW_BLAZERS: Product[] = BLAZER_IMAGES.map((img, idx) => ({
+  id: `blazer-${idx}`,
+  name: `Executive Modern Slim-Fit Blazer #${idx + 1601}`,
+  category: "Clothing",
+  price: [80, 85, 90, 95, 100][idx % 5],
+  rating: 4.7,
+  stock: 20,
+  description: `Elevate your professional presence with the Executive Modern Slim-Fit Blazer. Tailored for a sharp, contemporary silhouette, this blazer is crafted from a premium wool-blend fabric that offers both comfort and a sophisticated drape. Perfect for the boardroom or high-end social events.
+  
+  ### Key Features:
+  - **Tailored Slim Fit:** Modern silhouette that enhances your frame.
+  - **Premium Wool Blend:** Breathable, durable, and wrinkle-resistant fabric.
+  - **Classic Notch Lapel:** Timeless design for professional versatility.
+  - **Functional Pockets:** Including internal chest pocket for essentials.
+  - **Smooth Inner Lining:** Ensures a comfortable fit and easy layering.
+  
+  **Material:** 60% Wool, 40% Polyester
+  **Quality:** Premium Export Tailoring
+  **Shipping:** Shipped in protective garment bags worldwide.`,
+  image: img,
+  images: [img],
+  datePosted: new Date().toISOString(),
+  fabric: "Premium Wool Blend",
+  quality: "Export Quality",
+  sizes: ['38R', '40R', '42R', '44R', '46R'],
+  colors: ['Midnight Navy', 'Classic Black', 'Slate Grey', 'Charcoal', 'Tan'],
+  shippingCountry: "Worldwide",
+  sellerId: 'seller-1',
+  sales: 125,
+  badges: ['Trending', 'Executive Choice', 'Premium Tailoring'],
+  metaTitle: `Executive Modern Slim-Fit Blazer - Professional Tailored Wear | World Market`,
+  metaDescription: `Shop our modern slim-fit blazers. Premium wool blend, sharp tailoring, and perfect for professional settings. Elevate your style today.`,
+  metaKeywords: `blazer, slim fit blazer, men's suit jacket, professional wear, tailored blazer, executive fashion`,
+  imageAlt: `Executive Slim-Fit Blazer Style ${idx + 1}`
+}));
+
 export const PRODUCTS: Product[] = [
   ...CLOUDINARY_IMAGES.map((img, idx) => {
     const category = CATEGORIES[idx % CATEGORIES.length];
@@ -478,7 +1250,17 @@ export const PRODUCTS: Product[] = [
   ...NEW_POLOS,
   ...NEW_GRAPHIC_TSHIRTS,
   ...NEW_SNEAKERS,
-  ...NEW_BOOTS
+  ...NEW_BOOTS,
+  ...NEW_SPORTS_BRAS,
+  ...NEW_OVERSIZED_HOODIES,
+  ...NEW_YOGA_PANTS,
+  ...NEW_WINTER_JACKETS,
+  ...NEW_SHORTS,
+  ...NEW_GYM_TANK_TOPS,
+  ...NEW_JOGGERS,
+  ...NEW_BACKPACKS,
+  ...NEW_WOOL_SWEATERS,
+  ...NEW_BLAZERS
 ];
 
 export const BLOG_POSTS: BlogPost[] = [
