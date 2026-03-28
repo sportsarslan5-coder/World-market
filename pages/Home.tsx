@@ -16,12 +16,16 @@ import {
   Mail, 
   CheckCircle2,
   TrendingUp,
-  Users
+  Users,
+  Clock,
+  Heart,
+  ShoppingCart,
+  Zap
 } from 'lucide-react';
 
 const Home: React.FC = () => {
   const { showName: pathShowName } = useParams();
-  const { activeShowName: subdomainShowName } = useStore();
+  const { activeShowName: subdomainShowName, addToCart, formatPrice } = useStore();
   const showName = pathShowName || subdomainShowName;
 
   useEffect(() => {
@@ -60,6 +64,22 @@ const Home: React.FC = () => {
           </p>
         </div>
       )}
+
+      {/* Limited Time Offer Banner */}
+      <section className="bg-yellow-400 py-3 px-4 overflow-hidden relative">
+        <div className="max-w-7xl mx-auto flex items-center justify-center gap-8 animate-pulse">
+          <div className="flex items-center gap-2 text-black font-black uppercase text-xs tracking-widest">
+            <Clock size={16} />
+            <span>Flash Sale: Up to 70% Off</span>
+          </div>
+          <div className="hidden md:flex items-center gap-2 text-black font-black uppercase text-xs tracking-widest">
+            <span>Ends In: 02h 45m 12s</span>
+          </div>
+          <Link to={getLink('/products')} className="bg-black text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-colors">
+            Shop Now
+          </Link>
+        </div>
+      </section>
 
       {/* Hero Section */}
       <section className="relative h-[90vh] flex items-center overflow-hidden bg-black">
@@ -186,32 +206,109 @@ const Home: React.FC = () => {
           </Link>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-          {PRODUCTS.slice(0, 6).map(p => (
-            <Link to={getProductLink(p.id)} key={p.id} className="group flex flex-col gap-4">
-              <div className="aspect-square bg-gray-50 rounded-3xl overflow-hidden relative border border-gray-100">
+          {PRODUCTS.slice(0, 12).map(p => (
+            <div key={p.id} className="group flex flex-col gap-4 bg-white p-3 rounded-[2rem] border border-gray-100 hover:shadow-2xl hover:shadow-blue-500/10 transition-all">
+              <Link to={getProductLink(p.id)} className="aspect-square bg-gray-50 rounded-2xl overflow-hidden relative">
                 <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg text-[10px] font-black shadow-sm">
-                  ⭐ {p.rating}
+                
+                {/* Badges */}
+                <div className="absolute top-2 left-2 flex flex-col gap-1">
+                  {p.discount && (
+                    <span className="bg-red-600 text-white text-[8px] font-black uppercase px-2 py-1 rounded-lg">
+                      -{p.discount}%
+                    </span>
+                  )}
+                  {p.badges?.map(badge => (
+                    <span key={badge} className="bg-blue-600 text-white text-[8px] font-black uppercase px-2 py-1 rounded-lg">
+                      {badge}
+                    </span>
+                  ))}
                 </div>
-                {p.badges && p.badges.length > 0 && (
-                  <div className="absolute top-3 left-3 flex flex-col gap-1">
-                    {p.badges.map(badge => (
-                      <span key={badge} className="bg-blue-600 text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-lg">
-                        {badge}
-                      </span>
-                    ))}
-                  </div>
+
+                {/* Wishlist Button */}
+                <button className="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 hover:scale-110 transition-all shadow-sm">
+                  <Heart size={14} />
+                </button>
+
+                {/* Quick Add Button */}
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    addToCart(p, 1);
+                  }}
+                  className="absolute bottom-2 left-2 right-2 bg-black/80 backdrop-blur-md text-white py-2 rounded-xl text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all flex items-center justify-center gap-2 hover:bg-blue-600"
+                >
+                  <ShoppingCart size={12} />
+                  Add to Cart
+                </button>
+              </Link>
+
+              <div className="px-1">
+                <div className="flex items-center gap-1 text-yellow-400 mb-1">
+                  <Star size={10} fill="currentColor" />
+                  <span className="text-[10px] font-black text-gray-900">{p.rating}</span>
+                </div>
+                <Link to={getProductLink(p.id)}>
+                  <h4 className="font-bold text-xs line-clamp-1 group-hover:text-blue-600 transition-colors uppercase tracking-tight">{p.name}</h4>
+                </Link>
+                <div className="flex items-baseline gap-2 mt-2">
+                  <span className="text-gray-900 font-black text-base tracking-tighter">{formatPrice(p.price)}</span>
+                  {p.oldPrice && (
+                    <span className="text-gray-400 text-[10px] line-through font-bold">{formatPrice(p.oldPrice)}</span>
+                  )}
+                </div>
+                {p.stock && p.stock < 10 && (
+                  <p className="text-[8px] font-black text-red-600 uppercase tracking-widest mt-1">Only {p.stock} left in stock</p>
                 )}
               </div>
-              <div>
-                <h4 className="font-bold text-sm line-clamp-1 group-hover:text-blue-600 transition-colors">{p.name}</h4>
-                <div className="flex justify-between items-center mt-2">
-                  <span className="text-gray-900 font-black text-lg tracking-tighter">${p.price.toFixed(2)}</span>
-                  <span className="text-blue-600 font-black text-[8px] uppercase tracking-widest bg-blue-50 px-2 py-1 rounded">Verified</span>
-                </div>
-              </div>
-            </Link>
+            </div>
           ))}
+        </div>
+      </section>
+
+      {/* Best Sellers Section */}
+      <section className="py-24 bg-gray-900 text-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8 text-center md:text-left">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-blue-600/20 text-blue-500 px-4 py-2 rounded-full mb-4">
+                <Zap size={16} fill="currentColor" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Global Best Sellers</span>
+              </div>
+              <h2 className="text-5xl font-black italic tracking-tighter uppercase leading-tight">
+                Top Rated <br/> <span className="text-blue-500">Performance Gear</span>
+              </h2>
+            </div>
+            <Link to={getLink('/products')} className="bg-white text-black px-10 py-4 rounded-full font-black text-xs uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all">
+              Explore All Best Sellers
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {PRODUCTS.filter(p => p.rating >= 4.8).slice(0, 3).map((p, i) => (
+              <Link to={getProductLink(p.id)} key={p.id} className="group relative bg-white/5 border border-white/10 rounded-[3rem] p-8 flex items-center gap-8 hover:bg-white/10 transition-all">
+                <div className="w-32 h-32 bg-white rounded-2xl overflow-hidden flex-shrink-0">
+                  <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-1 text-yellow-400 mb-2">
+                    <Star size={12} fill="currentColor" />
+                    <span className="text-xs font-black text-white">{p.rating}</span>
+                  </div>
+                  <h4 className="font-black uppercase text-sm mb-2 line-clamp-1">{p.name}</h4>
+                  <div className="text-xl font-black text-blue-500 tracking-tighter">{formatPrice(p.price)}</div>
+                  <div className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-500">
+                    <span>{p.sales}+ Sold</span>
+                    <span className="w-1 h-1 bg-gray-700 rounded-full"></span>
+                    <span className="text-green-500">In Stock</span>
+                  </div>
+                </div>
+                <div className="absolute -top-4 -right-4 w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center font-black italic text-xl shadow-xl">
+                  #{i + 1}
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 

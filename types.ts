@@ -23,6 +23,7 @@ export interface Review {
   rating: number;
   comment: string;
   date: string;
+  country?: string;
 }
 
 export interface Product {
@@ -33,6 +34,8 @@ export interface Product {
   image: string;
   images?: string[];
   price: number;
+  oldPrice?: number;
+  discount?: number;
   rating: number;
   stock: number;
   datePosted: string;
@@ -44,6 +47,8 @@ export interface Product {
   shippingCountry?: string;
   sellerId?: string;
   sales?: number;
+  viewers?: number;
+  saleEndsAt?: string;
   metaTitle?: string;
   metaDescription?: string;
   metaKeywords?: string;

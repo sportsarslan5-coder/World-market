@@ -841,9 +841,9 @@ const NEW_HOODIES: Product[] = HOODIE_IMAGES.map((img, idx) => ({
 
 const NEW_TRACKSUITS: Product[] = TRACKSUIT_IMAGES.map((img, idx) => ({
   id: `tracksuit-${idx}`,
-  name: `Pro-Performance Athletic Tracksuit #${idx + 201}`,
+  name: `tracksuit #${idx + 201}`,
   category: "Sportswear",
-  price: [69, 72, 75, 79, 82][idx % 5],
+  price: 35,
   rating: 4.9,
   stock: 30,
   description: `Dominate your workout or travel in comfort with the Pro-Performance Athletic Tracksuit. Engineered with moisture-wicking technology to keep you dry and comfortable.
@@ -875,9 +875,9 @@ const NEW_TRACKSUITS: Product[] = TRACKSUIT_IMAGES.map((img, idx) => ({
 
 const NEW_POLOS: Product[] = POLO_IMAGES.map((img, idx) => ({
   id: `polo-${idx}`,
-  name: `Elite Heritage Pique Polo Shirt #${idx + 301}`,
+  name: `polo #${idx + 301}`,
   category: "Clothing",
-  price: [25, 28, 30, 33, 35][idx % 5],
+  price: 35,
   rating: 4.7,
   stock: 100,
   description: `Elevate your everyday style with the Elite Heritage Pique Polo Shirt. Combining classic sophistication with modern comfort, this polo is crafted from premium breathable pique cotton. Whether you're on the golf course or in a casual business meeting, this shirt ensures you look sharp and feel cool.
@@ -911,9 +911,9 @@ const NEW_POLOS: Product[] = POLO_IMAGES.map((img, idx) => ({
 
 const NEW_GRAPHIC_TSHIRTS: Product[] = GRAPHIC_TSHIRT_IMAGES.map((img, idx) => ({
   id: `graphic-tshirt-${idx}`,
-  name: `Signature Urban Graphic T-Shirt #${idx + 601}`,
+  name: `graphic-tshirt #${idx + 601}`,
   category: "Clothing",
-  price: [20, 22, 25, 28, 30][idx % 5],
+  price: 35,
   rating: 4.6,
   stock: 60,
   description: `Make a statement with our Signature Urban Graphic T-Shirt. Featuring exclusive high-definition artwork on our softest premium cotton, this tee is designed to stand out. With a comfortable modern fit and fade-resistant prints, it's the perfect centerpiece for your streetwear collection.
@@ -947,9 +947,9 @@ const NEW_GRAPHIC_TSHIRTS: Product[] = GRAPHIC_TSHIRT_IMAGES.map((img, idx) => (
 
 const NEW_SNEAKERS: Product[] = SNEAKER_IMAGES.map((img, idx) => ({
   id: `sneaker-${idx}`,
-  name: `Elite Urban Performance Sneakers #${idx + 401}`,
+  name: `sneaker #${idx + 401}`,
   category: "Shoes",
-  price: [105, 110, 120, 130, 135][idx % 5],
+  price: 35,
   rating: 4.9,
   stock: 15,
   description: `Step into the future of footwear with our Elite Urban Performance Sneakers. Combining cutting-edge design with unparalleled support, these sneakers are engineered for those who move. Whether you're hitting the gym or the city streets, experience the perfect blend of style and performance.
@@ -983,9 +983,9 @@ const NEW_SNEAKERS: Product[] = SNEAKER_IMAGES.map((img, idx) => ({
 
 const NEW_BOOTS: Product[] = BOOT_IMAGES.map((img, idx) => ({
   id: `boot-${idx}`,
-  name: `Signature Suede Chelsea Boots #${idx + 501}`,
+  name: `boot #${idx + 501}`,
   category: "Shoes",
-  price: [119, 125, 130, 135, 140][idx % 5],
+  price: 35,
   rating: 4.8,
   stock: 10,
   description: `Add a touch of sophistication to your look with our Signature Suede Chelsea Boots. Handcrafted from premium suede with a classic silhouette that never goes out of style.
@@ -1017,9 +1017,9 @@ const NEW_BOOTS: Product[] = BOOT_IMAGES.map((img, idx) => ({
 
 const NEW_SPORTS_BRAS: Product[] = SPORTS_BRA_IMAGES.map((img, idx) => ({
   id: `sports-bra-${idx}`,
-  name: `Pro-Support High-Impact Sports Bra #${idx + 701}`,
+  name: `sports-bra #${idx + 701}`,
   category: "Sportswear",
-  price: [28, 30, 32, 34, 36][idx % 5],
+  price: 35,
   rating: 4.9,
   stock: 50,
   description: `Achieve your fitness goals with the Pro-Support High-Impact Sports Bra. Designed for maximum stability and comfort during your most intense workouts, this bra features advanced moisture-wicking technology and an ergonomic fit that moves with you.
@@ -1053,9 +1053,9 @@ const NEW_SPORTS_BRAS: Product[] = SPORTS_BRA_IMAGES.map((img, idx) => ({
 
 const NEW_OVERSIZED_HOODIES: Product[] = OVERSIZED_HOODIE_IMAGES.map((img, idx) => ({
   id: `oversized-hoodie-${idx}`,
-  name: `Oversized Hoodie #${idx + 801}`,
+  name: `oversized-hoodie #${idx + 801}`,
   category: "Clothing",
-  price: 50,
+  price: 35,
   rating: 4.7,
   stock: 40,
   description: `Redefine comfort with the Urban Luxe Oversized Hoodie. Crafted from premium heavyweight cotton blend, this hoodie offers a relaxed, modern silhouette that's perfect for layering or making a statement on its own. It's the ultimate fusion of cozy warmth and streetwear style.
@@ -1089,9 +1089,9 @@ const NEW_OVERSIZED_HOODIES: Product[] = OVERSIZED_HOODIE_IMAGES.map((img, idx) 
 
 const NEW_YOGA_PANTS: Product[] = YOGA_PANTS_IMAGES.map((img, idx) => ({
   id: `yoga-pants-${idx}`,
-  name: `Yoga Pants #${idx + 901}`,
+  name: `yoga-pants #${idx + 901}`,
   category: "Sportswear",
-  price: 38,
+  price: 35,
   rating: 4.9,
   stock: 75,
   description: `Experience total freedom of movement with the Zen-Flex Sculpt High-Waist Yoga Pants. Engineered with our signature four-way stretch fabric and squat-proof technology, these leggings provide a supportive, sculpted fit that stays in place from your first downward dog to your final savasana.
@@ -1125,9 +1125,9 @@ const NEW_YOGA_PANTS: Product[] = YOGA_PANTS_IMAGES.map((img, idx) => ({
 
 const NEW_WINTER_JACKETS: Product[] = WINTER_JACKET_IMAGES.map((img, idx) => ({
   id: `winter-jacket-${idx}`,
-  name: `Winter Jacket #${idx + 1001}`,
+  name: `winter-jacket #${idx + 1001}`,
   category: "Outdoor",
-  price: 50,
+  price: 35,
   rating: 4.9,
   stock: 25,
   description: `Conquer the cold with the Arctic Shield Pro Insulated Winter Jacket. Designed for extreme weather, this jacket features a high-performance waterproof shell and advanced thermal insulation to keep you warm and dry in the harshest conditions.
@@ -1161,9 +1161,9 @@ const NEW_WINTER_JACKETS: Product[] = WINTER_JACKET_IMAGES.map((img, idx) => ({
 
 const NEW_SHORTS: Product[] = SHORTS_IMAGES.map((img, idx) => ({
   id: `shorts-${idx}`,
-  name: `Active-Flow Pro Training Shorts #${idx + 1101}`,
+  name: `shorts #${idx + 1101}`,
   category: "Sportswear",
-  price: [25, 28, 30, 33, 35][idx % 5],
+  price: 35,
   rating: 4.7,
   stock: 120,
   description: `Push your limits with the Active-Flow Pro Training Shorts. Designed for high-intensity movement, these shorts feature a lightweight, breathable fabric and a built-in compression liner for maximum support and comfort during any workout.
@@ -1197,9 +1197,9 @@ const NEW_SHORTS: Product[] = SHORTS_IMAGES.map((img, idx) => ({
 
 const NEW_GYM_TANK_TOPS: Product[] = GYM_TANK_IMAGES.map((img, idx) => ({
   id: `gym-tank-${idx}`,
-  name: `Iron-Core Elite Gym Tank Top #${idx + 1201}`,
+  name: `gym-tank #${idx + 1201}`,
   category: "Sportswear",
-  price: [20, 22, 25, 28, 30][idx % 5],
+  price: 35,
   rating: 4.6,
   stock: 150,
   description: `Built for the dedicated athlete, the Iron-Core Elite Gym Tank Top offers a tapered fit and dropped armholes for unrestricted movement. Crafted from a premium cotton-poly blend, it provides the perfect balance of softness and durability for your heaviest lifting sessions.
@@ -1233,9 +1233,9 @@ const NEW_GYM_TANK_TOPS: Product[] = GYM_TANK_IMAGES.map((img, idx) => ({
 
 const NEW_JOGGERS: Product[] = JOGGERS_IMAGES.map((img, idx) => ({
   id: `joggers-${idx}`,
-  name: `Urban Flex Tech-Fleece Joggers #${idx + 1301}`,
+  name: `joggers #${idx + 1301}`,
   category: "Clothing",
-  price: [35, 38, 40, 43, 45][idx % 5],
+  price: 35,
   rating: 4.8,
   stock: 80,
   description: `Experience the perfect fusion of athletic performance and urban style with our Urban Flex Tech-Fleece Joggers. Designed for maximum mobility and comfort, these joggers feature a streamlined tapered fit and premium moisture-wicking fabric. Ideal for intense training sessions or a relaxed day in the city.
@@ -1269,9 +1269,9 @@ const NEW_JOGGERS: Product[] = JOGGERS_IMAGES.map((img, idx) => ({
 
 const NEW_BACKPACKS: Product[] = BACKPACK_IMAGES.map((img, idx) => ({
   id: `backpack-${idx}`,
-  name: `Nomad Elite Multi-Functional Backpack #${idx + 1401}`,
+  name: `backpack #${idx + 1401}`,
   category: "Bags",
-  price: [48, 52, 55, 58, 62][idx % 5],
+  price: 35,
   rating: 4.9,
   stock: 35,
   description: `Navigate your daily journey with the Nomad Elite Multi-Functional Backpack. Crafted from high-density water-resistant materials, this backpack is designed to protect your tech and organize your life. With dedicated compartments for everything from your laptop to your water bottle, it's the ultimate tool for the modern commuter.
@@ -1305,9 +1305,9 @@ const NEW_BACKPACKS: Product[] = BACKPACK_IMAGES.map((img, idx) => ({
 
 const NEW_WOOL_SWEATERS: Product[] = WOOL_SWEATER_IMAGES.map((img, idx) => ({
   id: `wool-sweater-${idx}`,
-  name: `Wool Sweater #${idx + 1501}`,
+  name: `wool-sweater #${idx + 1501}`,
   category: "Clothing",
-  price: 55,
+  price: 35,
   rating: 4.8,
   stock: 30,
   description: `Experience the pinnacle of natural warmth with our Heritage Pure Merino Wool Sweater. Crafted from 100% premium Merino wool, this sweater offers a luxurious feel, exceptional breathability, and a timeless aesthetic. It's the perfect layering piece for the sophisticated modern wardrobe.
@@ -1341,9 +1341,9 @@ const NEW_WOOL_SWEATERS: Product[] = WOOL_SWEATER_IMAGES.map((img, idx) => ({
 
 const NEW_BLAZERS: Product[] = BLAZER_IMAGES.map((img, idx) => ({
   id: `blazer-${idx}`,
-  name: `Executive Modern Slim-Fit Blazer #${idx + 1601}`,
+  name: `blazer #${idx + 1601}`,
   category: "Clothing",
-  price: [80, 85, 90, 95, 100][idx % 5],
+  price: 35,
   rating: 4.7,
   stock: 20,
   description: `Elevate your professional presence with the Executive Modern Slim-Fit Blazer. Tailored for a sharp, contemporary silhouette, this blazer is crafted from a premium wool-blend fabric that offers both comfort and a sophisticated drape. Perfect for the boardroom or high-end social events.
@@ -1378,13 +1378,23 @@ const NEW_BLAZERS: Product[] = BLAZER_IMAGES.map((img, idx) => ({
 export const PRODUCTS: Product[] = [
   ...CLOUDINARY_IMAGES.map((img, idx) => {
     const category = CATEGORIES[idx % CATEGORIES.length];
+    const basePrice = 35.00;
+    const discount = 10 + Math.floor(Math.random() * 20); // 10% - 30%
+    const oldPrice = basePrice / (1 - discount / 100);
+    const viewers = 10 + Math.floor(Math.random() * 50);
+    const saleEndsAt = new Date(Date.now() + (2 + Math.random() * 10) * 3600000).toISOString(); // 2-12 hours from now
+
     return {
       id: `wm-post-${idx}`,
-      name: `${category} Premium Item #${idx + 100}`,
+      name: `post #${idx + 100}`,
       category: category,
-      price: 35.00,
+      price: basePrice,
+      oldPrice: oldPrice,
+      discount: discount,
+      viewers: viewers,
+      saleEndsAt: saleEndsAt,
       rating: parseFloat((4.5 + Math.random() * 0.5).toFixed(1)),
-      stock: 500,
+      stock: 5 + Math.floor(Math.random() * 10), // 5-15 in stock for urgency
       description: `High-performance professional uniform manufactured by World Market. Durable fabric, moisture-wicking technology, and custom export quality. Designed for elite athletes who demand the best in comfort and performance.`,
       image: img,
       images: [img, ...CLOUDINARY_IMAGES.slice((idx + 1) % CLOUDINARY_IMAGES.length, (idx + 4) % CLOUDINARY_IMAGES.length)],
@@ -1397,9 +1407,9 @@ export const PRODUCTS: Product[] = [
       sellerId: idx % 2 === 0 ? 'seller-1' : 'seller-2',
       sales: 10 + Math.floor(Math.random() * 100),
       reviews: [
-        { id: 'r1', user: 'Mike T.', rating: 5, comment: 'Excellent quality, fits perfectly!', date: '2025-02-15' },
-        { id: 'r2', user: 'Sarah K.', rating: 4, comment: 'Good material, but shipping took a bit longer.', date: '2025-02-10' },
-        { id: 'r3', user: 'David L.', rating: 5, comment: 'Best uniform we have ever had for our team.', date: '2025-01-28' }
+        { id: 'r1', user: 'Mike T.', rating: 5, comment: 'Excellent quality, fits perfectly!', date: '2025-02-15', country: 'USA' },
+        { id: 'r2', user: 'Sarah K.', rating: 4, comment: 'Good material, but shipping took a bit longer.', date: '2025-02-10', country: 'UK' },
+        { id: 'r3', user: 'David L.', rating: 5, comment: 'Best uniform we have ever had for our team.', date: '2025-01-28', country: 'Canada' }
       ]
     };
   }),

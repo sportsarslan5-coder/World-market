@@ -5,11 +5,13 @@ import SEO from './SEO';
 import { useStore } from '../context/StoreContext';
 import { detectShowName } from '../services/routingUtils';
 import { CURRENCIES, LANGUAGES, PRODUCTS } from '../constants';
+import Fuse from 'fuse.js';
 import { useTranslation } from '../src/translations';
 import { 
   Search, 
   ShoppingCart, 
   Globe, 
+  ShieldCheck, 
   ChevronDown, 
   User, 
   Menu, 
@@ -58,13 +60,18 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
+  const fuse = useMemo(() => new Fuse(PRODUCTS, {
+    keys: ['name', 'category', 'description'],
+    threshold: 0.4,
+    distance: 100,
+    includeScore: true
+  }), []);
+
   const suggestions = useMemo(() => {
     if (!searchQuery.trim()) return [];
-    return PRODUCTS.filter(p => 
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchQuery.toLowerCase())
-    ).slice(0, 6);
-  }, [searchQuery]);
+    const results = fuse.search(searchQuery);
+    return results.slice(0, 6).map(r => r.item);
+  }, [searchQuery, fuse]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -479,10 +486,18 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <a href="#" className="text-gray-500 hover:text-white transition-colors"><Linkedin size={20} /></a>
             </div>
 
-            <div className="flex items-center gap-4 opacity-50 grayscale">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-4" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-6" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-5" />
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              <div className="flex items-center gap-2 text-gray-500">
+                <ShieldCheck size={16} className="text-blue-500" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Secure Checkout</span>
+              </div>
+              <div className="flex items-center gap-4 opacity-50 grayscale hover:grayscale-0 transition-all">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-4" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-6" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-5" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Google_Pay_Logo.svg" alt="Google Pay" className="h-5" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_Pay_logo.svg" alt="Apple Pay" className="h-5" />
+              </div>
             </div>
 
             <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest">

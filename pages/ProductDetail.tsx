@@ -4,11 +4,11 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { useStore } from '../context/StoreContext';
 import { ADMIN_WHATSAPP } from '../constants';
-import { Star, Truck, ShieldCheck, RotateCcw, MessageCircle, ShoppingCart, ChevronRight, Share2, Heart, CheckCircle2 } from 'lucide-react';
+import { Star, Truck, ShieldCheck, RotateCcw, MessageCircle, ShoppingCart, ChevronRight, Share2, Heart, CheckCircle2, Eye, Clock, Zap } from 'lucide-react';
 
 const ProductDetail: React.FC = () => {
   const { productId, showName: pathShowName } = useParams();
-  const { products, addToCart, activeShowName: subdomainShowName } = useStore();
+  const { products, addToCart, activeShowName: subdomainShowName, formatPrice } = useStore();
   const showName = pathShowName || subdomainShowName;
   const navigate = useNavigate();
 
@@ -154,11 +154,35 @@ Please fill the above data to proceed with manufacturing.`;
 
             <div className="py-6 border-y border-gray-100">
               <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-black tracking-tighter text-gray-900">${product.price.toFixed(2)}</span>
-                <span className="text-xs font-bold text-gray-400 line-through">${(product.price * 1.5).toFixed(2)}</span>
-                <span className="text-xs font-black text-green-600 uppercase tracking-widest">33% OFF</span>
+                <span className="text-4xl font-black tracking-tighter text-gray-900">{formatPrice(product.price)}</span>
+                {product.oldPrice && (
+                  <span className="text-xs font-bold text-gray-400 line-through">{formatPrice(product.oldPrice)}</span>
+                )}
+                {product.discount && (
+                  <span className="text-xs font-black text-red-600 uppercase tracking-widest">{product.discount}% OFF</span>
+                )}
               </div>
               <p className="text-[10px] font-bold text-gray-500 mt-1 uppercase tracking-widest">Inclusive of all taxes</p>
+              
+              {/* Urgency & Social Proof */}
+              <div className="mt-6 space-y-3">
+                <div className="flex items-center gap-2 text-blue-600 animate-pulse">
+                  <Eye size={14} />
+                  <span className="text-[10px] font-black uppercase tracking-widest">{product.viewers || 24} people are viewing this right now</span>
+                </div>
+                {product.stock && product.stock < 10 && (
+                  <div className="flex items-center gap-2 text-red-600">
+                    <Zap size={14} fill="currentColor" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Only {product.stock} left in stock - order soon</span>
+                  </div>
+                )}
+                {product.saleEndsAt && (
+                  <div className="flex items-center gap-2 text-orange-600">
+                    <Clock size={14} />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Flash Sale ends in 02h 45m 12s</span>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="space-y-6">
@@ -349,7 +373,12 @@ Please fill the above data to proceed with manufacturing.`;
                         {review.user[0]}
                       </div>
                       <div>
-                        <h5 className="text-xs font-black uppercase tracking-tight">{review.user}</h5>
+                        <div className="flex items-center gap-2">
+                          <h5 className="text-xs font-black uppercase tracking-tight">{review.user}</h5>
+                          {review.country && (
+                            <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">{review.country}</span>
+                          )}
+                        </div>
                         <div className="flex items-center gap-1 text-yellow-400 mt-0.5">
                           {[...Array(5)].map((_, i) => (
                             <Star key={i} size={10} fill={i < review.rating ? 'currentColor' : 'none'} />
@@ -373,6 +402,34 @@ Please fill the above data to proceed with manufacturing.`;
                 Load More Reviews
               </button>
             </div>
+          </div>
+        </div>
+        {/* Related Products Section */}
+        <div className="mt-24 pt-24 border-t border-gray-100">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <h2 className="text-4xl font-black uppercase italic tracking-tighter">You may <span className="text-blue-600">also like</span></h2>
+              <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-2">Recommended based on this item</p>
+            </div>
+            <Link to={getLink('/products')} className="text-blue-600 font-black uppercase text-[10px] tracking-widest hover:underline flex items-center gap-2">
+              View All <ChevronRight size={14} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4).map(p => (
+              <Link to={getLink(`/products/${p.id}`)} key={p.id} className="group flex flex-col gap-4">
+                <div className="aspect-square bg-gray-50 rounded-3xl overflow-hidden relative border border-gray-100">
+                  <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg text-[10px] font-black shadow-sm">
+                    ⭐ {p.rating}
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-bold text-xs line-clamp-1 group-hover:text-blue-600 transition-colors uppercase tracking-tight">{p.name}</h4>
+                  <div className="text-gray-900 font-black text-lg tracking-tighter mt-1">{formatPrice(p.price)}</div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </div>
