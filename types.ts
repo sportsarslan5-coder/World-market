@@ -54,6 +54,14 @@ export interface Product {
   metaKeywords?: string;
   imageAlt?: string;
   badges?: string[];
+  ratingCount?: number;
+  ratingBreakdown?: {
+    5: number;
+    4: number;
+    3: number;
+    2: number;
+    1: number;
+  };
 }
 
 export interface CartItem extends Product {
