@@ -39,6 +39,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentShow, setCurrentShow] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState<string>('');
+  const [selectedColor, setSelectedColor] = useState<string>('');
   
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -47,6 +49,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const detected = detectShowName();
     setCurrentShow(detected);
   }, [location]);
+
+  useEffect(() => {
+    if (quickViewProduct) {
+      setSelectedSize(quickViewProduct.sizes?.[0] || '');
+      setSelectedColor(quickViewProduct.colors?.[0] || '');
+      setQuantity(1);
+    }
+  }, [quickViewProduct]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -374,6 +384,50 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 {quickViewProduct.description}
               </p>
 
+              <div className="space-y-6 mb-8">
+                {quickViewProduct.sizes && quickViewProduct.sizes.length > 0 && (
+                  <div>
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Select Size</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {quickViewProduct.sizes.map(size => (
+                        <button
+                          key={size}
+                          onClick={() => setSelectedSize(size)}
+                          className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all border-2 ${
+                            selectedSize === size 
+                              ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/20' 
+                              : 'bg-white border-gray-100 text-gray-900 hover:border-blue-600'
+                          }`}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {quickViewProduct.colors && quickViewProduct.colors.length > 0 && (
+                  <div>
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Select Color</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {quickViewProduct.colors.map(color => (
+                        <button
+                          key={color}
+                          onClick={() => setSelectedColor(color)}
+                          className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all border-2 ${
+                            selectedColor === color 
+                              ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/20' 
+                              : 'bg-white border-gray-100 text-gray-900 hover:border-blue-600'
+                          }`}
+                        >
+                          {color}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="space-y-6 mt-auto">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center border-2 border-gray-100 rounded-2xl p-1">
@@ -393,7 +447,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   </div>
                   <button 
                     onClick={() => {
-                      addToCart(quickViewProduct, quantity);
+                      addToCart(quickViewProduct, quantity, selectedSize, selectedColor);
                       setQuickViewProduct(null);
                       setQuantity(1);
                     }}

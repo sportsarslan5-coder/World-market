@@ -30,7 +30,7 @@ const Cart: React.FC = () => {
   const handleCheckout = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const itemsList = cart.map(item => `- ${item.name} (x${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}`).join('\n');
+    const itemsList = cart.map(item => `- ${item.name} ${item.selectedSize ? `(Size: ${item.selectedSize})` : ''} ${item.selectedColor ? `(Color: ${item.selectedColor})` : ''} (x${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}`).join('\n');
     
     const message = `NEW ORDER RECEIVED
 ---------------------------------
@@ -158,6 +158,14 @@ Show Context: ${activeShowName || 'Main Store'}
                         <Link to={getProductLink(item.id)}>
                           <h3 className="text-xl font-black uppercase tracking-tight mb-1 hover:text-blue-600 transition-colors">{item.name}</h3>
                           <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest">{item.category}</p>
+                          <div className="flex gap-2 mt-2">
+                            {item.selectedSize && (
+                              <span className="text-[8px] font-black uppercase bg-gray-100 px-2 py-1 rounded border">Size: {item.selectedSize}</span>
+                            )}
+                            {item.selectedColor && (
+                              <span className="text-[8px] font-black uppercase bg-gray-100 px-2 py-1 rounded border">Color: {item.selectedColor}</span>
+                            )}
+                          </div>
                         </Link>
                         <span className="text-2xl font-black tracking-tighter">${(item.price * item.quantity).toFixed(2)}</span>
                       </div>
@@ -169,7 +177,7 @@ Show Context: ${activeShowName || 'Main Store'}
                           <span className="text-sm font-black">{item.quantity}</span>
                         </div>
                         <button 
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeFromCart(item.id, item.selectedSize, item.selectedColor)}
                           className="text-[10px] font-black uppercase text-red-500 hover:underline tracking-widest"
                         >
                           Remove Item

@@ -18,8 +18,8 @@ interface StoreContextType {
   setQuickViewProduct: (product: Product | null) => void;
   formatPrice: (amount: number) => string;
   addProduct: (product: Omit<Product, 'id' | 'datePosted'>) => void;
-  addToCart: (product: Product, quantity?: number) => void;
-  removeFromCart: (productId: string) => void;
+  addToCart: (product: Product, quantity?: number, selectedSize?: string, selectedColor?: string) => void;
+  removeFromCart: (productId: string, selectedSize?: string, selectedColor?: string) => void;
   clearCart: () => void;
 }
 
@@ -94,18 +94,31 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setProducts([fullProduct, ...products]);
   };
 
-  const addToCart = (product: Product, quantity: number = 1) => {
+  const addToCart = (product: Product, quantity: number = 1, selectedSize?: string, selectedColor?: string) => {
+    const size = selectedSize || product.sizes?.[0];
+    const color = selectedColor || product.colors?.[0];
+
     setCart(prev => {
-      const exists = prev.find(item => item.id === product.id);
+      const exists = prev.find(item => 
+        item.id === product.id && 
+        item.selectedSize === size && 
+        item.selectedColor === color
+      );
       if (exists) {
-        return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item);
+        return prev.map(item => 
+          (item.id === product.id && item.selectedSize === size && item.selectedColor === color) 
+          ? { ...item, quantity: item.quantity + quantity } 
+          : item
+        );
       }
-      return [...prev, { ...product, quantity }];
+      return [...prev, { ...product, quantity, selectedSize: size, selectedColor: color }];
     });
   };
 
-  const removeFromCart = (id: string) => {
-    setCart(prev => prev.filter(item => item.id !== id));
+  const removeFromCart = (id: string, selectedSize?: string, selectedColor?: string) => {
+    setCart(prev => prev.filter(item => 
+      !(item.id === id && item.selectedSize === selectedSize && item.selectedColor === selectedColor)
+    ));
   };
 
   const clearCart = () => setCart([]);

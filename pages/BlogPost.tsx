@@ -2,11 +2,11 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { BLOG_POSTS, PRODUCTS } from '../constants';
-import { Calendar, User, ArrowLeft, Tag, ShoppingCart, Star } from 'lucide-react';
+import { Calendar, User, ArrowLeft, Tag, ShoppingCart, Star, Eye } from 'lucide-react';
 
 const BlogPost: React.FC = () => {
   const { slug } = useParams();
-  const { language, formatPrice, addToCart } = useStore();
+  const { language, formatPrice, addToCart, setQuickViewProduct } = useStore();
   const post = BLOG_POSTS.find(p => p.slug === slug);
 
   if (!post) return <div className="min-h-screen flex items-center justify-center">Post not found</div>;
@@ -85,12 +85,20 @@ const BlogPost: React.FC = () => {
               <div key={p.id} className="group bg-white p-4 rounded-[2rem] border border-transparent hover:border-gray-100 hover:shadow-2xl transition-all">
                 <div className="aspect-square bg-gray-50 rounded-3xl overflow-hidden relative mb-4">
                   <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  <button 
-                    onClick={() => addToCart(p)}
-                    className="absolute bottom-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-900 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-lg"
-                  >
-                    <ShoppingCart size={18} />
-                  </button>
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <button 
+                      onClick={() => setQuickViewProduct(p)}
+                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-900 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110"
+                    >
+                      <Eye size={18} />
+                    </button>
+                    <button 
+                      onClick={() => addToCart(p)}
+                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-900 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110"
+                    >
+                      <ShoppingCart size={18} />
+                    </button>
+                  </div>
                 </div>
                 <div className="px-2">
                   <div className="flex justify-between items-center mb-1">

@@ -20,12 +20,13 @@ import {
   Clock,
   Heart,
   ShoppingCart,
-  Zap
+  Zap,
+  Eye
 } from 'lucide-react';
 
 const Home: React.FC = () => {
   const { showName: pathShowName } = useParams();
-  const { activeShowName: subdomainShowName, addToCart, formatPrice } = useStore();
+  const { activeShowName: subdomainShowName, addToCart, formatPrice, setQuickViewProduct } = useStore();
   const showName = pathShowName || subdomainShowName;
 
   useEffect(() => {
@@ -230,17 +231,28 @@ const Home: React.FC = () => {
                   <Heart size={14} />
                 </button>
 
-                {/* Quick Add Button */}
-                <button 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    addToCart(p, 1);
-                  }}
-                  className="absolute bottom-2 left-2 right-2 bg-black/80 backdrop-blur-md text-white py-2 rounded-xl text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all flex items-center justify-center gap-2 hover:bg-blue-600"
-                >
-                  <ShoppingCart size={12} />
-                  Add to Cart
-                </button>
+                {/* Quick Actions */}
+                <div className="absolute bottom-2 left-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all">
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setQuickViewProduct(p);
+                    }}
+                    className="flex-grow bg-white/90 backdrop-blur-md text-black py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-blue-600 hover:text-white transition-colors"
+                  >
+                    <Eye size={12} />
+                    View
+                  </button>
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      addToCart(p, 1);
+                    }}
+                    className="w-10 h-10 bg-black/80 backdrop-blur-md text-white rounded-xl flex items-center justify-center hover:bg-blue-600 transition-colors"
+                  >
+                    <ShoppingCart size={12} />
+                  </button>
+                </div>
               </Link>
 
               <div className="px-1">

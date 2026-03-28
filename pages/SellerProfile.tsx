@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { SELLERS, PRODUCTS } from '../constants';
-import { Star, CheckCircle, MapPin, MessageCircle, ShoppingBag, Award, Clock } from 'lucide-react';
+import { Star, CheckCircle, MapPin, MessageCircle, ShoppingBag, Award, Clock, Eye } from 'lucide-react';
 
 const SellerProfile: React.FC = () => {
   const { sellerId } = useParams();
@@ -115,7 +115,7 @@ const SellerProfile: React.FC = () => {
                     onClick={() => setQuickViewProduct(p)}
                     className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-900 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110"
                   >
-                    <Star size={18} />
+                    <Eye size={18} />
                   </button>
                   <button 
                     onClick={() => addToCart(p)}

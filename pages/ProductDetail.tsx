@@ -52,7 +52,7 @@ Please fill the above data to proceed with manufacturing.`;
   };
 
   const handleAddToCart = () => {
-    addToCart(product, quantity);
+    addToCart(product, quantity, selectedSize, selectedColor);
     // Optional: show a toast or redirect to cart
     // navigate('/cart');
   };
