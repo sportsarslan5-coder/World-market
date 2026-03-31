@@ -9,10 +9,12 @@ const Cart: React.FC = () => {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
     name: '',
+    email: '',
     phone: '',
     address: '',
     city: '',
-    country: ''
+    country: '',
+    zipCode: ''
   });
 
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
@@ -36,8 +38,10 @@ const Cart: React.FC = () => {
 ---------------------------------
 CUSTOMER DETAILS:
 Name: ${customerInfo.name}
+Email: ${customerInfo.email}
 Phone: ${customerInfo.phone}
 Address: ${customerInfo.address}, ${customerInfo.city}, ${customerInfo.country}
+Zip Code: ${customerInfo.zipCode}
 
 ORDER SUMMARY:
 ${itemsList}
@@ -91,6 +95,18 @@ Show Context: ${activeShowName || 'Main Store'}
                       />
                     </div>
                     <div className="space-y-1">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Email Address (Required)</label>
+                      <input 
+                        required
+                        type="email"
+                        className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
+                        value={customerInfo.email}
+                        onChange={e => setCustomerInfo({...customerInfo, email: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-1">
                       <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Phone Number</label>
                       <input 
                         required
@@ -99,15 +115,15 @@ Show Context: ${activeShowName || 'Main Store'}
                         onChange={e => setCustomerInfo({...customerInfo, phone: e.target.value})}
                       />
                     </div>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Shipping Address</label>
-                    <input 
-                      required
-                      className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
-                      value={customerInfo.address}
-                      onChange={e => setCustomerInfo({...customerInfo, address: e.target.value})}
-                    />
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Country</label>
+                      <input 
+                        required
+                        className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
+                        value={customerInfo.country}
+                        onChange={e => setCustomerInfo({...customerInfo, country: e.target.value})}
+                      />
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-1">
@@ -120,14 +136,23 @@ Show Context: ${activeShowName || 'Main Store'}
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Country</label>
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Zip Code</label>
                       <input 
                         required
                         className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
-                        value={customerInfo.country}
-                        onChange={e => setCustomerInfo({...customerInfo, country: e.target.value})}
+                        value={customerInfo.zipCode}
+                        onChange={e => setCustomerInfo({...customerInfo, zipCode: e.target.value})}
                       />
                     </div>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Full Address</label>
+                    <input 
+                      required
+                      className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
+                      value={customerInfo.address}
+                      onChange={e => setCustomerInfo({...customerInfo, address: e.target.value})}
+                    />
                   </div>
                   <div className="pt-6 flex gap-4">
                     <button 

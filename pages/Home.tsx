@@ -120,6 +120,60 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      {/* Amazon Style Category Blocks */}
+      <section className="relative -mt-32 z-20 max-w-7xl mx-auto px-4 pb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { title: 'Polo Shirts', cat: 'Clothing', kw: 'polo' },
+            { title: 'T-Shirts', cat: 'Clothing', kw: 'tshirt' },
+            { title: 'Graphic T-Shirts', cat: 'Clothing', kw: 'graphic' },
+            { title: 'Hoodies', cat: 'Clothing', kw: 'hoodie' },
+            { title: 'Sneakers', cat: 'Shoes', kw: 'sneaker' },
+            { title: 'Gym Wear', cat: 'Sportswear', kw: 'gym' },
+            { title: 'Jackets', cat: 'Clothing', kw: 'jacket' },
+            { title: 'Backpacks', cat: 'Bags', kw: 'backpack' }
+          ].map((block) => {
+            const images = PRODUCTS
+              .filter(p => p.category === block.cat && p.name.toLowerCase().includes(block.kw))
+              .map(p => p.image)
+              .slice(0, 4);
+            
+            // Fallback if not enough images
+            if (images.length < 4) {
+              const fallback = PRODUCTS.filter(p => p.category === block.cat).map(p => p.image).slice(0, 4 - images.length);
+              images.push(...fallback);
+            }
+
+            return (
+              <Link 
+                key={block.title}
+                to={getLink(`/products?cat=${block.cat}&q=${block.kw}`)}
+                className="bg-white p-5 shadow-lg hover:shadow-xl transition-all flex flex-col group"
+              >
+                <h3 className="text-xl font-black uppercase italic tracking-tighter mb-4 text-gray-900 group-hover:text-blue-600 transition-colors">
+                  {block.title}
+                </h3>
+                <div className="grid grid-cols-2 gap-2 flex-grow">
+                  {images.map((img, i) => (
+                    <div key={i} className="aspect-square bg-gray-100 overflow-hidden rounded-sm">
+                      <img 
+                        src={img} 
+                        alt="" 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                        referrerPolicy="no-referrer"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <span className="text-blue-600 text-[10px] font-black uppercase tracking-widest mt-6 group-hover:text-orange-600 transition-colors">
+                  Shop All {block.title}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
       {/* Trust Badges */}
       <section className="bg-black border-y border-white/5 py-10">
         <div className="max-w-7xl mx-auto px-4">

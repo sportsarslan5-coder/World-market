@@ -237,18 +237,20 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <span className="text-[10px] font-bold text-gray-500 uppercase">{t('returns')}</span>
                 <span className="text-xs font-black tracking-tight group-hover:text-blue-500 transition-colors">& {t('orders')}</span>
               </Link>
-              <Link to={getLink('/cart')} className="relative flex items-center gap-2 group p-2 hover:bg-white/5 rounded-xl transition-all">
-                <div className="relative">
-                  <ShoppingCart size={24} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
-                  {cartCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-blue-600 text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-black animate-bounce">
-                      {cartCount}
-                    </span>
-                  )}
-                </div>
-                <span className="hidden xl:block text-xs font-black uppercase tracking-widest mt-1">{t('cart')}</span>
-              </Link>
             </div>
+
+            {/* Cart - Always Visible */}
+            <Link to={getLink('/cart')} className="relative flex items-center gap-2 group p-2 hover:bg-white/5 rounded-xl transition-all">
+              <div className="relative">
+                <ShoppingCart size={24} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-blue-600 text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-black animate-bounce">
+                    {cartCount}
+                  </span>
+                )}
+              </div>
+              <span className="hidden xl:block text-xs font-black uppercase tracking-widest mt-1">{t('cart')}</span>
+            </Link>
 
             {/* Mobile Menu Toggle */}
             <button 
