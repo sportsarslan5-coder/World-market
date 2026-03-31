@@ -5,7 +5,7 @@ import { useStore } from '../context/StoreContext';
 import { ADMIN_WHATSAPP } from '../constants';
 
 const Cart: React.FC = () => {
-  const { cart, removeFromCart, clearCart, activeShowName } = useStore();
+  const { cart, removeFromCart, clearCart, activeShowName, referralCode } = useStore();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
     name: '',
@@ -52,6 +52,7 @@ Tax: $${tax.toFixed(2)}
 TOTAL: $${total.toFixed(2)}
 
 Show Context: ${activeShowName || 'Main Store'}
+Referral Code: ${referralCode || 'None (Direct)'}
 ---------------------------------`;
 
     const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;

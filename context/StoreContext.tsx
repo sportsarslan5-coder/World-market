@@ -10,6 +10,7 @@ interface StoreContextType {
   sales: SaleRecord[];
   customers: Customer[];
   activeShowName: string | null;
+  referralCode: string | null;
   currency: Currency;
   language: Language;
   quickViewProduct: Product | null;
@@ -31,6 +32,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [sales, setSales] = useState<SaleRecord[]>([]);
   const [activeShowName, setActiveShowName] = useState<string | null>(detectShowName());
+  const [referralCode, setReferralCode] = useState<string | null>(null);
   
   const [currency, setCurrencyState] = useState<Currency>(CURRENCIES[0]);
   const [language, setLanguageState] = useState<Language>(LANGUAGES[0]);
@@ -40,11 +42,30 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const detected = detectShowName();
     if (detected) setActiveShowName(detected);
     
+    // Capture referral code from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref');
+    if (ref) {
+      setReferralCode(ref);
+      // Persist referral code in session storage
+      sessionStorage.setItem('referralCode', ref);
+    } else {
+      const storedRef = sessionStorage.getItem('referralCode');
+      if (storedRef) setReferralCode(storedRef);
+    }
+    
     // Simple auto-detection simulation for currency/language
-    // In a real app, we'd use a geolocation API or browser settings
     const browserLang = navigator.language.split('-')[0];
     const foundLang = LANGUAGES.find(l => l.code === browserLang);
     if (foundLang) setLanguageState(foundLang);
+
+    // Auto-detect currency based on locale
+    const locale = navigator.language;
+    if (locale.includes('GB')) setCurrency('GBP');
+    else if (locale.includes('PK')) setCurrency('PKR');
+    else if (locale.includes('AE')) setCurrency('AED');
+    else if (locale.includes('DE') || locale.includes('FR') || locale.includes('ES')) setCurrency('EUR');
+    else setCurrency('USD');
   }, []);
 
   const setCurrency = (code: CurrencyCode) => {
@@ -125,7 +146,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   return (
     <StoreContext.Provider value={{ 
-      products, cart, sales, customers, activeShowName,
+      products, cart, sales, customers, activeShowName, referralCode,
       currency, language, quickViewProduct,
       setCurrency, setLanguage, setQuickViewProduct, formatPrice,
       addProduct, addToCart, removeFromCart, clearCart 

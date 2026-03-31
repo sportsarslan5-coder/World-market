@@ -43,7 +43,8 @@ export const SELLERS: SellerInfo[] = [
     responseTime: '< 1 hour',
     isVerified: true,
     joinedDate: '2023-01-15',
-    balance: 4500.50
+    balance: 4500.50,
+    commissionRate: 0.08
   },
   {
     id: 'seller-2',
@@ -61,7 +62,27 @@ export const SELLERS: SellerInfo[] = [
     responseTime: '< 4 hours',
     isVerified: true,
     joinedDate: '2023-06-20',
-    balance: 1200.00
+    balance: 1200.00,
+    commissionRate: 0.04
+  },
+  {
+    id: 'seller-3',
+    fullName: 'Starter Promoter',
+    whatsapp: '923009876543',
+    email: 'starter@worldmarket.com',
+    country: 'United Kingdom',
+    city: 'London',
+    contactNumber: '+44 20 1234 5678',
+    paymentDetails: 'PayPal',
+    showName: 'starterpromo',
+    rank: 'Starter',
+    rating: 4.0,
+    totalSales: 50,
+    responseTime: '< 24 hours',
+    isVerified: true,
+    joinedDate: '2024-01-10',
+    balance: 150.00,
+    commissionRate: 0.03
   }
 ];
 

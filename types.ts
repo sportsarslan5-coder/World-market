@@ -1,7 +1,7 @@
 
 export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'AED' | 'PKR';
 export type LanguageCode = 'en' | 'ar' | 'fr' | 'es' | 'de';
-export type SellerRank = 'Gold' | 'Silver' | 'Standard';
+export type SellerRank = 'Gold' | 'Silver' | 'Starter';
 
 export interface Currency {
   code: CurrencyCode;
@@ -80,6 +80,7 @@ export interface SaleRecord {
   date: string;
   status: 'Delivered' | 'Processing' | 'Shipped';
   sellerId?: string;
+  commissionEarned?: number;
 }
 
 export interface Customer {
@@ -109,6 +110,7 @@ export interface SellerInfo {
   isVerified: boolean;
   joinedDate: string;
   balance: number;
+  commissionRate: number;
 }
 
 export interface BlogPost {
