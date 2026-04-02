@@ -26,7 +26,7 @@ import {
 
 const Home: React.FC = () => {
   const { showName: pathShowName } = useParams();
-  const { activeShowName: subdomainShowName, addToCart, formatPrice, setQuickViewProduct } = useStore();
+  const { activeShowName: subdomainShowName, activeSeller, addToCart, formatPrice, setQuickViewProduct } = useStore();
   const showName = pathShowName || subdomainShowName;
 
   useEffect(() => {
@@ -58,10 +58,13 @@ const Home: React.FC = () => {
         description={showName ? `Shop factory-direct products from ${showName.toUpperCase()} on World Market.` : "World Market connects you with verified global sellers for the best pricing and quality."}
       />
       {/* Dynamic Show Banner */}
-      {showName && (
-        <div className="bg-blue-600 py-2 px-4 text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
-            Official Show: <span className="underline">{showName.replace(/-/g, ' ')}</span> | Global Marketplace Partner
+      {activeSeller && (
+        <div className="bg-blue-600 py-4 px-4 text-center relative overflow-hidden group">
+          <div className="absolute inset-0 bg-white/10 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+          <p className="text-sm font-black uppercase tracking-[0.3em] text-white flex items-center justify-center gap-3">
+            <Star size={16} fill="white" />
+            Official Partner Shop: <span className="underline decoration-2 underline-offset-4">{activeSeller.fullName}</span>
+            <Star size={16} fill="white" />
           </p>
         </div>
       )}
@@ -95,17 +98,37 @@ const Home: React.FC = () => {
         
         <div className="relative max-w-7xl mx-auto px-4 text-white w-full">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 bg-blue-600/20 backdrop-blur-md border border-blue-500/30 px-4 py-2 rounded-full mb-8">
-              <Globe size={16} className="text-blue-500" />
-              <span className="text-[10px] font-black uppercase tracking-widest">Global Marketplace Now Open</span>
-            </div>
-            <h1 className="text-6xl md:text-8xl font-black mb-8 leading-[0.85] tracking-tighter italic uppercase">
-              Buy <span className="text-blue-500">Anything.</span> <br/> 
-              Sell <span className="text-white underline decoration-blue-600">Everywhere.</span>
-            </h1>
-            <p className="text-lg md:text-xl mb-12 max-w-xl text-gray-300 font-medium leading-relaxed">
-              Global marketplace with factory direct pricing and worldwide shipping. Access premium goods from verified manufacturers across the globe.
-            </p>
+            {activeSeller ? (
+              <div className="mb-12 animate-slideUp">
+                <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-xl border border-white/20 px-6 py-3 rounded-2xl mb-8">
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.6)]"></div>
+                  <span className="text-xs font-black uppercase tracking-widest text-white/90">Store Active & Verified</span>
+                </div>
+                <h1 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter leading-[0.9] mb-6">
+                  Welcome to <br />
+                  <span className="text-blue-500 drop-shadow-[0_0_30px_rgba(59,130,246,0.4)]">{activeSeller.fullName}</span> <br />
+                  <span className="text-white">Shop</span>
+                </h1>
+                <p className="text-xl md:text-2xl font-medium text-gray-300 max-w-2xl leading-relaxed">
+                  Curated global products, factory-direct pricing, and verified quality. 
+                  Shop the collection from our official partner.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="inline-flex items-center gap-2 bg-blue-600/20 backdrop-blur-md border border-blue-500/30 px-4 py-2 rounded-full mb-8">
+                  <Globe size={16} className="text-blue-500" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Global Marketplace Now Open</span>
+                </div>
+                <h1 className="text-6xl md:text-8xl font-black mb-8 leading-[0.85] tracking-tighter italic uppercase">
+                  Buy <span className="text-blue-500">Anything.</span> <br/> 
+                  Sell <span className="text-white underline decoration-blue-600">Everywhere.</span>
+                </h1>
+                <p className="text-lg md:text-xl mb-12 max-w-xl text-gray-300 font-medium leading-relaxed">
+                  Global marketplace with factory direct pricing and worldwide shipping. Access premium goods from verified manufacturers across the globe.
+                </p>
+              </>
+            )}
             <div className="flex flex-col sm:flex-row gap-6">
               <Link to={getLink('/products')} className="bg-blue-600 text-white px-12 py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-white hover:text-black transition-all transform hover:scale-105 shadow-2xl flex items-center justify-center gap-2">
                 Shop Now <ArrowRight size={18} />

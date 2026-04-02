@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Product, CartItem, SaleRecord, Customer, Currency, Language, CurrencyCode, LanguageCode } from '../types';
-import { PRODUCTS, MOCK_CUSTOMERS, CURRENCIES, LANGUAGES } from '../constants';
+import { Product, CartItem, SaleRecord, Customer, Currency, Language, CurrencyCode, LanguageCode, SellerInfo } from '../types';
+import { PRODUCTS, MOCK_CUSTOMERS, CURRENCIES, LANGUAGES, SELLERS } from '../constants';
 import { detectShowName } from '../services/routingUtils';
 
 interface StoreContextType {
@@ -11,6 +11,7 @@ interface StoreContextType {
   customers: Customer[];
   activeShowName: string | null;
   referralCode: string | null;
+  activeSeller: SellerInfo | null;
   currency: Currency;
   language: Language;
   quickViewProduct: Product | null;
@@ -33,6 +34,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [sales, setSales] = useState<SaleRecord[]>([]);
   const [activeShowName, setActiveShowName] = useState<string | null>(detectShowName());
   const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [activeSeller, setActiveSeller] = useState<SellerInfo | null>(null);
   
   const [currency, setCurrencyState] = useState<Currency>(CURRENCIES[0]);
   const [language, setLanguageState] = useState<Language>(LANGUAGES[0]);
@@ -67,6 +69,21 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     else if (locale.includes('DE') || locale.includes('FR') || locale.includes('ES')) setCurrency('EUR');
     else setCurrency('USD');
   }, []);
+
+  // Update activeSeller whenever activeShowName or referralCode changes
+  useEffect(() => {
+    const sellerId = referralCode || activeShowName;
+    if (sellerId) {
+      const found = SELLERS.find(s => s.showName.toLowerCase() === sellerId.toLowerCase());
+      if (found) {
+        setActiveSeller(found);
+      } else {
+        setActiveSeller(null);
+      }
+    } else {
+      setActiveSeller(null);
+    }
+  }, [activeShowName, referralCode]);
 
   const setCurrency = (code: CurrencyCode) => {
     const found = CURRENCIES.find(c => c.code === code);
@@ -146,7 +163,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   return (
     <StoreContext.Provider value={{ 
-      products, cart, sales, customers, activeShowName, referralCode,
+      products, cart, sales, customers, activeShowName, referralCode, activeSeller,
       currency, language, quickViewProduct,
       setCurrency, setLanguage, setQuickViewProduct, formatPrice,
       addProduct, addToCart, removeFromCart, clearCart 
