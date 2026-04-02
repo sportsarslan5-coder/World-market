@@ -812,6 +812,10 @@ const BLAZER_IMAGES = [
   "https://res.cloudinary.com/dc0ytviey/image/upload/v1774203536/PerformanceBlazer-Blue-Front_srs4hv.png"
 ];
 
+const CAP_IMAGES = [
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961041/IMG-20260329-WA0119_ws0icb.jpg"
+];
+
 const BOOT_IMAGES = [
   "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101784/799665_10_uwhewx.jpg",
   "https://res.cloudinary.com/dc0ytviey/image/upload/v1772101745/the-low-down-on-chelsea-boots-2_qjriex.jpg",
@@ -1428,6 +1432,43 @@ const NEW_BLAZERS: Product[] = BLAZER_IMAGES.map((img, idx) => ({
   imageAlt: `Executive Slim-Fit Blazer Style ${idx + 1}`
 }));
 
+const NEW_CAPS: Product[] = CAP_IMAGES.map((img, idx) => ({
+  id: `cap-${idx}`,
+  name: `Cap`,
+  category: "Accessories",
+  price: 30.00,
+  oldPrice: 45.00,
+  discount: 33,
+  rating: 4.9,
+  stock: 100,
+  description: `Premium quality athletic cap designed for both performance and style. Featuring breathable fabric and an adjustable strap for the perfect fit. Ideal for sports, outdoor activities, or casual streetwear.
+  
+  ### Key Features:
+  - **Breathable Fabric:** Keeps you cool during intense activities.
+  - **Adjustable Strap:** One size fits most with a secure, comfortable fit.
+  - **Durable Construction:** Built to last through every adventure.
+  - **Classic Design:** Timeless aesthetic that complements any outfit.
+  
+  **Material:** 100% Cotton Twill
+  **Quality:** Premium Export Grade
+  **Shipping:** Fast worldwide shipping available.`,
+  image: img,
+  images: [img],
+  datePosted: new Date().toISOString(),
+  fabric: "100% Cotton Twill",
+  quality: "Premium",
+  sizes: ['One Size', 'Normal'],
+  colors: ['Black', 'Navy', 'White', 'Normal Color'],
+  shippingCountry: "Worldwide",
+  sellerId: 'seller-1',
+  sales: 150,
+  badges: ['New Arrival', 'Trending'],
+  metaTitle: `Premium Athletic Cap - Stylish & Breathable Headwear | World Market`,
+  metaDescription: `Shop our premium athletic cap. Breathable cotton twill, adjustable fit, and classic style. Perfect for sports and casual wear.`,
+  metaKeywords: `cap, hat, athletic cap, sports hat, streetwear, accessories`,
+  imageAlt: `Premium Athletic Cap`
+}));
+
 export const PRODUCTS: Product[] = [
   ...CLOUDINARY_IMAGES.map((img, idx) => {
     const category = CATEGORIES[idx % CATEGORIES.length];
@@ -1481,7 +1522,8 @@ export const PRODUCTS: Product[] = [
   ...NEW_JOGGERS,
   ...NEW_BACKPACKS,
   ...NEW_WOOL_SWEATERS,
-  ...NEW_BLAZERS
+  ...NEW_BLAZERS,
+  ...NEW_CAPS
 ];
 
 export const BLOG_POSTS: BlogPost[] = [
