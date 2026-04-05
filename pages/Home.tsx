@@ -54,8 +54,8 @@ const Home: React.FC = () => {
   return (
     <div className="animate-fadeIn bg-white">
       <SEO 
-        title={showName ? `${showName.toUpperCase()} Marketplace` : "Global Factory-Direct Marketplace"}
-        description={showName ? `Shop factory-direct products from ${showName.toUpperCase()} on World Market.` : "World Market connects you with verified global sellers for the best pricing and quality."}
+        title={activeSeller ? `${activeSeller.fullName} Marketplace` : "Global Factory-Direct Marketplace"}
+        description={activeSeller ? `Shop factory-direct products from ${activeSeller.fullName} on World Market.` : "World Market connects you with verified global sellers for the best pricing and quality."}
       />
       {/* Dynamic Show Banner */}
       {activeSeller && (

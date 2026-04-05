@@ -30,7 +30,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
   const { 
     cart, currency, language, setCurrency, setLanguage, formatPrice,
-    quickViewProduct, setQuickViewProduct, addToCart
+    quickViewProduct, setQuickViewProduct, addToCart, activeSeller
   } = useStore();
   const { t } = useTranslation(language.code);
   
@@ -109,7 +109,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1">
             <span className="text-green-500">●</span> 
-            {currentShow ? `${currentShow.toUpperCase()} OFFICIAL SHOW` : '24/7 Seller Support'}
+            {activeSeller ? `${activeSeller.fullName.toUpperCase()} OFFICIAL SHOW` : '24/7 Seller Support'}
           </span>
           <div className="hidden md:flex items-center gap-4 border-l border-white/10 pl-4">
             <div className="flex items-center gap-1 group cursor-pointer relative">

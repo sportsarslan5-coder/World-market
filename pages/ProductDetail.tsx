@@ -8,7 +8,7 @@ import { Star, Truck, ShieldCheck, RotateCcw, MessageCircle, ShoppingCart, Chevr
 
 const ProductDetail: React.FC = () => {
   const { productId, showName: pathShowName } = useParams();
-  const { products, addToCart, activeShowName: subdomainShowName, formatPrice } = useStore();
+  const { products, addToCart, activeShowName: subdomainShowName, formatPrice, activeSeller } = useStore();
   const showName = pathShowName || subdomainShowName;
   const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ const ProductDetail: React.FC = () => {
   const handleWhatsAppOrder = () => {
     const message = `NEW ORDER INQUIRY - World Market Shop
 ---------------------------------
-SOURCE SHOW: ${showName ? showName.toUpperCase() : 'MAIN STORE'}
+SOURCE SHOW: ${activeSeller ? activeSeller.fullName.toUpperCase() : 'MAIN STORE'}
 Item: ${product.name}
 Price: $${product.price.toFixed(2)}
 Size: ${selectedSize}
@@ -315,10 +315,10 @@ Please fill the above data to proceed with manufacturing.`;
                 <div className="pt-6 bg-gray-50 -mx-8 -mb-8 p-8 rounded-b-[2.5rem] border-t">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-black text-xs">
-                      {showName ? showName[0].toUpperCase() : 'WM'}
+                      {activeSeller ? activeSeller.fullName[0].toUpperCase() : 'WM'}
                     </div>
                     <div>
-                      <h5 className="text-[10px] font-black uppercase tracking-widest">{showName ? showName.replace(/-/g, ' ') : 'World Market Official'}</h5>
+                      <h5 className="text-[10px] font-black uppercase tracking-widest">{activeSeller ? activeSeller.fullName : 'World Market Official'}</h5>
                       <p className="text-[9px] font-bold text-gray-400 uppercase">Verified Seller Since 2024</p>
                     </div>
                   </div>

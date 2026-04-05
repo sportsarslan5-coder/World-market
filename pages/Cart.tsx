@@ -5,7 +5,7 @@ import { useStore } from '../context/StoreContext';
 import { ADMIN_WHATSAPP } from '../constants';
 
 const Cart: React.FC = () => {
-  const { cart, removeFromCart, clearCart, activeShowName, referralCode } = useStore();
+  const { cart, removeFromCart, clearCart, activeShowName, referralCode, activeSeller } = useStore();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
     name: '',
@@ -51,7 +51,7 @@ Shipping: ${shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
 Tax: $${tax.toFixed(2)}
 TOTAL: $${total.toFixed(2)}
 
-Show Context: ${activeShowName || 'Main Store'}
+Show Context: ${activeSeller ? activeSeller.fullName : 'Main Store'}
 Referral Code: ${referralCode || 'None (Direct)'}
 ---------------------------------`;
 
