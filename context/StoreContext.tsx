@@ -44,10 +44,15 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const detected = detectShowName();
     if (detected) setActiveShowName(detected);
     
-    // Capture referral code from URL
+    // Capture referral code or seller from URL
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get('ref');
-    if (ref) {
+    const sellerParam = urlParams.get('seller');
+    
+    if (sellerParam) {
+      setReferralCode(sellerParam);
+      sessionStorage.setItem('referralCode', sellerParam);
+    } else if (ref) {
       setReferralCode(ref);
       // Persist referral code in session storage
       sessionStorage.setItem('referralCode', ref);

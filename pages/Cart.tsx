@@ -32,27 +32,25 @@ const Cart: React.FC = () => {
   const handleCheckout = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const itemsList = cart.map(item => `- ${item.name} ${item.selectedSize ? `(Size: ${item.selectedSize})` : ''} ${item.selectedColor ? `(Color: ${item.selectedColor})` : ''} (x${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}`).join('\n');
+    const urlParams = new URLSearchParams(window.location.search);
+    const shopName = urlParams.get('seller') || (activeSeller ? activeSeller.showName : "Main Store");
     
+    const itemsList = cart.map(item => `${item.name} (Size: ${item.selectedSize || 'N/A'}, Color: ${item.selectedColor || 'N/A'}, x${item.quantity})`).join(', ');
+    const sizesList = cart.map(item => item.selectedSize || 'N/A').join(', ');
+    const colorsList = cart.map(item => item.selectedColor || 'N/A').join(', ');
+
     const message = `NEW ORDER RECEIVED
 ---------------------------------
-CUSTOMER DETAILS:
-Name: ${customerInfo.name}
-Email: ${customerInfo.email}
+Shop Name: ${shopName}
+Customer Name: ${customerInfo.name}
 Phone: ${customerInfo.phone}
 Address: ${customerInfo.address}, ${customerInfo.city}, ${customerInfo.country}
-Zip Code: ${customerInfo.zipCode}
-
-ORDER SUMMARY:
-${itemsList}
-
-Subtotal: $${subtotal.toFixed(2)}
-Shipping: ${shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
-Tax: $${tax.toFixed(2)}
-TOTAL: $${total.toFixed(2)}
-
-Show Context: ${activeSeller ? `${activeSeller.fullName} (${activeSeller.showName})` : 'Main Store'}
-Referral Code: ${referralCode || 'None (Direct)'}
+Product: ${itemsList}
+Size: ${sizesList}
+Color: ${colorsList}
+Link: ${window.location.href}
+---------------------------------
+Total Amount: $${total.toFixed(2)}
 ---------------------------------`;
 
     const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;

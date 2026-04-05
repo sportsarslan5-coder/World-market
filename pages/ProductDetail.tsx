@@ -29,26 +29,41 @@ const ProductDetail: React.FC = () => {
     );
   }
 
-  const handleWhatsAppOrder = () => {
-    const message = `NEW ORDER INQUIRY - World Market Shop
+  const [isOrdering, setIsOrdering] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState({
+    name: '',
+    phone: '',
+    address: ''
+  });
+
+  const handleWhatsAppOrder = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    
+    if (!isOrdering) {
+      setIsOrdering(true);
+      return;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const shopName = urlParams.get('seller') || (activeSeller ? activeSeller.showName : "Main Store");
+
+    const message = `NEW ORDER RECEIVED
 ---------------------------------
-SOURCE SHOW: ${activeSeller ? `${activeSeller.fullName.toUpperCase()} (${activeSeller.showName.toUpperCase()})` : 'MAIN STORE'}
-Item: ${product.name}
-Price: $${product.price.toFixed(2)}
-Size: ${selectedSize}
-Color: ${selectedColor}
-Quantity: ${quantity}
-Total: $${(product.price * quantity).toFixed(2)}
+Shop Name: ${shopName}
+Customer Name: ${customerInfo.name}
+Phone: ${customerInfo.phone}
+Address: ${customerInfo.address}
+Product: ${product.name} (x${quantity})
+Size: ${selectedSize || 'N/A'}
+Color: ${selectedColor || 'N/A'}
+Link: ${window.location.href}
 ---------------------------------
-REQUIRED DATA:
-Full Name: 
-Shipping Address: 
-Contact Number: 
----------------------------------
-Please fill the above data to proceed with manufacturing.`;
+Total Amount: $${(product.price * quantity).toFixed(2)}
+---------------------------------`;
 
     const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;
     window.open(waLink, '_blank');
+    setIsOrdering(false);
   };
 
   const handleAddToCart = () => {
@@ -272,20 +287,70 @@ Please fill the above data to proceed with manufacturing.`;
                 </div>
 
                 <div className="space-y-3 pt-4">
-                  <button 
-                    onClick={handleAddToCart}
-                    className="w-full bg-black text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-blue-600 transition-all transform active:scale-95"
-                  >
-                    <ShoppingCart size={18} />
-                    Add to Cart
-                  </button>
-                  <button 
-                    onClick={handleWhatsAppOrder}
-                    className="w-full bg-green-500 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-green-600 transition-all transform active:scale-95 shadow-xl shadow-green-500/20"
-                  >
-                    <MessageCircle size={18} />
-                    Order via WhatsApp
-                  </button>
+                  {isOrdering ? (
+                    <form onSubmit={handleWhatsAppOrder} className="space-y-4 animate-fadeIn">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Full Name</label>
+                        <input 
+                          required
+                          className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold text-sm"
+                          value={customerInfo.name}
+                          onChange={e => setCustomerInfo({...customerInfo, name: e.target.value})}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Phone Number</label>
+                        <input 
+                          required
+                          className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold text-sm"
+                          value={customerInfo.phone}
+                          onChange={e => setCustomerInfo({...customerInfo, phone: e.target.value})}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Shipping Address</label>
+                        <textarea 
+                          required
+                          rows={2}
+                          className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold text-sm"
+                          value={customerInfo.address}
+                          onChange={e => setCustomerInfo({...customerInfo, address: e.target.value})}
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <button 
+                          type="button"
+                          onClick={() => setIsOrdering(false)}
+                          className="flex-1 bg-gray-100 text-black py-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-gray-200 transition-all"
+                        >
+                          Cancel
+                        </button>
+                        <button 
+                          type="submit"
+                          className="flex-[2] bg-green-500 text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-green-600 transition-all shadow-lg shadow-green-500/20"
+                        >
+                          Confirm Order
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <>
+                      <button 
+                        onClick={handleAddToCart}
+                        className="w-full bg-black text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-blue-600 transition-all transform active:scale-95"
+                      >
+                        <ShoppingCart size={18} />
+                        Add to Cart
+                      </button>
+                      <button 
+                        onClick={() => handleWhatsAppOrder()}
+                        className="w-full bg-green-500 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-green-600 transition-all transform active:scale-95 shadow-xl shadow-green-500/20"
+                      >
+                        <MessageCircle size={18} />
+                        Order via WhatsApp
+                      </button>
+                    </>
+                  )}
                 </div>
 
                 <div className="pt-8 space-y-4 border-t border-gray-50">

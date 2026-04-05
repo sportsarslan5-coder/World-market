@@ -16,10 +16,13 @@ const Contact: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    const urlParams = new URLSearchParams(window.location.search);
+    const shopName = urlParams.get('seller') || (activeSeller ? activeSeller.showName : "Main Store");
+
     const message = `NEW INQUIRY RECEIVED
 ---------------------------------
-SOURCE SHOW: ${activeSeller ? `${activeSeller.fullName.toUpperCase()} (${activeSeller.showName.toUpperCase()})` : 'MAIN STORE'}
-Name: ${formState.name}
+Shop Name: ${shopName}
+Customer Name: ${formState.name}
 Email: ${formState.email}
 Subject: ${formState.subject}
 Message: ${formState.message}
