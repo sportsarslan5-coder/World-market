@@ -51,7 +51,7 @@ Shipping: ${shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
 Tax: $${tax.toFixed(2)}
 TOTAL: $${total.toFixed(2)}
 
-Show Context: ${activeSeller ? activeSeller.fullName : 'Main Store'}
+Show Context: ${activeSeller ? `${activeSeller.fullName} (${activeSeller.showName})` : 'Main Store'}
 Referral Code: ${referralCode || 'None (Direct)'}
 ---------------------------------`;
 

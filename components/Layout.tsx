@@ -344,6 +344,23 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         {children}
       </main>
 
+      {/* Floating Seller Badge */}
+      {activeSeller && (
+        <div className="fixed bottom-8 left-8 z-[100] animate-fadeIn">
+          <div className="bg-white/80 backdrop-blur-xl border border-blue-100 p-4 rounded-[2rem] shadow-2xl flex items-center gap-4 group hover:scale-105 transition-all duration-500">
+            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-blue-500/20">
+              🏪
+            </div>
+            <div className="flex flex-col pr-4">
+              <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-0.5">Official Seller</span>
+              <h4 className="text-sm font-black uppercase tracking-tighter text-gray-900 leading-none">{activeSeller.fullName}</h4>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{activeSeller.showName}</span>
+            </div>
+            <div className="absolute -top-2 -right-2 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
+          </div>
+        </div>
+      )}
+
       {/* Quick View Modal */}
       {quickViewProduct && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-8">

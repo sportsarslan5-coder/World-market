@@ -32,7 +32,7 @@ const ProductDetail: React.FC = () => {
   const handleWhatsAppOrder = () => {
     const message = `NEW ORDER INQUIRY - World Market Shop
 ---------------------------------
-SOURCE SHOW: ${activeSeller ? activeSeller.fullName.toUpperCase() : 'MAIN STORE'}
+SOURCE SHOW: ${activeSeller ? `${activeSeller.fullName.toUpperCase()} (${activeSeller.showName.toUpperCase()})` : 'MAIN STORE'}
 Item: ${product.name}
 Price: $${product.price.toFixed(2)}
 Size: ${selectedSize}

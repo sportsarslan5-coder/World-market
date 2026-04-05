@@ -1,8 +1,10 @@
 
 import React, { useState } from 'react';
 import { ADMIN_WHATSAPP } from '../constants';
+import { useStore } from '../context/StoreContext';
 
 const Contact: React.FC = () => {
+  const { activeSeller } = useStore();
   const [formState, setFormState] = useState({
     name: '',
     email: '',
@@ -16,6 +18,7 @@ const Contact: React.FC = () => {
     
     const message = `NEW INQUIRY RECEIVED
 ---------------------------------
+SOURCE SHOW: ${activeSeller ? `${activeSeller.fullName.toUpperCase()} (${activeSeller.showName.toUpperCase()})` : 'MAIN STORE'}
 Name: ${formState.name}
 Email: ${formState.email}
 Subject: ${formState.subject}
