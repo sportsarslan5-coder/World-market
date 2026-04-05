@@ -4,7 +4,7 @@ import { useStore } from '../context/StoreContext';
 import { CATEGORIES, SELLERS } from '../constants';
 
 const Admin: React.FC = () => {
-  const { products, sales, customers, addProduct } = useStore();
+  const { products, sales, customers, addProduct, updateSaleStatus, formatPrice } = useStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'inventory' | 'sales' | 'customers' | 'settings' | 'withdrawals'>('overview');
   const [accessCode, setAccessCode] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -92,6 +92,91 @@ const Admin: React.FC = () => {
             </button>
           ))}
         </div>
+
+        {activeTab === 'overview' && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+            {[
+              { label: 'Total Revenue', value: formatPrice(sales.reduce((acc, s) => acc + s.amount, 0)), icon: '💰', color: 'bg-green-50 text-green-600' },
+              { label: 'Total Orders', value: sales.length, icon: '📦', color: 'bg-blue-50 text-blue-600' },
+              { label: 'Active Sellers', value: SELLERS.length, icon: '👥', color: 'bg-purple-50 text-purple-600' },
+              { label: 'Pending Payments', value: sales.filter(s => s.status === 'Pending Payment').length, icon: '⏳', color: 'bg-orange-50 text-orange-600' }
+            ].map((stat, i) => (
+              <div key={i} className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-gray-100 flex items-center gap-6">
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-2xl ${stat.color}`}>{stat.icon}</div>
+                <div>
+                  <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">{stat.label}</p>
+                  <p className="text-2xl font-black italic tracking-tighter">{stat.value}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {activeTab === 'sales' && (
+          <div className="space-y-8">
+            <div className="flex justify-between items-center mb-8">
+              <h3 className="text-3xl font-black italic tracking-tighter uppercase">Order <span className="text-blue-600 underline">Management</span></h3>
+              <div className="flex gap-4">
+                <button className="bg-blue-600 text-white px-6 py-3 rounded-xl font-black text-xs uppercase shadow-lg">Process All</button>
+                <button className="bg-gray-100 text-gray-900 px-6 py-3 rounded-xl font-black text-xs uppercase">Export CSV</button>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-[3rem] shadow-xl border border-gray-100 overflow-hidden">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Order ID</th>
+                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Customer</th>
+                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Product</th>
+                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Amount</th>
+                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
+                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {sales.map(s => (
+                    <tr key={s.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-10 py-6">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">#{s.id.split('-')[1]}</span>
+                      </td>
+                      <td className="px-10 py-6">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-black uppercase tracking-tighter text-gray-900">{s.customerName}</span>
+                          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{s.customerEmail}</span>
+                        </div>
+                      </td>
+                      <td className="px-10 py-6 text-xs font-bold text-gray-900 uppercase">{s.productName}</td>
+                      <td className="px-10 py-6 text-sm font-black text-gray-900">{formatPrice(s.amount)}</td>
+                      <td className="px-10 py-6">
+                        <span className={`px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest ${
+                          s.status === 'Confirmed' ? 'bg-green-50 text-green-600' : 
+                          s.status === 'Pending Payment' ? 'bg-orange-50 text-orange-600' : 
+                          'bg-blue-50 text-blue-600'
+                        }`}>
+                          {s.status}
+                        </span>
+                      </td>
+                      <td className="px-10 py-6">
+                        <div className="flex gap-4">
+                          {s.status === 'Pending Payment' && (
+                            <button 
+                              onClick={() => updateSaleStatus(s.id, 'Confirmed')}
+                              className="text-green-600 text-[10px] font-black uppercase tracking-widest hover:underline"
+                            >
+                              Confirm Payment
+                            </button>
+                          )}
+                          <button className="text-blue-600 text-[10px] font-black uppercase tracking-widest hover:underline">Details</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {activeTab === 'customers' && (
           <div className="space-y-8">

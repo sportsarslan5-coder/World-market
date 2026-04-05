@@ -80,7 +80,7 @@ export interface SaleRecord {
   customerEmail: string;
   amount: number;
   date: string;
-  status: 'Delivered' | 'Processing' | 'Shipped';
+  status: 'Delivered' | 'Processing' | 'Shipped' | 'Pending Payment' | 'Confirmed';
   sellerId?: string;
   commissionEarned?: number;
 }

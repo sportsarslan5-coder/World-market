@@ -23,6 +23,8 @@ interface StoreContextType {
   addToCart: (product: Product, quantity?: number, selectedSize?: string, selectedColor?: string) => void;
   removeFromCart: (productId: string, selectedSize?: string, selectedColor?: string) => void;
   clearCart: () => void;
+  addSale: (sale: Omit<SaleRecord, 'id' | 'date'>) => void;
+  updateSaleStatus: (id: string, status: SaleRecord['status']) => void;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -166,12 +168,28 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const clearCart = () => setCart([]);
 
+  const addSale = (newSale: Omit<SaleRecord, 'id' | 'date'>) => {
+    const sale: SaleRecord = {
+      ...newSale,
+      id: `sale-${Date.now()}`,
+      date: new Date().toISOString()
+    };
+    setSales(prev => [sale, ...prev]);
+  };
+
+  const updateSaleStatus = (id: string, status: SaleRecord['status']) => {
+    setSales(prev => prev.map(sale => 
+      sale.id === id ? { ...sale, status } : sale
+    ));
+  };
+
   return (
     <StoreContext.Provider value={{ 
       products, cart, sales, customers, activeShowName, referralCode, activeSeller,
       currency, language, quickViewProduct,
       setCurrency, setLanguage, setQuickViewProduct, formatPrice,
-      addProduct, addToCart, removeFromCart, clearCart 
+      addProduct, addToCart, removeFromCart, clearCart,
+      addSale, updateSaleStatus
     }}>
       {children}
     </StoreContext.Provider>

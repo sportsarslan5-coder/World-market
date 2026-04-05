@@ -5,7 +5,7 @@ import { useStore } from '../context/StoreContext';
 import { ADMIN_WHATSAPP } from '../constants';
 
 const Cart: React.FC = () => {
-  const { cart, removeFromCart, clearCart, activeShowName, referralCode, activeSeller } = useStore();
+  const { cart, removeFromCart, clearCart, activeShowName, referralCode, activeSeller, addSale } = useStore();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
     name: '',
@@ -39,6 +39,19 @@ const Cart: React.FC = () => {
     const sizesList = cart.map(item => item.selectedSize || 'N/A').join(', ');
     const colorsList = cart.map(item => item.selectedColor || 'N/A').join(', ');
 
+    // Store order in system
+    cart.forEach(item => {
+      addSale({
+        productId: item.id,
+        productName: item.name,
+        customerName: customerInfo.name,
+        customerEmail: customerInfo.email,
+        amount: item.price * item.quantity,
+        status: 'Pending Payment',
+        sellerId: activeSeller?.id
+      });
+    });
+
     const message = `NEW ORDER RECEIVED
 ---------------------------------
 Shop Name: ${shopName}
@@ -51,13 +64,19 @@ Color: ${colorsList}
 Link: ${window.location.href}
 ---------------------------------
 Total Amount: $${total.toFixed(2)}
----------------------------------`;
+---------------------------------
+PAYMENT FLOW:
+1. Admin will confirm your order.
+2. Admin will send payment instructions (Bank/Wise/PayPal/Crypto).
+3. After payment, your order will be confirmed.
+
+Secure manual payment confirmation via WhatsApp.`;
 
     const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;
     window.open(waLink, '_blank');
     clearCart();
     setIsCheckingOut(false);
-    alert("Order details sent to WhatsApp! Our team will contact you shortly.");
+    alert("Order details sent to WhatsApp! Our team will provide payment instructions shortly.");
   };
 
   if (cart.length === 0) {
@@ -168,6 +187,9 @@ Total Amount: $${total.toFixed(2)}
                       Place Order via WhatsApp
                     </button>
                   </div>
+                  <p className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest pt-4">
+                    Secure manual payment confirmation via WhatsApp.
+                  </p>
                 </form>
               </div>
             ) : (

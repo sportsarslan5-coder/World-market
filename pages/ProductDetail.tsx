@@ -8,7 +8,7 @@ import { Star, Truck, ShieldCheck, RotateCcw, MessageCircle, ShoppingCart, Chevr
 
 const ProductDetail: React.FC = () => {
   const { productId, showName: pathShowName } = useParams();
-  const { products, addToCart, activeShowName: subdomainShowName, formatPrice, activeSeller } = useStore();
+  const { products, addToCart, activeShowName: subdomainShowName, formatPrice, activeSeller, addSale } = useStore();
   const showName = pathShowName || subdomainShowName;
   const navigate = useNavigate();
 
@@ -47,6 +47,17 @@ const ProductDetail: React.FC = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const shopName = urlParams.get('seller') || (activeSeller ? activeSeller.showName : "Main Store");
 
+    // Store order in system
+    addSale({
+      productId: product.id,
+      productName: product.name,
+      customerName: customerInfo.name,
+      customerEmail: 'N/A',
+      amount: product.price * quantity,
+      status: 'Pending Payment',
+      sellerId: activeSeller?.id
+    });
+
     const message = `NEW ORDER RECEIVED
 ---------------------------------
 Shop Name: ${shopName}
@@ -59,7 +70,13 @@ Color: ${selectedColor || 'N/A'}
 Link: ${window.location.href}
 ---------------------------------
 Total Amount: $${(product.price * quantity).toFixed(2)}
----------------------------------`;
+---------------------------------
+PAYMENT FLOW:
+1. Admin will confirm your order.
+2. Admin will send payment instructions (Bank/Wise/PayPal/Crypto).
+3. After payment, your order will be confirmed.
+
+Secure manual payment confirmation via WhatsApp.`;
 
     const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;
     window.open(waLink, '_blank');
@@ -332,6 +349,9 @@ Total Amount: $${(product.price * quantity).toFixed(2)}
                           Confirm Order
                         </button>
                       </div>
+                      <p className="text-center text-[8px] font-bold text-gray-400 uppercase tracking-widest pt-2">
+                        Secure manual payment confirmation via WhatsApp.
+                      </p>
                     </form>
                   ) : (
                     <>
