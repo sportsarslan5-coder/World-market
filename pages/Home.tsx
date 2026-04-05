@@ -54,11 +54,11 @@ const Home: React.FC = () => {
   return (
     <div className="animate-fadeIn bg-white">
       <SEO 
-        title={activeSeller ? `${activeSeller.fullName} Marketplace` : "Global Factory-Direct Marketplace"}
-        description={activeSeller ? `Shop factory-direct products from ${activeSeller.fullName} on World Market.` : "World Market connects you with verified global sellers for the best pricing and quality."}
+        title={activeSeller ? `${activeSeller.fullName} Marketplace` : showName ? `${showName.toUpperCase()} Marketplace` : "Global Factory-Direct Marketplace"}
+        description={activeSeller ? `Shop factory-direct products from ${activeSeller.fullName} on World Market.` : showName ? `Shop factory-direct products from ${showName.toUpperCase()} on World Market.` : "World Market connects you with verified global sellers for the best pricing and quality."}
       />
       {/* Dynamic Show Banner */}
-      {activeSeller && (
+      {activeSeller ? (
         <div className="bg-blue-600 py-4 px-4 text-center relative overflow-hidden group">
           <div className="absolute inset-0 bg-white/10 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
           <p className="text-sm font-black uppercase tracking-[0.3em] text-white flex items-center justify-center gap-3">
@@ -67,7 +67,15 @@ const Home: React.FC = () => {
             <Star size={16} fill="white" />
           </p>
         </div>
-      )}
+      ) : showName ? (
+        <div className="bg-gray-800 py-4 px-4 text-center relative overflow-hidden group">
+          <p className="text-sm font-black uppercase tracking-[0.3em] text-white flex items-center justify-center gap-3">
+            <Clock size={16} className="text-yellow-400" />
+            New Store Created: <span className="text-blue-400">{showName.toUpperCase()}</span>
+            <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded ml-2">Pending Verification</span>
+          </p>
+        </div>
+      ) : null}
 
       {/* Limited Time Offer Banner */}
       <section className="bg-yellow-400 py-3 px-4 overflow-hidden relative">
@@ -112,6 +120,22 @@ const Home: React.FC = () => {
                 <p className="text-xl md:text-2xl font-medium text-gray-300 max-w-2xl leading-relaxed">
                   Curated global products, factory-direct pricing, and verified quality. 
                   Shop the collection from our official partner.
+                </p>
+              </div>
+            ) : showName ? (
+              <div className="mb-12 animate-slideUp">
+                <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-xl border border-white/20 px-6 py-3 rounded-2xl mb-8">
+                  <div className="w-3 h-3 bg-yellow-500 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.6)]"></div>
+                  <span className="text-xs font-black uppercase tracking-widest text-white/90">Store Created - Pending Review</span>
+                </div>
+                <h1 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter leading-[0.9] mb-6">
+                  Welcome to <br />
+                  <span className="text-blue-500 drop-shadow-[0_0_30px_rgba(59,130,246,0.4)]">{showName.toUpperCase()}</span> <br />
+                  <span className="text-white">Marketplace</span>
+                </h1>
+                <p className="text-xl md:text-2xl font-medium text-gray-300 max-w-2xl leading-relaxed">
+                  Your unique marketplace link is now active! Start sharing your store name 
+                  to earn commissions on every global sale.
                 </p>
               </div>
             ) : (

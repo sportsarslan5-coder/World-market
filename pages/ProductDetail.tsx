@@ -315,11 +315,13 @@ Please fill the above data to proceed with manufacturing.`;
                 <div className="pt-6 bg-gray-50 -mx-8 -mb-8 p-8 rounded-b-[2.5rem] border-t">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-black text-xs">
-                      {activeSeller ? activeSeller.fullName[0].toUpperCase() : 'WM'}
+                      {activeSeller ? activeSeller.fullName[0].toUpperCase() : showName ? showName[0].toUpperCase() : 'WM'}
                     </div>
                     <div>
-                      <h5 className="text-[10px] font-black uppercase tracking-widest">{activeSeller ? activeSeller.fullName : 'World Market Official'}</h5>
-                      <p className="text-[9px] font-bold text-gray-400 uppercase">Verified Seller Since 2024</p>
+                      <h5 className="text-[10px] font-black uppercase tracking-widest">{activeSeller ? activeSeller.fullName : showName ? showName.toUpperCase() : 'World Market Official'}</h5>
+                      <p className="text-[9px] font-bold text-gray-400 uppercase">
+                        {activeSeller ? 'Verified Seller Since 2024' : 'New Seller - Pending Verification'}
+                      </p>
                     </div>
                   </div>
                 </div>

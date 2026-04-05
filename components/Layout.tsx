@@ -109,7 +109,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1">
             <span className="text-green-500">●</span> 
-            {activeSeller ? `${activeSeller.fullName.toUpperCase()} OFFICIAL SHOW` : '24/7 Seller Support'}
+            {activeSeller 
+              ? `${activeSeller.fullName.toUpperCase()} OFFICIAL SHOW` 
+              : currentShow 
+                ? `${currentShow.toUpperCase()} SHOW (NEW)` 
+                : '24/7 Seller Support'}
           </span>
           <div className="hidden md:flex items-center gap-4 border-l border-white/10 pl-4">
             <div className="flex items-center gap-1 group cursor-pointer relative">
