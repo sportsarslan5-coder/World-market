@@ -73,16 +73,16 @@ const SellerRanking: React.FC = () => {
             color="bg-blue-50 text-blue-600"
             icon={ShoppingBag}
             requirements={[
+              "Basic Seller Account",
               "Verified Email & Phone",
               "Complete Business Profile",
-              "Valid Identity Documents",
               "Active Product Listings"
             ]}
             benefits={[
               "Global Marketplace Access",
               "Basic Seller Dashboard",
               "Standard Support",
-              "Standard Commission Rates"
+              "3% Commission Rate"
             ]}
           />
           <RankCard 
@@ -90,16 +90,16 @@ const SellerRanking: React.FC = () => {
             color="bg-gray-100 text-gray-600"
             icon={ShieldCheck}
             requirements={[
-              "Minimum 50 Successful Orders",
+              "Minimum 100 Successful Orders",
               "4.0+ Average Rating",
-              "90% Response Rate",
-              "Verified Business Entity"
+              "Verified Seller Status",
+              "90% Response Rate"
             ]}
             benefits={[
               "Silver Badge on Profile",
               "Priority Search Listing",
               "24/7 Priority Support",
-              "Reduced Commission (4.5%)"
+              "4% Commission Rate"
             ]}
           />
           <RankCard 
@@ -108,15 +108,15 @@ const SellerRanking: React.FC = () => {
             icon={Award}
             requirements={[
               "Minimum 200 Successful Orders",
-              "4.8+ Average Rating",
-              "98% Response Rate",
-              "No Policy Violations"
+              "4.5+ Average Rating",
+              "Verified Business Entity",
+              "98% Response Rate"
             ]}
             benefits={[
               "Gold Badge & Verification",
               "Top-Tier Search Placement",
               "Dedicated Account Manager",
-              "Lowest Commission (3.5%)"
+              "8-8.5% Commission Rate"
             ]}
           />
         </div>

@@ -1,7 +1,9 @@
 
 export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'AED' | 'PKR';
 export type LanguageCode = 'en' | 'ar' | 'fr' | 'es' | 'de';
-export type SellerRank = 'Gold' | 'Silver' | 'Starter';
+export type SellerRank = 'Gold' | 'Silver' | 'Standard';
+export type VerificationStatus = 'Pending' | 'Verified' | 'Rejected';
+export type BusinessType = 'Individual' | 'Business';
 
 export interface Currency {
   code: CurrencyCode;
@@ -108,9 +110,14 @@ export interface SellerInfo {
   totalSales: number;
   responseTime: string;
   isVerified: boolean;
+  verificationStatus: VerificationStatus;
+  businessType: BusinessType;
+  kycDocuments?: string[];
   joinedDate: string;
   balance: number;
   commissionRate: number;
+  totalEarnings: number;
+  withdrawnAmount: number;
 }
 
 export interface BlogPost {

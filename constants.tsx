@@ -1,4 +1,4 @@
-import { Product, Customer, Currency, Language, SellerInfo, BlogPost } from './types';
+import { Product, Customer, Currency, Language, SellerInfo, BlogPost, SaleRecord } from './types';
 
 export const ADMIN_WHATSAPP = "923187536795"; 
 
@@ -42,9 +42,13 @@ export const SELLERS: SellerInfo[] = [
     totalSales: 1250,
     responseTime: '< 1 hour',
     isVerified: true,
+    verificationStatus: 'Verified',
+    businessType: 'Business',
     joinedDate: '2023-01-15',
     balance: 4500.50,
-    commissionRate: 0.08
+    commissionRate: 0.08,
+    totalEarnings: 15400.00,
+    withdrawnAmount: 10899.50
   },
   {
     id: 'seller-2',
@@ -61,9 +65,13 @@ export const SELLERS: SellerInfo[] = [
     totalSales: 450,
     responseTime: '< 4 hours',
     isVerified: true,
+    verificationStatus: 'Verified',
+    businessType: 'Business',
     joinedDate: '2023-06-20',
     balance: 1200.00,
-    commissionRate: 0.04
+    commissionRate: 0.04,
+    totalEarnings: 5600.00,
+    withdrawnAmount: 4400.00
   },
   {
     id: 'seller-3',
@@ -75,14 +83,18 @@ export const SELLERS: SellerInfo[] = [
     contactNumber: '+44 20 1234 5678',
     paymentDetails: 'PayPal',
     showName: 'starterpromo',
-    rank: 'Starter',
+    rank: 'Standard',
     rating: 4.0,
     totalSales: 50,
     responseTime: '< 24 hours',
     isVerified: true,
+    verificationStatus: 'Verified',
+    businessType: 'Individual',
     joinedDate: '2024-01-10',
     balance: 150.00,
-    commissionRate: 0.03
+    commissionRate: 0.03,
+    totalEarnings: 450.00,
+    withdrawnAmount: 300.00
   }
 ];
 
@@ -1550,6 +1562,45 @@ export const BLOG_POSTS: BlogPost[] = [
     date: '2025-02-25',
     author: 'Design Team',
     tags: ['Trends', 'Sportswear', '2025']
+  }
+];
+
+export const MOCK_ORDERS: SaleRecord[] = [
+  {
+    id: 'ORD-1001',
+    productId: 'wm-post-0',
+    productName: 'Professional Team Jersey',
+    customerName: 'John Smith',
+    customerEmail: 'john@example.com',
+    amount: 150.00,
+    date: '2024-03-20',
+    status: 'Shipped',
+    sellerId: 'seller-1',
+    commissionEarned: 12.00
+  },
+  {
+    id: 'ORD-1002',
+    productId: 'wm-post-1',
+    productName: 'Elite Training Shorts',
+    customerName: 'Sarah Wilson',
+    customerEmail: 'sarah@example.com',
+    amount: 85.00,
+    date: '2024-03-21',
+    status: 'Processing',
+    sellerId: 'seller-1',
+    commissionEarned: 6.80
+  },
+  {
+    id: 'ORD-1003',
+    productId: 'wm-post-2',
+    productName: 'Performance Hoodie',
+    customerName: 'Mike Ross',
+    customerEmail: 'mike@example.com',
+    amount: 120.00,
+    date: '2024-03-22',
+    status: 'Delivered',
+    sellerId: 'seller-1',
+    commissionEarned: 9.60
   }
 ];
 

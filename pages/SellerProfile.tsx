@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { SELLERS, PRODUCTS } from '../constants';
-import { Star, CheckCircle, MapPin, MessageCircle, ShoppingBag, Award, Clock, Eye } from 'lucide-react';
+import { Star, CheckCircle, MapPin, MessageCircle, ShoppingBag, Award, Clock, Eye, ShieldCheck } from 'lucide-react';
 
 const SellerProfile: React.FC = () => {
   const { sellerId } = useParams();
@@ -19,14 +19,21 @@ const SellerProfile: React.FC = () => {
         return (
           <div className="flex items-center gap-2 bg-yellow-50 text-yellow-700 px-4 py-2 rounded-2xl border border-yellow-200 shadow-sm shadow-yellow-500/10">
             <Award size={18} className="text-yellow-500" />
-            <span className="text-xs font-black uppercase tracking-widest">Gold Seller</span>
+            <span className="text-[10px] font-black uppercase tracking-widest">Gold Seller</span>
           </div>
         );
       case 'Silver':
         return (
           <div className="flex items-center gap-2 bg-gray-50 text-gray-700 px-4 py-2 rounded-2xl border border-gray-200 shadow-sm shadow-gray-500/10">
             <Award size={18} className="text-gray-400" />
-            <span className="text-xs font-black uppercase tracking-widest">Silver Seller</span>
+            <span className="text-[10px] font-black uppercase tracking-widest">Silver Seller</span>
+          </div>
+        );
+      case 'Standard':
+        return (
+          <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-2xl border border-blue-200 shadow-sm shadow-blue-500/10">
+            <Award size={18} className="text-blue-400" />
+            <span className="text-[10px] font-black uppercase tracking-widest">Standard Seller</span>
           </div>
         );
       default:
@@ -50,9 +57,15 @@ const SellerProfile: React.FC = () => {
                 </h1>
                 <div className="flex items-center justify-center gap-3">
                   {seller.isVerified && (
-                    <div className="flex items-center gap-1 bg-blue-50 text-blue-600 px-3 py-1 rounded-full border border-blue-100">
-                      <CheckCircle size={14} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">Verified</span>
+                    <div className="flex items-center gap-1 bg-green-50 text-green-600 px-3 py-1 rounded-full border border-green-100">
+                      <ShieldCheck size={14} />
+                      <span className="text-[10px] font-black uppercase tracking-widest">{seller.verificationStatus || 'Verified'}</span>
+                    </div>
+                  )}
+                  {seller.businessType && (
+                    <div className="flex items-center gap-1 bg-purple-50 text-purple-600 px-3 py-1 rounded-full border border-purple-100">
+                      <ShoppingBag size={14} />
+                      <span className="text-[10px] font-black uppercase tracking-widest">{seller.businessType}</span>
                     </div>
                   )}
                   <RankBadge rank={seller.rank} />
