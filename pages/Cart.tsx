@@ -33,11 +33,12 @@ const Cart: React.FC = () => {
     e.preventDefault();
     
     const urlParams = new URLSearchParams(window.location.search);
-    const shopName = urlParams.get('seller') || (activeSeller ? activeSeller.showName : "Main Store");
+    const shopName = urlParams.get('seller') || (activeSeller ? activeSeller.showName : (activeShowName || "Main Store"));
+    const sellerCode = referralCode || (activeSeller ? activeSeller.id : "Direct");
     
-    const itemsList = cart.map(item => `${item.name} (Size: ${item.selectedSize || 'N/A'}, Color: ${item.selectedColor || 'N/A'}, x${item.quantity})`).join(', ');
-    const sizesList = cart.map(item => item.selectedSize || 'N/A').join(', ');
-    const colorsList = cart.map(item => item.selectedColor || 'N/A').join(', ');
+    const orderSummary = cart.map(item => 
+      `Product: ${item.name} (ID: ${item.id})\nSize: ${item.selectedSize || 'N/A'}\nColor: ${item.selectedColor || 'N/A'}\nQuantity: ${item.quantity}\nPrice: $${item.price.toFixed(2)}`
+    ).join('\n\n');
 
     // Store order in system
     cart.forEach(item => {
@@ -53,23 +54,29 @@ const Cart: React.FC = () => {
     });
 
     const message = `NEW ORDER RECEIVED
----------------------------------
+--------------------------------
+
+--- SHOP DETAILS ---
 Shop Name: ${shopName}
-Customer Name: ${customerInfo.name}
+Referral Code: ${sellerCode}
+
+--- CUSTOMER DETAILS ---
+Name: ${customerInfo.name}
+Email: ${customerInfo.email}
 Phone: ${customerInfo.phone}
 Address: ${customerInfo.address}, ${customerInfo.city}, ${customerInfo.country}
-Product: ${itemsList}
-Size: ${sizesList}
-Color: ${colorsList}
-Link: ${window.location.href}
----------------------------------
-Total Amount: $${total.toFixed(2)}
----------------------------------
-PAYMENT FLOW:
-1. Admin will confirm your order.
-2. Admin will send payment instructions (Bank/Wise/PayPal/Crypto).
-3. After payment, your order will be confirmed.
+Zip Code: ${customerInfo.zipCode}
 
+--- ORDER SUMMARY ---
+${orderSummary}
+
+--- BILLING ---
+Subtotal: $${subtotal.toFixed(2)}
+Shipping: ${shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
+Tax: $${tax.toFixed(2)}
+TOTAL: $${total.toFixed(2)}
+
+--------------------------------
 Secure manual payment confirmation via WhatsApp.`;
 
     const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;

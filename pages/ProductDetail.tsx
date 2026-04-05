@@ -8,7 +8,7 @@ import { Star, Truck, ShieldCheck, RotateCcw, MessageCircle, ShoppingCart, Chevr
 
 const ProductDetail: React.FC = () => {
   const { productId, showName: pathShowName } = useParams();
-  const { products, addToCart, activeShowName: subdomainShowName, formatPrice, activeSeller, addSale } = useStore();
+  const { products, addToCart, activeShowName: subdomainShowName, formatPrice, activeSeller, addSale, referralCode } = useStore();
   const showName = pathShowName || subdomainShowName;
   const navigate = useNavigate();
 
@@ -45,7 +45,8 @@ const ProductDetail: React.FC = () => {
     }
 
     const urlParams = new URLSearchParams(window.location.search);
-    const shopName = urlParams.get('seller') || (activeSeller ? activeSeller.showName : "Main Store");
+    const shopName = urlParams.get('seller') || (activeSeller ? activeSeller.showName : (showName || "Main Store"));
+    const sellerCode = referralCode || (activeSeller ? activeSeller.id : "Direct");
 
     // Store order in system
     addSale({
@@ -59,23 +60,28 @@ const ProductDetail: React.FC = () => {
     });
 
     const message = `NEW ORDER RECEIVED
----------------------------------
+--------------------------------
+
+--- SHOP DETAILS ---
 Shop Name: ${shopName}
-Customer Name: ${customerInfo.name}
+Referral Code: ${sellerCode}
+
+--- CUSTOMER DETAILS ---
+Name: ${customerInfo.name}
 Phone: ${customerInfo.phone}
 Address: ${customerInfo.address}
-Product: ${product.name} (x${quantity})
+
+--- ORDER SUMMARY ---
+Product: ${product.name} (ID: ${product.id})
 Size: ${selectedSize || 'N/A'}
 Color: ${selectedColor || 'N/A'}
-Link: ${window.location.href}
----------------------------------
-Total Amount: $${(product.price * quantity).toFixed(2)}
----------------------------------
-PAYMENT FLOW:
-1. Admin will confirm your order.
-2. Admin will send payment instructions (Bank/Wise/PayPal/Crypto).
-3. After payment, your order will be confirmed.
+Quantity: ${quantity}
+Price: $${product.price.toFixed(2)}
 
+--- BILLING ---
+TOTAL: $${(product.price * quantity).toFixed(2)}
+
+--------------------------------
 Secure manual payment confirmation via WhatsApp.`;
 
     const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;
