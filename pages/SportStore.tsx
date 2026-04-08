@@ -17,9 +17,7 @@ const SportStore: React.FC = () => {
         "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961389/IMG-20260329-WA0006_ztxqy5.jpg",
         "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961392/IMG-20260329-WA0001_w6wv6h.jpg",
         "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961393/IMG-20260329-WA0002_pk31td.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961397/IMG-20260329-WA0000_muyyzt.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961401/IMG-20260329-WA0003_hmkv8s.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961380/IMG-20260329-WA0005_jib82r.jpg"
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961397/IMG-20260329-WA0000_muyyzt.jpg"
       ]
     },
     {
@@ -35,61 +33,36 @@ const SportStore: React.FC = () => {
         "https://res.cloudinary.com/dc0ytviey/image/upload/v1774960848/IMG-20260329-WA0163_glsfak.jpg",
         "https://res.cloudinary.com/dc0ytviey/image/upload/v1774960853/IMG-20260329-WA0162_f4arjo.jpg",
         "https://res.cloudinary.com/dc0ytviey/image/upload/v1774960854/IMG-20260329-WA0164_pmff1o.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774960855/IMG-20260329-WA0167_vez3fj.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961238/IMG-20260329-WA0056_rcfzbo.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961240/IMG-20260329-WA0051_gbziqz.jpg"
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774960855/IMG-20260329-WA0167_vez3fj.jpg"
       ]
     },
     {
-      id: 3,
-      name: "Shorts",
+      id: 11,
+      name: "Cap",
       price: 30,
-      description: "Lightweight sports shorts perfect for training and matches.",
-      sizes: "All sizes available",
+      description: "Premium quality sports caps with custom embroidery options.",
+      sizes: "Adjustable",
       colors: "All colors available",
       images: [
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961152/IMG-20260329-WA0080_qplop8.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961156/IMG-20260329-WA0084_fd4hmp.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961166/IMG-20260329-WA0078_afxatg.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961169/IMG-20260329-WA0079_uzhxvo.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961169/IMG-20260329-WA0076_k0jgjc.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961135/IMG-20260329-WA0085_ktcwb9.jpg"
-      ]
-    },
-    {
-      id: 4,
-      name: "Joggers or Sweatpants",
-      price: 40,
-      description: "Comfortable and flexible joggers for gym and sports use.",
-      sizes: "All sizes available",
-      colors: "All colors available",
-      images: [
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961095/IMG-20260329-WA0103_qfh2o8.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961098/IMG-20260329-WA0101_j0znnv.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961110/IMG-20260329-WA0100_qajbtl.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961099/IMG-20260329-WA0102_obpt6s.jpg"
-      ]
-    },
-    {
-      id: 5,
-      name: "Long Sleeve Jerseys",
-      price: 30,
-      description: "Professional long sleeve jerseys for all sports.",
-      sizes: "All sizes available",
-      colors: "All colors available",
-      images: [
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961127/IMG-20260329-WA0093_ncewen.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961143/IMG-20260329-WA0088_mhb3wg.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961131/IMG-20260329-WA0091_yzdnml.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961172/IMG-20260329-WA0075_mkb1sj.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961147/IMG-20260329-WA0090_wfhm6d.jpg"
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961041/IMG-20260329-WA0119_ws0icb.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961050/IMG-20260329-WA0114_kp2v8q.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961049/IMG-20260329-WA0116_pndnb3.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961050/IMG-20260329-WA0112_pp3m6e.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961066/IMG-20260329-WA0113_efnujj.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961021/IMG-20260329-WA0125_p2bl6o.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961030/IMG-20260329-WA0115_disphb.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961038/IMG-20260329-WA0120_sxw9n1.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961039/IMG-20260329-WA0118_rqylia.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961040/IMG-20260329-WA0117_azcjio.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961010/IMG-20260329-WA0123_nvgdls.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961011/IMG-20260329-WA0124_mnaer3.jpg"
       ]
     },
     {
       id: 6,
       name: "Basketball Uniforms",
       price: 40,
-      description: "Complete basketball kits with custom design options. Professional grade fabric for peak performance.",
+      description: "Complete basketball kits with custom design options.",
       sizes: "All sizes available",
       colors: "All colors available",
       images: [
@@ -100,45 +73,16 @@ const SportStore: React.FC = () => {
         "https://res.cloudinary.com/dc0ytviey/image/upload/v1775314470/IMG_20260404_121458_602_oviyaj.jpg",
         "https://res.cloudinary.com/dc0ytviey/image/upload/v1775314471/IMG_20260404_130428_754_suuztm.jpg",
         "https://res.cloudinary.com/dc0ytviey/image/upload/v1775314471/IMG_20260404_121448_613_gpspoc.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775314463/IMG_20260329_234621_277_qpj8ae.jpg"
-      ]
-    },
-    {
-      id: 7,
-      name: "baseball jersey",
-      price: 35,
-      description: "High-quality baseball jerseys with team customization. Durable and breathable materials.",
-      sizes: "All sizes available",
-      colors: "All colors available",
-      images: [
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775149216/Gemini_Generated_Image_96bxvd96bxvd96bx_amsbbi.png",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775149219/4fe70d5f-1738-461d-ad7d-c1250ab268cf_hmceok.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775149225/Gemini_Generated_Image_9gmjgc9gmjgc9gmj_hm8thv.png",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775149219/Gemini_Generated_Image_ddqesaddqesaddqe_hp1dnu.png",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775149225/Gemini_Generated_Image_1x7s311x7s311x7s_kzkm3k.png",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775149210/4d51148e-ce06-4509-9fc2-8f26947aba47_ito0mc.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775149214/7e8765aa-b380-425a-a0e1-277cbcabf763_qtfm5v.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775149214/597a9cde-7f92-4ebe-a109-8fdc16b66602_xbyak1.jpg"
-      ]
-    },
-    {
-      id: 8,
-      name: "Baseball Bat",
-      price: 150,
-      description: "Durable and professional baseball bats for competitive play.",
-      sizes: "Standard Sizes",
-      colors: "Natural Wood / Black / Custom",
-      images: [
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774960761/IMG-20260331-WA0007_pywcoz.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774960765/IMG-20260331-WA0008_dijbqz.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774960774/IMG-20260331-WA0005_nqzk64.jpg"
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775314463/IMG_20260329_234621_277_qpj8ae.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775314465/IMG_20260404_125733_655_r4rsoe.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775314468/IMG_20260404_125948_358_h9jofr.jpg"
       ]
     },
     {
       id: 9,
-      name: "American football jersey",
+      name: "American Football Jersey",
       price: 30,
-      description: "Strong and premium quality football jerseys. Built for durability and performance on the field.",
+      description: "Strong and premium quality football jerseys.",
       sizes: "All sizes available",
       colors: "All colors available",
       images: [
@@ -156,9 +100,9 @@ const SportStore: React.FC = () => {
     },
     {
       id: 10,
-      name: "ice hockey Jersey",
+      name: "Ice Hockey Jersey",
       price: 40,
-      description: "Heavy-duty hockey jerseys designed for performance. Premium materials for maximum comfort.",
+      description: "Heavy-duty hockey jerseys designed for performance.",
       sizes: "All sizes available",
       colors: "All colors available",
       images: [
@@ -173,21 +117,32 @@ const SportStore: React.FC = () => {
       ]
     },
     {
-      id: 11,
-      name: "Cap",
-      price: 30,
-      description: "Premium quality sports caps with custom embroidery options. Perfect for teams and casual wear.",
-      sizes: "Adjustable / All sizes",
+      id: 7,
+      name: "Baseball Jersey",
+      price: 35,
+      description: "High-quality baseball jerseys with team customization.",
+      sizes: "All sizes available",
       colors: "All colors available",
       images: [
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961041/IMG-20260329-WA0119_ws0icb.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961050/IMG-20260329-WA0114_kp2v8q.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961049/IMG-20260329-WA0116_pndnb3.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961050/IMG-20260329-WA0112_pp3m6e.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961066/IMG-20260329-WA0113_efnujj.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961021/IMG-20260329-WA0125_p2bl6o.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961030/IMG-20260329-WA0115_disphb.jpg",
-        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774961038/IMG-20260329-WA0120_sxw9n1.jpg"
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775149216/Gemini_Generated_Image_96bxvd96bxvd96bx_amsbbi.png",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775149219/4fe70d5f-1738-461d-ad7d-c1250ab268cf_hmceok.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775149225/Gemini_Generated_Image_9gmjgc9gmjgc9gmj_hm8thv.png",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775149219/Gemini_Generated_Image_ddqesaddqesaddqe_hp1dnu.png",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775149225/Gemini_Generated_Image_1x7s311x7s311x7s_kzkm3k.png",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1775149210/4d51148e-ce06-4509-9fc2-8f26947aba47_ito0mc.jpg"
+      ]
+    },
+    {
+      id: 8,
+      name: "Baseball Bat",
+      price: 150,
+      description: "Durable and professional baseball bats.",
+      sizes: "Standard Sizes",
+      colors: "Natural Wood / Black / Custom",
+      images: [
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774960761/IMG-20260331-WA0007_pywcoz.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774960765/IMG-20260331-WA0008_dijbqz.jpg",
+        "https://res.cloudinary.com/dc0ytviey/image/upload/v1774960774/IMG-20260331-WA0005_nqzk64.jpg"
       ]
     }
   ];
