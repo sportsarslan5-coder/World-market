@@ -23,6 +23,7 @@ import BlogPost from './pages/BlogPost';
 import SellerProfile from './pages/SellerProfile';
 import SellerDashboard from './pages/SellerDashboard';
 import SellerRanking from './pages/SellerRanking';
+import SportStore from './pages/SportStore';
 
 const App: React.FC = () => {
   return (
@@ -38,6 +39,7 @@ const App: React.FC = () => {
           <Route path="/admin" element={<Admin />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/register-show" element={<RegisterShow />} />
+          <Route path="/sport-store" element={<SportStore />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/shipping-policy" element={<ShippingPolicy />} />
           <Route path="/about-us" element={<AboutUs />} />

@@ -274,6 +274,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <span>All</span>
             </button>
             <Link to={getLink('/products')} className="hover:text-blue-500">Today's Deals</Link>
+            <Link to="/sport-store" className="text-yellow-500 hover:underline">Sport Store 🔥</Link>
             <Link to={getLink('/ai-designer')} className="text-blue-500 hover:underline">AI Design Studio</Link>
             <Link to={getLink('/products?cat=Clothing')} className="hover:text-blue-500">Clothing</Link>
             <Link to={getLink('/products?cat=Shoes')} className="hover:text-blue-500">Shoes</Link>
