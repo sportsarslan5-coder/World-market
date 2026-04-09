@@ -43,7 +43,7 @@ const FAQ: React.FC = () => {
             Frequently Asked <span className="text-blue-600 underline">Questions</span>
           </h1>
           <p className="text-xl text-gray-400 font-medium leading-relaxed max-w-2xl mx-auto">
-            Everything you need to know about World Market. Can't find the answer? Reach out to us.
+            Everything you need to know about W-LORD MARKET. Can't find the answer? Reach out to us.
           </p>
         </div>
 

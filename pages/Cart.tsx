@@ -275,7 +275,7 @@ Secure manual payment confirmation via WhatsApp.`;
               </button>
             )}
             <div className="mt-8 text-center">
-              <span className="text-[9px] font-black uppercase text-gray-500 tracking-widest">Powered by World Market Global Payments</span>
+              <span className="text-[9px] font-black uppercase text-gray-500 tracking-widest">Powered by W-LORD MARKET Global Payments</span>
             </div>
           </div>
         </div>

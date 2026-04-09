@@ -23,9 +23,9 @@ const SEO: React.FC<SEOProps> = ({
 }) => {
   const { pathname } = useLocation();
   
-  const siteName = 'World Market';
-  const defaultTitle = 'World Market | Global Factory-Direct Marketplace';
-  const defaultDescription = 'Shop factory-direct products from around the world. World Market connects you with verified global sellers for the best pricing and quality.';
+  const siteName = 'W-LORD MARKET';
+  const defaultTitle = 'W-LORD MARKET | Global Sportswear Manufacturer';
+  const defaultDescription = 'W-LORD MARKET is a premier international sports uniform manufacturing company from Sialkot, delivering high-end athletic apparel worldwide.';
   const defaultImage = 'https://picsum.photos/seed/worldmarket/1200/630';
   const siteUrl = 'https://worldmarket.shop'; // Placeholder for actual URL
 

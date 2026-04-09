@@ -12,7 +12,7 @@ const Blog: React.FC = () => {
       <div className="bg-gray-900 text-white py-24 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter mb-6">
-            World Market <span className="text-blue-500 underline">Blog</span>
+            W-LORD MARKET <span className="text-blue-500 underline">Blog</span>
           </h1>
           <p className="text-xl text-gray-400 font-medium leading-relaxed">
             Insights, trends, and news from the global factory-direct marketplace.

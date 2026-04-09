@@ -56,7 +56,7 @@ const ShippingPolicy: React.FC = () => {
           <section>
             <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">4. Customs, Duties & Taxes</h2>
             <p className="text-gray-600 leading-relaxed font-medium">
-              World Market is not responsible for any customs and taxes applied to your order. All fees imposed during or after shipping are the responsibility of the customer (tariffs, taxes, etc.).
+              W-LORD MARKET is not responsible for any customs and taxes applied to your order. All fees imposed during or after shipping are the responsibility of the customer (tariffs, taxes, etc.).
             </p>
           </section>
 

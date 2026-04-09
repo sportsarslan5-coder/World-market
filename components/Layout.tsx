@@ -1,6 +1,7 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import BrandLogo from './BrandLogo';
 import SEO from './SEO';
 import { useStore } from '../context/StoreContext';
 import { detectShowName } from '../services/routingUtils';
@@ -162,14 +163,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center h-20 gap-4 md:gap-8">
             {/* Logo */}
-            <Link to={getLink('/')} className="flex items-center gap-2 flex-shrink-0 group">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-600 rounded-xl flex items-center justify-center text-xl md:text-2xl shadow-lg shadow-blue-500/20 group-hover:bg-white transition-all">
-                🌍
-              </div>
-              <div className="hidden sm:flex flex-col leading-none">
-                <span className="text-lg md:text-xl font-black font-oswald tracking-tighter text-blue-500 italic group-hover:text-white transition-colors">WORLD</span>
-                <span className="text-lg md:text-xl font-black font-oswald tracking-tighter text-white italic group-hover:text-blue-500 transition-colors">MARKET</span>
-              </div>
+            <Link to={getLink('/')} className="flex-shrink-0">
+              <BrandLogo />
             </Link>
 
             {/* Advanced Search */}
@@ -291,10 +286,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl lg:hidden animate-fadeIn">
           <div className="p-6 flex flex-col h-full">
             <div className="flex justify-between items-center mb-12">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-xl">🌍</div>
-                <span className="text-xl font-black italic uppercase tracking-tighter text-white">WORLD MARKET</span>
-              </div>
+              <BrandLogo />
               <button onClick={() => setIsMobileMenuOpen(false)} className="text-white p-2">
                 <X size={32} />
               </button>
@@ -500,8 +492,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-24">
             {/* Brand & Newsletter */}
             <div className="space-y-8">
-              <Link to="/" className="text-3xl font-black italic uppercase tracking-tighter">
-                World <span className="text-blue-500">Market</span>
+              <Link to="/" className="block">
+                <BrandLogo />
               </Link>
               <p className="text-gray-400 text-sm font-medium leading-relaxed">
                 The global marketplace for factory-direct products. Buy anything, sell everywhere.
@@ -579,7 +571,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </div>
 
             <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest">
-              © 2025 World Market. All rights reserved.
+              © 2025 W-LORD MARKET. All rights reserved.
             </p>
           </div>
         </div>

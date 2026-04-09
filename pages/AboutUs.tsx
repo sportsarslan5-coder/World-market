@@ -34,7 +34,7 @@ const AboutUs: React.FC = () => {
               Eliminating the <span className="text-blue-600 underline">Middleman</span>
             </h2>
             <p className="text-lg text-gray-600 leading-relaxed font-medium">
-              World Market was founded on a simple principle: high-quality products should be accessible to everyone, regardless of location. By partnering directly with manufacturers, we eliminate unnecessary markups and deliver value directly to your doorstep.
+              W-LORD MARKET was founded on a simple principle: high-quality products should be accessible to everyone, regardless of location. By partnering directly with manufacturers, we eliminate unnecessary markups and deliver value directly to your doorstep.
             </p>
             <div className="grid grid-cols-2 gap-8 pt-8">
               <div>

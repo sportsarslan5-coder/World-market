@@ -5,6 +5,7 @@ import SEO from '../components/SEO';
 import { CATEGORIES, PRODUCTS } from '../constants';
 import { useStore } from '../context/StoreContext';
 import { getEnvironmentMode } from '../services/routingUtils';
+import BrandLogo from '../components/BrandLogo';
 import { 
   Globe, 
   ShieldCheck, 
@@ -54,8 +55,8 @@ const Home: React.FC = () => {
   return (
     <div className="animate-fadeIn bg-white">
       <SEO 
-        title={activeSeller ? `${activeSeller.fullName} Marketplace` : showName ? `${showName.toUpperCase()} Marketplace` : "Global Factory-Direct Marketplace"}
-        description={activeSeller ? `Shop factory-direct products from ${activeSeller.fullName} on World Market.` : showName ? `Shop factory-direct products from ${showName.toUpperCase()} on World Market.` : "World Market connects you with verified global sellers for the best pricing and quality."}
+        title={activeSeller ? `${activeSeller.fullName} - W-LORD MARKET` : showName ? `${showName.toUpperCase()} - W-LORD MARKET` : "W-LORD MARKET | Global Sportswear Manufacturer"}
+        description={activeSeller ? `Shop factory-direct products from ${activeSeller.fullName} on W-LORD MARKET.` : showName ? `Shop factory-direct products from ${showName.toUpperCase()} on W-LORD MARKET.` : "W-LORD MARKET connects you with verified global manufacturers for the best pricing and quality in sports uniforms."}
       />
       {/* Dynamic Show Banner */}
       {activeSeller ? (
@@ -448,13 +449,13 @@ const Home: React.FC = () => {
         </section>
       )}
 
-      {/* Why Choose World Market */}
+      {/* Why Choose W-LORD MARKET */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div>
               <h2 className="text-5xl font-black italic tracking-tighter uppercase mb-8 leading-tight">
-                Why Choose <br/> <span className="text-blue-600">World Market?</span>
+                Why Choose <br/> <span className="text-blue-600">W-LORD MARKET?</span>
               </h2>
               <div className="space-y-8">
                 <div className="flex gap-6">
@@ -538,10 +539,11 @@ const Home: React.FC = () => {
       <section className="py-24 bg-blue-600">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
-            <div className="text-white text-center lg:text-left">
-              <h2 className="text-4xl font-black italic tracking-tighter uppercase mb-4">Join the <span className="text-black">World Market</span></h2>
-              <p className="text-blue-100 font-medium text-lg">Subscribe for exclusive deals and global marketplace updates.</p>
-            </div>
+              <Link to="/" className="block mb-8">
+                <BrandLogo className="scale-150 origin-left" />
+              </Link>
+              <h2 className="text-4xl font-black italic tracking-tighter uppercase mb-4 text-white">Join the <span className="text-black">W-LORD Community</span></h2>
+              <p className="text-blue-100 font-medium text-lg">Subscribe for exclusive deals and global manufacturing updates.</p>
             <form className="flex w-full max-w-xl bg-white rounded-full p-2 shadow-2xl">
               <div className="flex items-center pl-6 text-gray-400">
                 <Mail size={20} />

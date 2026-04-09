@@ -42,7 +42,7 @@ const Terms: React.FC = () => {
           <section>
             <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">2. Intellectual Property</h2>
             <p className="text-gray-600 leading-relaxed font-medium">
-              All content on this platform, including text, graphics, logos, and software, is the property of World Market and is protected by international copyright laws.
+              All content on this platform, including text, graphics, logos, and software, is the property of W-LORD MARKET and is protected by international copyright laws.
             </p>
           </section>
 
@@ -56,7 +56,7 @@ const Terms: React.FC = () => {
           <section>
             <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">4. Limitation of Liability</h2>
             <p className="text-gray-600 leading-relaxed font-medium">
-              World Market shall not be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use our services.
+              W-LORD MARKET shall not be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use our services.
             </p>
           </section>
 

@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Info
 } from 'lucide-react';
+import BrandLogo from '../components/BrandLogo';
 import { ADMIN_WHATSAPP } from '../constants';
 
 interface ProductItem {
@@ -361,6 +362,21 @@ const SportStore: React.FC = () => {
       >
         <MessageCircle size={32} />
       </motion.button>
+
+      {/* Brand Identity Section */}
+      <section className="bg-[#f3f4f6] py-12 border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="flex-shrink-0">
+            <BrandLogo className="scale-125 origin-left" />
+          </div>
+          <div className="max-w-2xl text-right md:text-left">
+            <h2 className="text-2xl font-black uppercase tracking-tighter text-gray-900 mb-2">International Sports Manufacturing</h2>
+            <p className="text-gray-600 font-medium leading-relaxed">
+              Based in Sialkot, <span className="text-blue-600 font-bold">W-LORD MARKET</span> is a premier manufacturer and supplier of high-end athletic apparel. We combine traditional craftsmanship with modern technology to deliver elite performance gear to teams worldwide.
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* Hero Section */}
       <header className="relative py-20 bg-gray-900 text-white overflow-hidden">

@@ -72,7 +72,7 @@ const RefundPolicy: React.FC = () => {
             <div>
               <h2 className="text-xl font-black uppercase tracking-tighter mb-4 text-red-900">Important Note</h2>
               <p className="text-sm text-red-700 font-bold leading-relaxed">
-                Please do not send your purchase back to the manufacturer. All returns must be processed through World Market's official return portal.
+                Please do not send your purchase back to the manufacturer. All returns must be processed through W-LORD MARKET's official return portal.
               </p>
             </div>
           </section>

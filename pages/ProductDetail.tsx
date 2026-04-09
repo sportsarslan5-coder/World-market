@@ -409,7 +409,7 @@ Secure manual payment confirmation via WhatsApp.`;
                       {activeSeller ? activeSeller.fullName[0].toUpperCase() : showName ? showName[0].toUpperCase() : 'WM'}
                     </div>
                     <div>
-                      <h5 className="text-[10px] font-black uppercase tracking-widest">{activeSeller ? activeSeller.fullName : showName ? showName.toUpperCase() : 'World Market Official'}</h5>
+                      <h5 className="text-[10px] font-black uppercase tracking-widest">{activeSeller ? activeSeller.fullName : showName ? showName.toUpperCase() : 'W-LORD MARKET Official'}</h5>
                       <p className="text-[9px] font-bold text-gray-400 uppercase">
                         {activeSeller ? 'Verified Seller Since 2024' : 'New Seller - Pending Verification'}
                       </p>

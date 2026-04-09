@@ -17,7 +17,7 @@ const Terms: React.FC = () => {
           <section>
             <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">1. Introduction</h2>
             <p className="text-gray-600 leading-relaxed font-medium">
-              Welcome to World Market. These Terms and Conditions govern your use of our website and services. By accessing or using World Market, you agree to be bound by these terms. If you do not agree, please do not use our platform.
+              Welcome to W-LORD MARKET. These Terms and Conditions govern your use of our website and services. By accessing or using W-LORD MARKET, you agree to be bound by these terms. If you do not agree, please do not use our platform.
             </p>
           </section>
 
@@ -31,21 +31,21 @@ const Terms: React.FC = () => {
           <section>
             <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">3. Product Listings & Pricing</h2>
             <p className="text-gray-600 leading-relaxed font-medium">
-              World Market is a marketplace connecting buyers and sellers. While we strive for accuracy, we do not warrant that product descriptions or prices are error-free. Prices are subject to change without notice.
+              W-LORD MARKET is a marketplace connecting buyers and sellers. While we strive for accuracy, we do not warrant that product descriptions or prices are error-free. Prices are subject to change without notice.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">4. Intellectual Property</h2>
             <p className="text-gray-600 leading-relaxed font-medium">
-              All content on World Market, including text, graphics, logos, and images, is the property of World Market or its content suppliers and is protected by international copyright laws.
+              All content on W-LORD MARKET, including text, graphics, logos, and images, is the property of W-LORD MARKET or its content suppliers and is protected by international copyright laws.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">5. Limitation of Liability</h2>
             <p className="text-gray-600 leading-relaxed font-medium">
-              World Market shall not be liable for any direct, indirect, incidental, special, or consequential damages resulting from the use or inability to use our services.
+              W-LORD MARKET shall not be liable for any direct, indirect, incidental, special, or consequential damages resulting from the use or inability to use our services.
             </p>
           </section>
 

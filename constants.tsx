@@ -872,7 +872,7 @@ const NEW_HOODIES: Product[] = HOODIE_IMAGES.map((img, idx) => ({
   sellerId: 'seller-1',
   sales: 240,
   badges: ['Best Seller', 'Trending Product'],
-  metaTitle: `Core Essential Performance Hoodie - Premium Athletic Sweatshirt | World Market`,
+  metaTitle: `Core Essential Performance Hoodie - Premium Athletic Sweatshirt | W-LORD MARKET`,
   metaDescription: `Shop the Core Essential Performance Hoodie. Soft fleece lining, athletic fit, and durable design. The ultimate versatile layer for fitness and casual wear.`,
   metaKeywords: `hoodie, performance hoodie, athletic sweatshirt, gym hoodie, fleece hoodie, men's sweatshirt`,
   imageAlt: `Core Essential Performance Hoodie Style ${idx + 1}`
@@ -908,7 +908,7 @@ const NEW_TRACKSUITS: Product[] = TRACKSUIT_IMAGES.map((img, idx) => ({
   sellerId: 'seller-1',
   sales: 510,
   badges: ['Best Seller', 'Limited Stock'],
-  metaTitle: `Pro-Performance Athletic Tracksuit - Teamwear & Training | World Market`,
+  metaTitle: `Pro-Performance Athletic Tracksuit - Teamwear & Training | W-LORD MARKET`,
   metaDescription: `High-performance tracksuits for athletes. Moisture-wicking fabric, durable design, and factory-direct pricing.`,
   metaKeywords: `tracksuit, athletic wear, training suit, sportswear, performance clothing`,
   imageAlt: `Pro-Performance Tracksuit Model ${idx + 1}`
@@ -946,7 +946,7 @@ const NEW_POLOS: Product[] = POLO_IMAGES.map((img, idx) => ({
   sellerId: 'seller-2',
   sales: 890,
   badges: ['Trending Product', 'Best Seller'],
-  metaTitle: `Elite Heritage Pique Polo Shirt - Premium Men's Casual Wear | World Market`,
+  metaTitle: `Elite Heritage Pique Polo Shirt - Premium Men's Casual Wear | W-LORD MARKET`,
   metaDescription: `Shop our Elite Heritage Pique Polo Shirt. 100% breathable pique cotton, modern slim fit, and classic design. Perfect for golf, work, and casual outings.`,
   metaKeywords: `polo shirt, pique polo, men's fashion, collared shirt, premium polo, casual wear`,
   imageAlt: `Elite Heritage Pique Polo Shirt Color ${idx + 1}`
@@ -984,7 +984,7 @@ const NEW_GRAPHIC_TSHIRTS: Product[] = GRAPHIC_TSHIRT_IMAGES.map((img, idx) => (
   sellerId: 'seller-2',
   sales: 450,
   badges: ['Trending', 'Limited Stock'],
-  metaTitle: `Signature Urban Graphic T-Shirt - Exclusive Streetwear Designs | World Market`,
+  metaTitle: `Signature Urban Graphic T-Shirt - Exclusive Streetwear Designs | W-LORD MARKET`,
   metaDescription: `Shop our Signature Urban Graphic T-Shirts. Premium combed cotton, high-definition prints, and unique streetwear art. Elevate your casual style today.`,
   metaKeywords: `graphic t-shirt, streetwear tee, printed t-shirt, cotton graphic tee, urban fashion, designer t-shirt`,
   imageAlt: `Signature Urban Graphic T-shirt Design ${idx + 1}`
@@ -1022,7 +1022,7 @@ const NEW_SNEAKERS: Product[] = SNEAKER_IMAGES.map((img, idx) => ({
   sellerId: 'seller-2',
   sales: 1200,
   badges: ['Best Seller', 'Top Rated'],
-  metaTitle: `Elite Urban Performance Sneakers - Premium Athletic Footwear | World Market`,
+  metaTitle: `Elite Urban Performance Sneakers - Premium Athletic Footwear | W-LORD MARKET`,
   metaDescription: `Discover the ultimate in comfort and style with our Elite Urban Performance Sneakers. Advanced cushioning, breathable mesh, and superior traction for every move.`,
   metaKeywords: `sneakers, athletic shoes, running shoes, urban footwear, premium sneakers, comfortable shoes`,
   imageAlt: `Elite Urban Performance Sneakers Style ${idx + 1}`
@@ -1058,7 +1058,7 @@ const NEW_BOOTS: Product[] = BOOT_IMAGES.map((img, idx) => ({
   sellerId: 'seller-1',
   sales: 115,
   badges: ['Limited Stock', 'Trending Product'],
-  metaTitle: `Signature Suede Chelsea Boots - Luxury Men's Boots | World Market`,
+  metaTitle: `Signature Suede Chelsea Boots - Luxury Men's Boots | W-LORD MARKET`,
   metaDescription: `Shop handcrafted Signature Suede Chelsea Boots. Premium materials, timeless style, and exceptional comfort.`,
   metaKeywords: `chelsea boots, suede boots, men's boots, luxury footwear, handcrafted shoes`,
   imageAlt: `Signature Suede Chelsea Boot ${idx + 1}`
@@ -1096,7 +1096,7 @@ const NEW_SPORTS_BRAS: Product[] = SPORTS_BRA_IMAGES.map((img, idx) => ({
   sellerId: 'seller-1',
   sales: 280,
   badges: ['Best Seller', 'High Support', 'Breathable'],
-  metaTitle: `Pro-Support High-Impact Sports Bra - Professional Gym Wear | World Market`,
+  metaTitle: `Pro-Support High-Impact Sports Bra - Professional Gym Wear | W-LORD MARKET`,
   metaDescription: `Shop our high-impact sports bra for maximum support. Breathable, moisture-wicking, and perfect for intense training. Experience the best in athletic support.`,
   metaKeywords: `sports bra, high impact bra, gym wear, athletic apparel, fitness bra, support bra`,
   imageAlt: `Pro-Support Sports Bra Style ${idx + 1}`
@@ -1134,7 +1134,7 @@ const NEW_OVERSIZED_HOODIES: Product[] = OVERSIZED_HOODIE_IMAGES.map((img, idx) 
   sellerId: 'seller-1',
   sales: 320,
   badges: ['Limited Stock', 'Trending Product', 'Streetwear Essential'],
-  metaTitle: `Urban Luxe Oversized Hoodie - Premium Streetwear Fashion | World Market`,
+  metaTitle: `Urban Luxe Oversized Hoodie - Premium Streetwear Fashion | W-LORD MARKET`,
   metaDescription: `Discover the ultimate comfort with our Urban Luxe Oversized Hoodie. Heavyweight fleece, relaxed fit, and modern streetwear style. Perfect for any season.`,
   metaKeywords: `oversized hoodie, streetwear hoodie, heavyweight hoodie, relaxed fit hoodie, premium hoodie, urban fashion`,
   imageAlt: `Urban Luxe Oversized Hoodie Style ${idx + 1}`
@@ -1172,7 +1172,7 @@ const NEW_YOGA_PANTS: Product[] = YOGA_PANTS_IMAGES.map((img, idx) => ({
   sellerId: 'seller-1',
   sales: 850,
   badges: ['Trending Product', 'Squat Proof', 'Best Seller'],
-  metaTitle: `Zen-Flex Sculpt High-Waist Yoga Pants - Premium Leggings | World Market`,
+  metaTitle: `Zen-Flex Sculpt High-Waist Yoga Pants - Premium Leggings | W-LORD MARKET`,
   metaDescription: `Shop our high-waist yoga pants for ultimate flexibility and support. Squat-proof, moisture-wicking, and perfectly sculpted. Ideal for yoga and fitness.`,
   metaKeywords: `yoga pants, leggings, high waist leggings, fitness wear, squat proof leggings, yoga apparel`,
   imageAlt: `Zen-Flex Yoga Pants Style ${idx + 1}`
@@ -1210,7 +1210,7 @@ const NEW_WINTER_JACKETS: Product[] = WINTER_JACKET_IMAGES.map((img, idx) => ({
   sellerId: 'seller-1',
   sales: 245,
   badges: ['Limited Stock', 'Extreme Warmth', 'Winter Essential'],
-  metaTitle: `Arctic Shield Pro Winter Jacket - Waterproof & Insulated | World Market`,
+  metaTitle: `Arctic Shield Pro Winter Jacket - Waterproof & Insulated | W-LORD MARKET`,
   metaDescription: `Shop our professional winter jackets for extreme cold. Waterproof shell, high-loft insulation, and durable design. Stay warm this winter.`,
   metaKeywords: `winter jacket, parka, insulated coat, waterproof jacket, outdoor apparel, extreme cold gear`,
   imageAlt: `Arctic Shield Winter Jacket Style ${idx + 1}`
@@ -1248,7 +1248,7 @@ const NEW_SHORTS: Product[] = SHORTS_IMAGES.map((img, idx) => ({
   sellerId: 'seller-1',
   sales: 850,
   badges: ['Best Seller', 'Quick Dry', 'High Performance'],
-  metaTitle: `Active-Flow Pro Training Shorts - High-Performance Gym Wear | World Market`,
+  metaTitle: `Active-Flow Pro Training Shorts - High-Performance Gym Wear | W-LORD MARKET`,
   metaDescription: `Shop our professional training shorts. Lightweight, breathable, and featuring a built-in liner. Perfect for running, gym, and outdoor sports.`,
   metaKeywords: `training shorts, gym shorts, running shorts, athletic wear, performance shorts`,
   imageAlt: `Active-Flow Training Shorts Style ${idx + 1}`
@@ -1286,7 +1286,7 @@ const NEW_GYM_TANK_TOPS: Product[] = GYM_TANK_IMAGES.map((img, idx) => ({
   sellerId: 'seller-1',
   sales: 890,
   badges: ['Trending', 'Athlete Choice'],
-  metaTitle: `Iron-Core Elite Gym Tank Top - Professional Bodybuilding Apparel | World Market`,
+  metaTitle: `Iron-Core Elite Gym Tank Top - Professional Bodybuilding Apparel | W-LORD MARKET`,
   metaDescription: `Shop our elite gym tank tops. Tapered fit, dropped armholes, and breathable fabric. Perfect for bodybuilding and heavy lifting.`,
   metaKeywords: `gym tank top, bodybuilding shirt, fitness tank, stringer, athletic apparel`,
   imageAlt: `Iron-Core Gym Tank Top Style ${idx + 1}`
@@ -1324,7 +1324,7 @@ const NEW_JOGGERS: Product[] = JOGGERS_IMAGES.map((img, idx) => ({
   sellerId: 'seller-1',
   sales: 560,
   badges: ['Best Seller', 'High Comfort'],
-  metaTitle: `Urban Flex Tech-Fleece Joggers - High-Performance Tapered Sweatpants | World Market`,
+  metaTitle: `Urban Flex Tech-Fleece Joggers - High-Performance Tapered Sweatpants | W-LORD MARKET`,
   metaDescription: `Discover the Urban Flex Tech-Fleece Joggers. Lightweight warmth, tapered fit, and secure zip pockets. Engineered for training and lifestyle comfort.`,
   metaKeywords: `joggers, tech fleece joggers, tapered sweatpants, gym joggers, athletic pants, streetwear`,
   imageAlt: `Urban Flex Tech-Fleece Joggers Style ${idx + 1}`
@@ -1362,7 +1362,7 @@ const NEW_BACKPACKS: Product[] = BACKPACK_IMAGES.map((img, idx) => ({
   sellerId: 'seller-2',
   sales: 210,
   badges: ['Trending Product', 'Durable'],
-  metaTitle: `Nomad Elite Multi-Functional Backpack - Water-Resistant Commuter Bag | World Market`,
+  metaTitle: `Nomad Elite Multi-Functional Backpack - Water-Resistant Commuter Bag | W-LORD MARKET`,
   metaDescription: `Discover the Nomad Elite Multi-Functional Backpack. Padded laptop protection, water-resistant shell, and ergonomic comfort. The best bag for work and travel.`,
   metaKeywords: `backpack, laptop backpack, travel bag, commuter backpack, water resistant backpack, multi-functional bag`,
   imageAlt: `Nomad Elite Multi-Functional Backpack Style ${idx + 1}`
@@ -1400,7 +1400,7 @@ const NEW_WOOL_SWEATERS: Product[] = WOOL_SWEATER_IMAGES.map((img, idx) => ({
   sellerId: 'seller-2',
   sales: 245,
   badges: ['Limited Stock', 'Pure Wool', 'Eco-Friendly'],
-  metaTitle: `Heritage Pure Merino Wool Sweater - Luxury Knitwear | World Market`,
+  metaTitle: `Heritage Pure Merino Wool Sweater - Luxury Knitwear | W-LORD MARKET`,
   metaDescription: `Shop our 100% pure Merino wool sweaters. Soft, warm, and elegantly designed. Experience the best in natural knitwear.`,
   metaKeywords: `wool sweater, merino wool, knitwear, luxury sweater, men's knitwear, premium wool`,
   imageAlt: `Heritage Wool Sweater Style ${idx + 1}`
@@ -1438,7 +1438,7 @@ const NEW_BLAZERS: Product[] = BLAZER_IMAGES.map((img, idx) => ({
   sellerId: 'seller-1',
   sales: 125,
   badges: ['Trending', 'Executive Choice', 'Premium Tailoring'],
-  metaTitle: `Executive Modern Slim-Fit Blazer - Professional Tailored Wear | World Market`,
+  metaTitle: `Executive Modern Slim-Fit Blazer - Professional Tailored Wear | W-LORD MARKET`,
   metaDescription: `Shop our modern slim-fit blazers. Premium wool blend, sharp tailoring, and perfect for professional settings. Elevate your style today.`,
   metaKeywords: `blazer, slim fit blazer, men's suit jacket, professional wear, tailored blazer, executive fashion`,
   imageAlt: `Executive Slim-Fit Blazer Style ${idx + 1}`
@@ -1475,7 +1475,7 @@ const NEW_CAPS: Product[] = CAP_IMAGES.map((img, idx) => ({
   sellerId: 'seller-1',
   sales: 150,
   badges: ['New Arrival', 'Trending'],
-  metaTitle: `Premium Athletic Cap - Stylish & Breathable Headwear | World Market`,
+  metaTitle: `Premium Athletic Cap - Stylish & Breathable Headwear | W-LORD MARKET`,
   metaDescription: `Shop our premium athletic cap. Breathable cotton twill, adjustable fit, and classic style. Perfect for sports and casual wear.`,
   metaKeywords: `cap, hat, athletic cap, sports hat, streetwear, accessories`,
   imageAlt: `Premium Athletic Cap`
@@ -1501,7 +1501,7 @@ export const PRODUCTS: Product[] = [
       saleEndsAt: saleEndsAt,
       rating: parseFloat((4.5 + Math.random() * 0.5).toFixed(1)),
       stock: 5 + Math.floor(Math.random() * 10), // 5-15 in stock for urgency
-      description: `High-performance professional uniform manufactured by World Market. Durable fabric, moisture-wicking technology, and custom export quality. Designed for elite athletes who demand the best in comfort and performance.`,
+      description: `High-performance professional uniform manufactured by W-LORD MARKET. Durable fabric, moisture-wicking technology, and custom export quality. Designed for elite athletes who demand the best in comfort and performance.`,
       image: img,
       images: [img, ...CLOUDINARY_IMAGES.slice((idx + 1) % CLOUDINARY_IMAGES.length, (idx + 4) % CLOUDINARY_IMAGES.length)],
       datePosted: new Date().toISOString(),
@@ -1548,7 +1548,7 @@ export const BLOG_POSTS: BlogPost[] = [
     category: 'Industry News',
     image: 'https://picsum.photos/seed/industry/800/400',
     date: '2025-02-20',
-    author: 'World Market Team',
+    author: 'W-LORD MARKET Team',
     tags: ['Factory Direct', 'Savings', 'Ecommerce']
   },
   {
