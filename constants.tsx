@@ -98,27 +98,6 @@ export const SELLERS: SellerInfo[] = [
   }
 ];
 
-const CLOUDINARY_IMAGES = [
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770048123/FD-163_FD-5060_u9c4nk.png",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770048123/FD-BASE-VN2-3444-nLxSniE19uaW_alt_3_x1e3hs.png",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770048122/iw4bvdxfzz7ak15hcgrm_cqn51z.jpg",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770048125/aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL2dhbWVjb2Nrc29ubGluZS1jb20vMjAyNi8wMS9hMDQ5ZmIxNS1ic2JfMDEyM19wcmFjdGljZV9kYXZpc18yNl81OS5qcGc_iy4soz.png",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770054975/250px-Uniforme_local_ialcqx.jpg",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770054977/2024_Major_League_Baseball_uniform_controversy__28cropped_29_vbgtfr.jpg",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770054977/new-index-bat-bags-grid-fall-2025-3_igkuhe.jpg",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770054977/Cam_Cannarella_JohnByrumGetty_efpobp.jpg",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770055149/2026_BASE_LeggettNo7Legacy_FRONT_rkrgpu.webp",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770054613/2_811d056b-a34e-49ea-b42f-6595878871c4_800x_kj2kke.jpg",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770054614/American-Football-700-9_vpggpv.jpg",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770054612/16AMERICANFOOTBALLMODEL_swj02j.jpg",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770056439/image.coreimg_szfvyx.jpg",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770056399/Hawaii_AirForce_Web_Captians_f52wrm.webp",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770056398/240917-american-sports-story-al-0928-5de7fc_xhcoqy.jpg",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770056397/01_08_34_15_gla_103_rec709_g24_20_3840x2160_20240726_0098751-copy-4-copy_lksoe4.jpg",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770056364/jerseys_j0kxki.jpg",
-  "https://res.cloudinary.com/dzt2nrkjr/image/upload/v1770056366/american-football-player-uniform-training-field_23-2150034543_w6cmwh.jpg"
-];
-
 const HOODIE_IMAGES = [
   "https://res.cloudinary.com/dc0ytviey/image/upload/v1774287022/ACL-SRC-Hoodie-VB-Front-Neu2_chqbgd.jpg",
   "https://res.cloudinary.com/dc0ytviey/image/upload/v1774287021/474fdd8a236c8d920ab4456eef014a1715d3eb1c_nyr2qd.jpg",
@@ -1482,43 +1461,6 @@ const NEW_CAPS: Product[] = CAP_IMAGES.map((img, idx) => ({
 }));
 
 export const PRODUCTS: Product[] = [
-  ...CLOUDINARY_IMAGES.map((img, idx) => {
-    const category = CATEGORIES[idx % CATEGORIES.length];
-    const basePrice = 35.00 + (idx % 10) - 5 + 0.99;
-    const discount = 15 + (idx % 15);
-    const oldPrice = basePrice / (1 - discount / 100);
-    const viewers = 10 + Math.floor(Math.random() * 50);
-    const saleEndsAt = new Date(Date.now() + (2 + Math.random() * 10) * 3600000).toISOString(); // 2-12 hours from now
-
-    return {
-      id: `wm-post-${idx}`,
-      name: `post #${idx + 100}`,
-      category: category,
-      price: basePrice,
-      oldPrice: oldPrice,
-      discount: discount,
-      viewers: viewers,
-      saleEndsAt: saleEndsAt,
-      rating: parseFloat((4.5 + Math.random() * 0.5).toFixed(1)),
-      stock: 5 + Math.floor(Math.random() * 10), // 5-15 in stock for urgency
-      description: `High-performance professional uniform manufactured by W-LORD MARKET. Durable fabric, moisture-wicking technology, and custom export quality. Designed for elite athletes who demand the best in comfort and performance.`,
-      image: img,
-      images: [img, ...CLOUDINARY_IMAGES.slice((idx + 1) % CLOUDINARY_IMAGES.length, (idx + 4) % CLOUDINARY_IMAGES.length)],
-      datePosted: new Date().toISOString(),
-      fabric: "100% Breathable Polyester Mesh",
-      quality: idx % 3 === 0 ? 'Export Quality' : (idx % 3 === 1 ? 'Premium' : 'Standard') as any,
-      sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'Normal'],
-      colors: ['Red', 'Blue', 'Black', 'White', 'Navy', 'Normal Color'],
-      shippingCountry: SHIPPING_COUNTRIES[idx % SHIPPING_COUNTRIES.length],
-      sellerId: idx % 2 === 0 ? 'seller-1' : 'seller-2',
-      sales: 10 + Math.floor(Math.random() * 100),
-      reviews: [
-        { id: 'r1', user: 'Mike T.', rating: 5, comment: 'Excellent quality, fits perfectly!', date: '2025-02-15', country: 'USA' },
-        { id: 'r2', user: 'Sarah K.', rating: 4, comment: 'Good material, but shipping took a bit longer.', date: '2025-02-10', country: 'UK' },
-        { id: 'r3', user: 'David L.', rating: 5, comment: 'Best uniform we have ever had for our team.', date: '2025-01-28', country: 'Canada' }
-      ]
-    };
-  }),
   ...NEW_HOODIES,
   ...NEW_TRACKSUITS,
   ...NEW_POLOS,
@@ -1568,7 +1510,7 @@ export const BLOG_POSTS: BlogPost[] = [
 export const MOCK_ORDERS: SaleRecord[] = [
   {
     id: 'ORD-1001',
-    productId: 'wm-post-0',
+    productId: 'hoodie-0',
     productName: 'Professional Team Jersey',
     customerName: 'John Smith',
     customerEmail: 'john@example.com',
@@ -1580,7 +1522,7 @@ export const MOCK_ORDERS: SaleRecord[] = [
   },
   {
     id: 'ORD-1002',
-    productId: 'wm-post-1',
+    productId: 'hoodie-1',
     productName: 'Elite Training Shorts',
     customerName: 'Sarah Wilson',
     customerEmail: 'sarah@example.com',
@@ -1592,7 +1534,7 @@ export const MOCK_ORDERS: SaleRecord[] = [
   },
   {
     id: 'ORD-1003',
-    productId: 'wm-post-2',
+    productId: 'hoodie-2',
     productName: 'Performance Hoodie',
     customerName: 'Mike Ross',
     customerEmail: 'mike@example.com',
