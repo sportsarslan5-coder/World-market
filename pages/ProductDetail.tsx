@@ -95,6 +95,10 @@ Secure manual payment confirmation via WhatsApp.`;
     // navigate('/cart');
   };
 
+  const relatedProducts = useMemo(() => {
+    return products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+  }, [products, product.category, product.id]);
+
   const getLink = (to: string) => {
     if (showName) {
       const cleanTo = to === '/' ? '' : to.startsWith('/') ? to : `/${to}`;
@@ -138,6 +142,7 @@ Secure manual payment confirmation via WhatsApp.`;
                 src={selectedImage} 
                 alt={product.name} 
                 className={`w-full h-full object-cover transition-transform duration-500 ${isZoomed ? 'scale-150' : 'scale-100'}`}
+                loading="lazy"
               />
               <div className="absolute top-4 right-4 flex flex-col gap-2">
                 <button className="bg-white/90 backdrop-blur-md p-2 rounded-full shadow-lg hover:bg-blue-600 hover:text-white transition-all">
@@ -159,7 +164,12 @@ Secure manual payment confirmation via WhatsApp.`;
                   onClick={() => setSelectedImage(img)}
                   className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${selectedImage === img ? 'border-blue-600 shadow-lg' : 'border-transparent hover:border-gray-200'}`}
                 >
-                  <img src={img} alt={`${product.name} ${i}`} className="w-full h-full object-cover" />
+                  <img 
+                    src={img} 
+                    alt={`${product.name} ${i}`} 
+                    className="w-full h-full object-cover" 
+                    loading="lazy"
+                  />
                 </button>
               ))}
             </div>
@@ -509,10 +519,15 @@ Secure manual payment confirmation via WhatsApp.`;
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4).map(p => (
+            {relatedProducts.map(p => (
               <Link to={getLink(`/products/${p.id}`)} key={p.id} className="group flex flex-col gap-4">
                 <div className="aspect-square bg-gray-50 rounded-3xl overflow-hidden relative border border-gray-100">
-                  <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <img 
+                    src={p.image} 
+                    alt={p.name} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                    loading="lazy"
+                  />
                   <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg text-[10px] font-black shadow-sm">
                     ⭐ {p.rating}
                   </div>

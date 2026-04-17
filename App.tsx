@@ -1,35 +1,46 @@
 
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
-import Home from './pages/Home';
-import Products from './pages/Products';
-import AIDesigner from './pages/AIDesigner';
-import Contact from './pages/Contact';
-import Admin from './pages/Admin';
-import Cart from './pages/Cart';
-import RegisterShow from './pages/RegisterShow';
-import ProductDetail from './pages/ProductDetail';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import ShippingPolicy from './pages/ShippingPolicy';
-import AboutUs from './pages/info/AboutUs';
-import ContactUs from './pages/info/ContactUs';
-import FAQ from './pages/info/FAQ';
-import TrackOrder from './pages/info/TrackOrder';
-import Terms from './pages/info/Terms';
-import RefundPolicy from './pages/info/RefundPolicy';
-import Blog from './pages/Blog';
-import BlogPost from './pages/BlogPost';
-import SellerProfile from './pages/SellerProfile';
-import SellerDashboard from './pages/SellerDashboard';
-import SellerRanking from './pages/SellerRanking';
-import SportStore from './pages/SportStore';
+
+// Lazy load pages for better performance
+const Home = lazy(() => import('./pages/Home'));
+const Products = lazy(() => import('./pages/Products'));
+const AIDesigner = lazy(() => import('./pages/AIDesigner'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Admin = lazy(() => import('./pages/Admin'));
+const Cart = lazy(() => import('./pages/Cart'));
+const RegisterShow = lazy(() => import('./pages/RegisterShow'));
+const ProductDetail = lazy(() => import('./pages/ProductDetail'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const ShippingPolicy = lazy(() => import('./pages/ShippingPolicy'));
+const AboutUs = lazy(() => import('./pages/info/AboutUs'));
+const ContactUs = lazy(() => import('./pages/info/ContactUs'));
+const FAQ = lazy(() => import('./pages/info/FAQ'));
+const TrackOrder = lazy(() => import('./pages/info/TrackOrder'));
+const Terms = lazy(() => import('./pages/info/Terms'));
+const RefundPolicy = lazy(() => import('./pages/info/RefundPolicy'));
+const Blog = lazy(() => import('./pages/Blog'));
+const BlogPost = lazy(() => import('./pages/BlogPost'));
+const SellerProfile = lazy(() => import('./pages/SellerProfile'));
+const SellerDashboard = lazy(() => import('./pages/SellerDashboard'));
+const SellerRanking = lazy(() => import('./pages/SellerRanking'));
+const SportStore = lazy(() => import('./pages/SportStore'));
+
+const LoadingFallback = () => (
+  <div className="min-h-[60vh] flex flex-col items-center justify-center p-8">
+    <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Loading W-LORD Experience...</p>
+  </div>
+);
 
 const App: React.FC = () => {
   return (
     <Router>
       <Layout>
-        <Routes>
+        <Suspense fallback={<LoadingFallback />}>
+          <Routes>
+
           {/* Main Global Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
@@ -64,9 +75,10 @@ const App: React.FC = () => {
           <Route path="/:showName/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/:showName/shipping-policy" element={<ShippingPolicy />} />
         </Routes>
-      </Layout>
-    </Router>
-  );
+      </Suspense>
+    </Layout>
+  </Router>
+);
 };
 
 export default App;

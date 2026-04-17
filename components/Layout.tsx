@@ -45,6 +45,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   
   const searchRef = useRef<HTMLDivElement>(null);
 
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   // Sync current show based on the URL
   useEffect(() => {
     const detected = detectShowName();
@@ -151,8 +156,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </div>
           </div>
         </div>
-        <div className="flex gap-4">
-          <Link to="/admin" className="hover:text-white transition-colors">Seller Center</Link>
+        <div className="flex items-center gap-4">
+          <Link 
+            to="/admin" 
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20"
+          >
+            <ShieldCheck size={12} />
+            <span>Seller Login</span>
+          </Link>
           <span className="text-gray-600">|</span>
           <span>Ship to: Worldwide</span>
         </div>
@@ -198,7 +209,12 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                         className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl transition-colors group"
                       >
                         <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                          <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                          <img 
+                            src={p.image} 
+                            alt={p.name} 
+                            className="w-full h-full object-cover" 
+                            loading="lazy"
+                          />
                         </div>
                         <div className="flex-grow">
                           <h4 className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{p.name}</h4>
@@ -324,9 +340,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               </div>
             </div>
 
-            <div className="mt-auto pt-8 border-t border-white/10">
-              <Link to="/admin" className="block w-full bg-blue-600 text-white text-center py-4 rounded-2xl font-black uppercase tracking-widest">
-                Seller Dashboard
+            <div className="mt-auto pt-8 border-t border-white/10 space-y-4">
+              <Link to="/admin" className="block w-full bg-blue-600 text-white text-center py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-blue-500/20" onClick={() => setIsMobileMenuOpen(false)}>
+                Seller Login / Dashboard
               </Link>
             </div>
           </div>

@@ -209,6 +209,7 @@ const Home: React.FC = () => {
                         alt="" 
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                         referrerPolicy="no-referrer"
+                        loading="lazy"
                       />
                     </div>
                   ))}
@@ -285,6 +286,7 @@ const Home: React.FC = () => {
                   ][idx]}?auto=format&fit=crop&q=80&w=800`} 
                   className="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700"
                   alt={cat}
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
                 <div className="absolute bottom-6 left-6">
@@ -312,7 +314,12 @@ const Home: React.FC = () => {
           {PRODUCTS.slice(0, 12).map(p => (
             <div key={p.id} className="group flex flex-col gap-4 bg-white p-3 rounded-[2rem] border border-gray-100 hover:shadow-2xl hover:shadow-blue-500/10 transition-all">
               <Link to={getProductLink(p.id)} className="aspect-square bg-gray-50 rounded-2xl overflow-hidden relative">
-                <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <img 
+                  src={p.image} 
+                  alt={p.name} 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                  loading="lazy"
+                />
                 
                 {/* Badges */}
                 <div className="absolute top-2 left-2 flex flex-col gap-1">
@@ -402,7 +409,12 @@ const Home: React.FC = () => {
             {PRODUCTS.filter(p => p.rating >= 4.8).slice(0, 3).map((p, i) => (
               <Link to={getProductLink(p.id)} key={p.id} className="group relative bg-white/5 border border-white/10 rounded-[3rem] p-8 flex items-center gap-8 hover:bg-white/10 transition-all">
                 <div className="w-32 h-32 bg-white rounded-2xl overflow-hidden flex-shrink-0">
-                  <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <img 
+                    src={p.image} 
+                    alt={p.name} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                    loading="lazy"
+                  />
                 </div>
                 <div>
                   <div className="flex items-center gap-1 text-yellow-400 mb-2">
@@ -492,6 +504,7 @@ const Home: React.FC = () => {
                 src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=2070" 
                 className="rounded-[3rem] shadow-2xl"
                 alt="Logistics"
+                loading="lazy"
               />
               <div className="absolute -bottom-10 -left-10 bg-blue-600 p-10 rounded-[2.5rem] shadow-2xl hidden md:block">
                 <span className="text-6xl font-black text-white block mb-2">200+</span>

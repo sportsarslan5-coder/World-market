@@ -227,7 +227,12 @@ const Products: React.FC = () => {
                 {filteredProducts.map(p => (
                   <div key={p.id} className="group flex flex-col gap-4 bg-white p-4 rounded-[2rem] border border-transparent hover:border-gray-100 hover:shadow-2xl transition-all">
                     <div className="aspect-square bg-gray-50 rounded-3xl overflow-hidden relative">
-                      <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                      <img 
+                        src={p.image} 
+                        alt={p.name} 
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                        loading="lazy"
+                      />
                       
                       {/* Action Overlay */}
                       <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
