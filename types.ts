@@ -87,6 +87,9 @@ export interface SaleRecord {
   customerPhone: string;
   customerEmail: string;
   customerAddress: string;
+  customerCity?: string;
+  customerCountry?: string;
+  customerZip?: string;
   amount: number;
   date: string;
   status: 'Delivered' | 'Processing' | 'Shipped' | 'Pending Payment' | 'Confirmed' | 'Cancelled';

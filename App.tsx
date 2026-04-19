@@ -23,6 +23,7 @@ const Terms = lazy(() => import('./pages/info/Terms'));
 const RefundPolicy = lazy(() => import('./pages/info/RefundPolicy'));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
+const SearchPage = lazy(() => import('./pages/Search'));
 const SellerProfile = lazy(() => import('./pages/SellerProfile'));
 const SellerDashboard = lazy(() => import('./pages/SellerDashboard'));
 const SellerRanking = lazy(() => import('./pages/SellerRanking'));
@@ -67,6 +68,7 @@ const App: React.FC = () => {
           <Route path="/refund-policy" element={<RefundPolicy />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="/seller/:sellerId" element={<SellerProfile />} />
           <Route path="/seller-dashboard" element={<SellerDashboard />} />
           <Route path="/seller-ranking" element={<SellerRanking />} />
@@ -78,6 +80,7 @@ const App: React.FC = () => {
           <Route path="/:showName/ai-designer" element={<AIDesigner />} />
           <Route path="/:showName/cart" element={<Cart />} />
           <Route path="/:showName/contact" element={<Contact />} />
+          <Route path="/:showName/search" element={<SearchPage />} />
           <Route path="/:showName/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/:showName/shipping-policy" element={<ShippingPolicy />} />
         </Routes>

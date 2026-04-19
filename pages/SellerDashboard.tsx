@@ -12,6 +12,7 @@ import {
   ArrowUpRight, 
   Settings, 
   LogOut,
+  X,
   Wallet,
   Clock,
   CheckCircle,
@@ -33,8 +34,9 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 const SellerDashboard: React.FC = () => {
   const seller = SELLERS[0];
-  const { formatPrice } = useStore();
+  const { formatPrice, sales } = useStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'orders' | 'earnings' | 'verification' | 'ranking'>('overview');
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
   
   const referralLink = `${window.location.origin}?ref=${seller.showName}`;
   const [copied, setCopied] = useState(false);
@@ -390,9 +392,14 @@ const SellerDashboard: React.FC = () => {
                           </span>
                         </td>
                         <td className="px-10 py-6">
-                          <button className="text-blue-600 hover:text-blue-700 font-black uppercase text-[10px] tracking-widest flex items-center gap-2">
-                            Update Status <ChevronRight size={14} />
-                          </button>
+                          <div className="flex gap-4">
+                            <button 
+                              onClick={() => setSelectedOrder(order)}
+                              className="text-blue-600 hover:text-blue-700 font-black uppercase text-[10px] tracking-widest flex items-center gap-2"
+                            >
+                              Details <ChevronRight size={14} />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -400,6 +407,69 @@ const SellerDashboard: React.FC = () => {
                 </table>
               </div>
             </div>
+            
+            {/* Order Details Modal */}
+            {selectedOrder && (
+              <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4 animate-fadeIn">
+                <div className="bg-white rounded-[3rem] shadow-2xl max-w-2xl w-full overflow-hidden animate-scaleIn">
+                  <div className="bg-gray-900 text-white p-10 flex justify-between items-center">
+                    <div>
+                      <h2 className="text-3xl font-black italic tracking-tighter uppercase">Order <span className="text-blue-500 underline">Details</span></h2>
+                      <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-2">ID: #{selectedOrder.id}</p>
+                    </div>
+                    <button onClick={() => setSelectedOrder(null)} className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all text-white"><X size={20} /></button>
+                  </div>
+                  <div className="p-10 space-y-8 max-h-[60vh] overflow-y-auto">
+                    <div>
+                      <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Customer Information</h4>
+                      <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                        <p className="text-sm font-black uppercase text-gray-900">{selectedOrder.customerName}</p>
+                        <p className="text-xs font-bold text-gray-500 mt-1">{selectedOrder.customerPhone}</p>
+                        <p className="text-xs font-bold text-gray-500">{selectedOrder.customerEmail}</p>
+                        <hr className="my-4 border-gray-200" />
+                        <p className="text-[10px] font-black uppercase text-gray-400 mb-2">Shipping Destination</p>
+                        <p className="text-xs font-bold text-gray-900 leading-relaxed uppercase">
+                          {selectedOrder.customerAddress}<br/>
+                          {selectedOrder.customerCity}, {selectedOrder.customerCountry}<br/>
+                          Zip: {selectedOrder.customerZip}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Order Content</h4>
+                      <div className="space-y-3">
+                        {selectedOrder.items?.map((item: any, idx: number) => (
+                          <div key={idx} className="flex justify-between items-center bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                            <div>
+                              <p className="text-xs font-black uppercase text-gray-900">{item.name}</p>
+                              <p className="text-[9px] font-bold text-gray-400 uppercase mt-1">Size: {item.size} | Color: {item.color} | Qty: {item.quantity}</p>
+                            </div>
+                            <p className="font-black text-sm">{formatPrice(item.price * item.quantity)}</p>
+                          </div>
+                        )) || (
+                          <div className="flex justify-between items-center bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                             <div>
+                              <p className="text-xs font-black uppercase text-gray-900">{(selectedOrder as any).productName}</p>
+                              <p className="text-[9px] font-bold text-gray-400 uppercase mt-1">Legacy Record</p>
+                            </div>
+                            <p className="font-black text-sm">{formatPrice(selectedOrder.amount)}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between items-center border-t border-gray-100 pt-6">
+                       <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total Settlement</span>
+                       <span className="text-3xl font-black italic tracking-tighter text-blue-600">{formatPrice(selectedOrder.amount)}</span>
+                    </div>
+                  </div>
+                  <div className="p-10 pt-0">
+                    <button onClick={() => setSelectedOrder(null)} className="w-full bg-black text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:bg-blue-600 transition-all">Close Details</button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

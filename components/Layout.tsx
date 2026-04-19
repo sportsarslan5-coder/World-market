@@ -92,7 +92,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      const path = currentShow ? `/${currentShow}/products` : '/products';
+      const path = currentShow ? `/${currentShow}/search` : '/search';
       navigate(`${path}?q=${encodeURIComponent(searchQuery)}`);
       setShowSuggestions(false);
     }

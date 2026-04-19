@@ -280,7 +280,11 @@ const Admin: React.FC = () => {
                         <p className="text-xs font-bold text-gray-500 mt-1">{selectedOrder.customerPhone}</p>
                         <p className="text-xs font-bold text-gray-500">{selectedOrder.customerEmail}</p>
                         <p className="text-[10px] font-bold text-gray-400 mt-4 uppercase">Shipping Address:</p>
-                        <p className="text-xs font-bold text-gray-500 leading-relaxed">{selectedOrder.customerAddress}</p>
+                        <p className="text-xs font-bold text-gray-500 leading-relaxed">
+                          {selectedOrder.customerAddress}<br/>
+                          {selectedOrder.customerCity && `${selectedOrder.customerCity}, `}{selectedOrder.customerCountry}<br/>
+                          {selectedOrder.customerZip && `Zip: ${selectedOrder.customerZip}`}
+                        </p>
                       </div>
                       <div>
                         <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Seller Details</h4>
