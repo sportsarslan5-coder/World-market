@@ -37,7 +37,7 @@ service cloud.firestore {
     function isValidSale(data) {
       return data.customerName is string && data.customerName.size() > 0
           && data.amount is number && data.amount >= 0
-          && data.status in ['Processing', 'Shipped', 'Delivered', 'Cancelled']
+          && data.status in ['Processing', 'Shipped', 'Delivered', 'Cancelled', 'Pending Payment', 'Confirmed']
           && (data.sellerId == null || data.sellerId is string);
     }
 
@@ -57,8 +57,8 @@ service cloud.firestore {
 
     match /sellers/{sellerId} {
       allow read: if true; // Profile is public for routing
-      allow create: if isSignedIn() && request.auth.uid == sellerId && isValidSeller(incoming());
-      allow update: if isAdmin() || (isSignedIn() && request.auth.uid == sellerId && incoming().diff(existing()).affectedKeys().hasOnly(['shopName', 'phone', 'category']));
+      allow create: if isValidSeller(incoming()) && isValidId(sellerId);
+      allow update: if isAdmin() || (isSignedIn() && request.auth.uid == sellerId);
       allow delete: if isAdmin();
     }
   }
