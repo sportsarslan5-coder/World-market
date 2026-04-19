@@ -29,7 +29,7 @@ const Cart: React.FC = () => {
     return `/products/${id}`;
   };
 
-  const handleCheckout = (e: React.FormEvent) => {
+  const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const urlParams = new URLSearchParams(window.location.search);
@@ -39,31 +39,32 @@ const Cart: React.FC = () => {
     const orderSummary = cart.map(item => 
       `Product: ${item.name} (ID: ${item.id})\nSize: ${item.selectedSize || 'N/A'}\nColor: ${item.selectedColor || 'N/A'}\nQuantity: ${item.quantity}\nPrice: $${item.price.toFixed(2)}`
     ).join('\n\n');
+ 
+    try {
+      // Store order in system
+      await addSale({
+        items: cart.map(item => ({
+          productId: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          size: item.selectedSize,
+          color: item.selectedColor
+        })),
+        customerName: customerInfo.name,
+        customerPhone: customerInfo.phone,
+        customerEmail: customerInfo.email,
+        customerAddress: customerInfo.address,
+        customerCity: customerInfo.city,
+        customerCountry: customerInfo.country,
+        customerZip: customerInfo.zipCode,
+        amount: total,
+        status: 'Pending Payment',
+        sellerId: activeSeller?.id,
+        sellerShopName: activeSeller?.shopName || activeSeller?.showName || shopName
+      });
 
-    // Store order in system
-    addSale({
-      items: cart.map(item => ({
-        productId: item.id,
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-        size: item.selectedSize,
-        color: item.selectedColor
-      })),
-      customerName: customerInfo.name,
-      customerPhone: customerInfo.phone,
-      customerEmail: customerInfo.email,
-      customerAddress: customerInfo.address,
-      customerCity: customerInfo.city,
-      customerCountry: customerInfo.country,
-      customerZip: customerInfo.zipCode,
-      amount: total,
-      status: 'Pending Payment',
-      sellerId: activeSeller?.id,
-      sellerShopName: activeSeller?.shopName || activeSeller?.showName || shopName
-    });
-
-    const message = `NEW ORDER RECEIVED
+      const message = `NEW ORDER RECEIVED
 --------------------------------
 
 --- SHOP DETAILS ---
@@ -89,11 +90,16 @@ TOTAL: $${total.toFixed(2)}
 --------------------------------
 Secure manual payment confirmation via WhatsApp.`;
 
-    const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;
-    window.open(waLink, '_blank');
-    clearCart();
-    setIsCheckingOut(false);
-    alert("Order details sent to WhatsApp! Our team will provide payment instructions shortly.");
+      const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;
+      
+      window.open(waLink, '_blank');
+      clearCart();
+      setIsCheckingOut(false);
+      alert("Order details saved to Cloud & sent to WhatsApp! Our team will provide payment instructions shortly.");
+    } catch (error) {
+      console.error("Order submission failed:", error);
+      alert("System Error: Could not reach Cloud Database. Please check your internet connection.");
+    }
   };
 
   if (cart.length === 0) {

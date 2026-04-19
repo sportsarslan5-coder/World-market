@@ -1,29 +1,55 @@
 
 import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Plus, Trash2, Edit2, ShieldCheck, Mail, LogIn } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES } from '../constants';
-
-const hashPassword = async (password: string) => {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-};
+import { auth } from '../services/firebase';
+import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, User } from 'firebase/auth';
 
 const Admin: React.FC = () => {
   const { products, sales, customers, sellers, addProduct, updateSaleStatus, formatPrice } = useStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'inventory' | 'sales' | 'customers' | 'settings' | 'withdrawals'>('overview');
-  const [adminPassword, setAdminPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [adminPanelUrl, setAdminPanelUrl] = useState('');
 
   // Search and Detail State
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+
+  // New Product State
+  const [isAddingProduct, setIsAddingProduct] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    price: 0,
+    category: CATEGORIES[0],
+    image: '',
+    description: '',
+    sizes: ['S', 'M', 'L', 'XL'],
+    colors: ['Black', 'Navy', 'White']
+  });
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setIsLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleGoogleLogin = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message);
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
 
   // Filtered sales
   const filteredSales = sales.filter(s => 
@@ -32,85 +58,80 @@ const Admin: React.FC = () => {
     (s.sellerShopName && s.sellerShopName.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  // Password Update State
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordStatus, setPasswordStatus] = useState('');
-
-  useEffect(() => {
-    const checkDefaultPassword = async () => {
-      if (!localStorage.getItem('wm_admin_hash')) {
-        const defaultHash = await hashPassword('ADMIN_SECURE');
-        localStorage.setItem('wm_admin_hash', defaultHash);
-      }
-    };
-    checkDefaultPassword();
-  }, []);
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    const inputHash = await hashPassword(adminPassword);
-    const storedHash = localStorage.getItem('wm_admin_hash');
-
-    if (inputHash === storedHash) {
-      setIsAuthenticated(true);
-      setError('');
-    } else {
-      setError('Access Denied: Invalid Security Credentials');
+    try {
+      await addProduct({
+        ...newProduct,
+        rating: 5.0,
+        reviews: [],
+        badges: ['New'],
+        stock: 100,
+        ratingCount: 0,
+        sales: 0,
+        viewers: 0
+      });
+      setIsAddingProduct(false);
+      setNewProduct({
+        name: '',
+        price: 0,
+        category: CATEGORIES[0],
+        image: '',
+        description: '',
+        sizes: ['S', 'M', 'L', 'XL'],
+        colors: ['Black', 'Navy', 'White']
+      });
+      alert('Product published to Cloud Firestore successfully!');
+    } catch (err: any) {
+      alert(`Error: ${err.message}`);
     }
   };
 
-  const handleUpdatePassword = async () => {
-    if (newPassword !== confirmPassword) {
-      setPasswordStatus('Passwords do not match');
-      return;
-    }
-    if (newPassword.length < 6) {
-      setPasswordStatus('Password must be at least 6 characters');
-      return;
-    }
-    const hash = await hashPassword(newPassword);
-    localStorage.setItem('wm_admin_hash', hash);
-    setPasswordStatus('Password updated successfully!');
-    setNewPassword('');
-    setConfirmPassword('');
-    setTimeout(() => setPasswordStatus(''), 3000);
-  };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 text-blue-600">
+        <div className="animate-spin text-4xl">⚽</div>
+      </div>
+    );
+  }
 
-  const handlePost = (e: React.FormEvent) => {
-    e.preventDefault();
-    // In actual use, this logic is admin-only.
-    alert('Products are managed by Admin Only.');
-  };
+  const isAdmin = user?.email === 'sportsarslan199@gmail.com';
 
-  if (!isAuthenticated) {
+  if (!user || !isAdmin) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center bg-gray-100 p-4">
         <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-2xl max-w-md w-full border border-gray-200 text-center">
           <div className="w-20 h-20 bg-blue-600 text-white rounded-3xl flex items-center justify-center text-4xl mx-auto mb-8 shadow-xl shadow-blue-500/30">
-            🔐
+            <ShieldCheck size={40} />
           </div>
-          <h2 className="text-3xl font-black italic tracking-tighter uppercase mb-2">Admin <span className="text-blue-600">Access</span></h2>
+          <h2 className="text-3xl font-black italic tracking-tighter uppercase mb-2">Admin <span className="text-blue-600">Gate</span></h2>
           <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mb-10 leading-loose">
-            High Security Gate <br/> USA (+1) / Pakistan (+92) Authorization Only
+            High Security Authentication <br/> Restricted to sportsarslan199@gmail.com
           </p>
 
-          <form onSubmit={handleLogin} className="space-y-6">
-            <input 
-              type="password" 
-              placeholder="Enter Admin Password"
-              className="w-full bg-gray-50 border p-5 rounded-2xl focus:ring-4 focus:ring-blue-500/10 outline-none font-black text-center text-lg tracking-widest text-black"
-              value={adminPassword}
-              onChange={e => setAdminPassword(e.target.value)}
-            />
-            {error && <p className="text-red-500 text-[10px] font-black uppercase animate-bounce">{error}</p>}
+          {!user ? (
             <button 
-              type="submit"
-              className="w-full bg-black text-white py-5 rounded-2xl font-black text-lg uppercase tracking-[0.2em] shadow-xl hover:bg-blue-600 transition-all"
+              onClick={handleGoogleLogin}
+              className="w-full bg-black text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4"
             >
-              Verify Identity
+              <LogIn size={20} />
+              Login with Google
             </button>
-          </form>
+          ) : (
+            <div className="space-y-6">
+              <div className="p-4 bg-red-50 text-red-600 rounded-2xl border border-red-100">
+                <p className="text-[10px] font-black uppercase tracking-widest">Unauthorized Account</p>
+                <p className="text-xs font-bold mt-1">{user.email}</p>
+              </div>
+              <button 
+                onClick={handleLogout}
+                className="w-full bg-gray-100 text-gray-900 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-gray-200 transition-all"
+              >
+                Logout & Try Different Email
+              </button>
+            </div>
+          )}
+          {error && <p className="mt-4 text-red-500 text-[10px] font-black uppercase">{error}</p>}
         </div>
       </div>
     );
@@ -124,7 +145,7 @@ const Admin: React.FC = () => {
             <h1 className="text-5xl font-black italic tracking-tighter">ADMIN <span className="text-blue-500 underline">PATCH SHOP</span></h1>
             <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-2">Centralized Global Control</p>
           </div>
-          <button onClick={() => setIsAuthenticated(false)} className="bg-red-600 text-white px-6 py-2 rounded-full text-xs font-black uppercase">Logout</button>
+          <button onClick={handleLogout} className="bg-red-600 text-white px-6 py-2 rounded-full text-xs font-black uppercase">Logout</button>
         </div>
       </div>
 
@@ -442,70 +463,136 @@ const Admin: React.FC = () => {
         {activeTab === 'settings' && (
           <div className="animate-fadeIn space-y-8 max-w-2xl mx-auto">
             <div className="bg-white p-10 rounded-3xl shadow-xl border border-gray-100">
-              <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-10">Security <span className="text-blue-600">Upgrade</span></h3>
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-[10px] font-black uppercase text-gray-500 mb-2 tracking-widest text-left">New Admin Password</label>
-                  <input 
-                    type="password" 
-                    className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
-                    value={newPassword}
-                    onChange={e => setNewPassword(e.target.value)}
-                  />
+              <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-10">Cloud <span className="text-blue-600">Infrastructure</span></h3>
+              <div className="p-6 bg-blue-50 rounded-2xl border border-blue-100 mb-8">
+                <div className="flex items-center gap-4 text-blue-600 mb-4">
+                  <ShieldCheck size={24} />
+                  <span className="text-sm font-black uppercase tracking-widest">Live Cloud Firestore Connected</span>
                 </div>
-                <div>
-                  <label className="block text-[10px] font-black uppercase text-gray-500 mb-2 tracking-widest text-left">Confirm Password</label>
-                  <input 
-                    type="password" 
-                    className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
-                    value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
-                  />
-                </div>
-                <button 
-                  onClick={handleUpdatePassword}
-                  className="w-full bg-black text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl hover:bg-blue-600 transition-all"
-                >
-                  Update Admin Password
-                </button>
-                {passwordStatus && (
-                  <p className={`text-center text-[10px] font-black uppercase tracking-widest ${passwordStatus.includes('success') ? 'text-green-600' : 'text-red-600'}`}>
-                    {passwordStatus}
-                  </p>
-                )}
+                <p className="text-[10px] font-bold text-blue-800 uppercase tracking-widest leading-loose text-left">
+                  Region: asia-southeast1 <br/>
+                  Project ID: gen-lang-client-0876635319 <br/>
+                  Status: All systems operational
+                </p>
               </div>
-            </div>
-
-            <div className="bg-white p-10 rounded-3xl shadow-xl border border-gray-100">
-              <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-10">Advanced <span className="text-blue-600">Configuration</span></h3>
-              <div className="space-y-8">
-                <div>
-                  <label className="block text-[10px] font-black uppercase text-gray-500 mb-2 tracking-widest text-left">Admin Panel URL (Placeholder)</label>
-                  <div className="flex gap-2">
-                    <input 
-                      type="text" 
-                      className="flex-grow bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
-                      placeholder="https://admin-panel-v2.apex.com"
-                      value={adminPanelUrl}
-                      onChange={e => setAdminPanelUrl(e.target.value)}
-                    />
-                    <button className="bg-blue-600 text-white px-6 rounded-xl font-black text-xs uppercase shadow-lg">Save</button>
-                  </div>
-                  <p className="text-[9px] text-gray-400 mt-2 uppercase font-bold tracking-widest">Update the target URL for the centralized manufacturing controller.</p>
-                </div>
-              </div>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">
+                User Management is now handled via Firebase Authentication. 
+                Manual password hashing has been deprecated for superior security.
+              </p>
             </div>
           </div>
         )}
 
         {activeTab === 'inventory' && (
-          <div className="bg-white p-10 rounded-3xl shadow-sm border text-center border-gray-100 py-32">
-            <div className="text-6xl mb-6 grayscale opacity-20">📦</div>
-            <h3 className="text-3xl font-black italic tracking-tighter uppercase mb-2">Inventory <span className="text-blue-600">Control</span></h3>
-            <p className="text-gray-400 font-bold uppercase text-xs tracking-widest max-w-md mx-auto leading-loose">
-              Only authorized Admin accounts can add, edit, or delete global products. 
-              Changes reflect instantly across all 1,000+ seller shows.
-            </p>
+          <div className="space-y-8 animate-fadeIn">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+              <h3 className="text-3xl font-black italic tracking-tighter uppercase">Inventory <span className="text-blue-600 underline">Management</span></h3>
+              <button 
+                onClick={() => setIsAddingProduct(true)}
+                className="bg-blue-600 text-white px-8 py-3 rounded-xl font-black text-xs uppercase shadow-xl shadow-blue-600/20 flex items-center gap-3"
+              >
+                <Plus size={18} /> Add New Product
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {products.map(product => (
+                <div key={product.id} className="bg-white rounded-[2.5rem] shadow-xl border border-gray-100 overflow-hidden group">
+                  <div className="aspect-square bg-gray-100 relative group-hover:scale-105 transition-transform duration-700">
+                    <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                    <div className="absolute top-4 right-4 flex gap-2">
+                       <button className="bg-white text-gray-900 p-2 rounded-lg shadow-lg hover:bg-blue-600 hover:text-white transition-all"><Edit2 size={14}/></button>
+                       <button className="bg-white text-red-600 p-2 rounded-lg shadow-lg hover:bg-red-600 hover:text-white transition-all"><Trash2 size={14}/></button>
+                    </div>
+                  </div>
+                  <div className="p-8">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h4 className="text-lg font-black uppercase tracking-tight">{product.name}</h4>
+                        <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">{product.category}</p>
+                      </div>
+                      <span className="text-xl font-black tracking-tighter">{formatPrice(product.price)}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      {product.badges?.map((badge, idx) => (
+                        <span key={idx} className="bg-gray-100 text-[8px] font-black px-2 py-1 rounded uppercase tracking-widest">{badge}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Add Product Modal */}
+            {isAddingProduct && (
+              <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+                <div className="bg-white rounded-[3rem] shadow-2xl max-w-2xl w-full overflow-hidden animate-scaleIn">
+                  <div className="bg-blue-600 text-white p-10 flex justify-between items-center">
+                    <div>
+                      <h2 className="text-3xl font-black italic tracking-tighter uppercase">Add <span className="text-black underline">Product</span></h2>
+                      <p className="text-blue-100 text-[10px] font-black uppercase tracking-widest mt-2">Cloud Firestore Inventory</p>
+                    </div>
+                    <button onClick={() => setIsAddingProduct(false)} className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all text-white"><X size={20} /></button>
+                  </div>
+                  <form onSubmit={handleAddProduct} className="p-10 space-y-6 max-h-[60vh] overflow-y-auto">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Product Name</label>
+                      <input 
+                        required
+                        className="w-full bg-gray-50 border p-4 rounded-xl font-bold"
+                        value={newProduct.name}
+                        onChange={e => setNewProduct({...newProduct, name: e.target.value})}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Base Price ($)</label>
+                        <input 
+                          required
+                          type="number"
+                          className="w-full bg-gray-50 border p-4 rounded-xl font-bold"
+                          value={newProduct.price}
+                          onChange={e => setNewProduct({...newProduct, price: parseFloat(e.target.value)})}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Category</label>
+                        <select 
+                          className="w-full bg-gray-50 border p-4 rounded-xl font-bold uppercase text-xs"
+                          value={newProduct.category}
+                          onChange={e => setNewProduct({...newProduct, category: e.target.value})}
+                        >
+                          {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Image URL</label>
+                      <input 
+                        required
+                        placeholder="https://images.unsplash.com/..."
+                        className="w-full bg-gray-50 border p-4 rounded-xl font-bold"
+                        value={newProduct.image}
+                        onChange={e => setNewProduct({...newProduct, image: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Description</label>
+                      <textarea 
+                        required
+                        rows={3}
+                        className="w-full bg-gray-50 border p-4 rounded-xl font-bold"
+                        value={newProduct.description}
+                        onChange={e => setNewProduct({...newProduct, description: e.target.value})}
+                      />
+                    </div>
+                    <div className="pt-6">
+                      <button type="submit" className="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:bg-black transition-all">Publish to Global Store</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

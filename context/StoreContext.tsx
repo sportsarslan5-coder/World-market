@@ -3,6 +3,20 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, CartItem, SaleRecord, Customer, Currency, Language, CurrencyCode, LanguageCode, SellerInfo } from '../types';
 import { PRODUCTS, MOCK_CUSTOMERS, CURRENCIES, LANGUAGES, SELLERS } from '../constants';
 import { detectShowName } from '../services/routingUtils';
+import { 
+  collection, 
+  onSnapshot, 
+  doc, 
+  setDoc, 
+  updateDoc, 
+  query, 
+  orderBy,
+  addDoc,
+  serverTimestamp,
+  getDocs,
+  writeBatch
+} from 'firebase/firestore';
+import { db } from '../services/firebase';
 
 interface StoreContextType {
   products: Product[];
@@ -20,48 +34,70 @@ interface StoreContextType {
   setLanguage: (code: LanguageCode) => void;
   setQuickViewProduct: (product: Product | null) => void;
   formatPrice: (amount: number) => string;
-  addProduct: (product: Omit<Product, 'id' | 'datePosted'>) => void;
+  addProduct: (product: Omit<Product, 'id' | 'datePosted'>) => Promise<void>;
   addToCart: (product: Product, quantity?: number, selectedSize?: string, selectedColor?: string) => void;
   removeFromCart: (productId: string, selectedSize?: string, selectedColor?: string) => void;
   clearCart: () => void;
-  addSale: (sale: Omit<SaleRecord, 'id' | 'date'>) => void;
-  addSeller: (seller: Omit<SellerInfo, 'id' | 'joinedDate' | 'totalSales' | 'balance' | 'totalEarnings' | 'withdrawnAmount' | 'rating' | 'rank' | 'isVerified' | 'verificationStatus' | 'commissionRate'>) => void;
-  updateSaleStatus: (id: string, status: SaleRecord['status']) => void;
+  addSale: (sale: Omit<SaleRecord, 'id' | 'date'>) => Promise<void>;
+  addSeller: (seller: Omit<SellerInfo, 'id' | 'joinedDate' | 'totalSales' | 'balance' | 'totalEarnings' | 'withdrawnAmount' | 'rating' | 'rank' | 'isVerified' | 'verificationStatus' | 'commissionRate'>) => Promise<void>;
+  updateSaleStatus: (id: string, status: SaleRecord['status']) => Promise<void>;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [products, setProducts] = useState<Product[]>(() => {
-    const saved = localStorage.getItem('wm_products');
-    if (saved) return JSON.parse(saved);
-    return PRODUCTS.filter(p => p.image && p.image.trim() !== '' && p.name && p.category);
-  });
+  const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
-  const [sales, setSales] = useState<SaleRecord[]>(() => {
-    const saved = localStorage.getItem('wm_sales');
-    if (saved) return JSON.parse(saved);
-    return [];
-  });
-  const [sellers, setSellers] = useState<SellerInfo[]>(() => {
-    const saved = localStorage.getItem('wm_sellers');
-    if (saved) return JSON.parse(saved);
-    return SELLERS;
-  });
+  const [sales, setSales] = useState<SaleRecord[]>([]);
+  const [sellers, setSellers] = useState<SellerInfo[]>([]);
 
-  // Save changes to localStorage
+  // Real-time synchronization with Firestore
   useEffect(() => {
-    localStorage.setItem('wm_products', JSON.stringify(products));
-  }, [products]);
+    // Sync Products
+    const unsubscribeProducts = onSnapshot(query(collection(db, 'products'), orderBy('datePosted', 'desc')), (snapshot) => {
+      const productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+      if (productList.length === 0) {
+        // Bootstrap initial data if fresh database
+        const batch = writeBatch(db);
+        PRODUCTS.forEach(p => {
+          const docRef = doc(collection(db, 'products'));
+          batch.set(docRef, { ...p, id: docRef.id, datePosted: new Date().toISOString() });
+        });
+        batch.commit();
+      } else {
+        setProducts(productList);
+      }
+    });
 
-  useEffect(() => {
-    localStorage.setItem('wm_sales', JSON.stringify(sales));
-  }, [sales]);
+    // Sync Sales
+    const unsubscribeSales = onSnapshot(query(collection(db, 'sales'), orderBy('date', 'desc')), (snapshot) => {
+      const salesList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SaleRecord));
+      setSales(salesList);
+    });
 
-  useEffect(() => {
-    localStorage.setItem('wm_sellers', JSON.stringify(sellers));
-  }, [sellers]);
+    // Sync Sellers
+    const unsubscribeSellers = onSnapshot(collection(db, 'sellers'), (snapshot) => {
+      const sellerList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SellerInfo));
+      if (sellerList.length === 0) {
+        // Bootstrap initial sellers
+        const batch = writeBatch(db);
+        SELLERS.forEach(s => {
+          const docRef = doc(db, 'sellers', s.id);
+          batch.set(docRef, s);
+        });
+        batch.commit();
+      } else {
+        setSellers(sellerList);
+      }
+    });
+
+    return () => {
+      unsubscribeProducts();
+      unsubscribeSales();
+      unsubscribeSellers();
+    };
+  }, []);
 
   const [activeShowName, setActiveShowName] = useState<string | null>(detectShowName());
   const [referralCode, setReferralCode] = useState<string | null>(null);
@@ -85,19 +121,17 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       sessionStorage.setItem('referralCode', sellerParam);
     } else if (ref) {
       setReferralCode(ref);
-      // Persist referral code in session storage
       sessionStorage.setItem('referralCode', ref);
     } else {
       const storedRef = sessionStorage.getItem('referralCode');
       if (storedRef) setReferralCode(storedRef);
     }
     
-    // Simple auto-detection simulation for currency/language
+    // Auto-detect currency/language
     const browserLang = navigator.language.split('-')[0];
     const foundLang = LANGUAGES.find(l => l.code === browserLang);
     if (foundLang) setLanguageState(foundLang);
 
-    // Auto-detect currency based on locale
     const locale = navigator.language;
     if (locale.includes('GB')) setCurrency('GBP');
     else if (locale.includes('PK')) setCurrency('PKR');
@@ -106,7 +140,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     else setCurrency('USD');
   }, []);
 
-  // Update activeSeller whenever activeShowName or referralCode changes
   useEffect(() => {
     const sellerId = referralCode || activeShowName;
     if (sellerId) {
@@ -140,44 +173,13 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return `${currency.symbol}${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
-  // Generate initial sales data if empty
-  useEffect(() => {
-    if (sales.length === 0) {
-      const initialSales: SaleRecord[] = Array.from({ length: 50 }).map((_, i) => {
-        const p = products[i % products.length];
-        const c = customers[i % customers.length];
-        return {
-          id: `sale-${i}`,
-          items: [{
-            productId: p.id,
-            name: p.name,
-            price: p.price,
-            quantity: 1,
-            size: p.sizes?.[0],
-            color: p.colors?.[0]
-          }],
-          customerName: c.name,
-          customerPhone: "+1234567890",
-          customerEmail: c.email,
-          customerAddress: "Mock Address 123",
-          amount: p.price,
-          date: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
-          status: i % 5 === 0 ? 'Processing' : 'Delivered',
-          sellerId: sellers[i % sellers.length].id,
-          sellerShopName: sellers[i % sellers.length].shopName || sellers[i % sellers.length].showName
-        };
-      });
-      setSales(initialSales);
-    }
-  }, [products, customers, sellers, sales.length]);
-
-  const addProduct = (newP: Omit<Product, 'id' | 'datePosted'>) => {
-    const fullProduct: Product = {
+  const addProduct = async (newP: Omit<Product, 'id' | 'datePosted'>) => {
+    const docRef = doc(collection(db, 'products'));
+    await setDoc(docRef, {
       ...newP,
-      id: `custom-${Date.now()}`,
+      id: docRef.id,
       datePosted: new Date().toISOString()
-    };
-    setProducts([fullProduct, ...products]);
+    });
   };
 
   const addToCart = (product: Product, quantity: number = 1, selectedSize?: string, selectedColor?: string) => {
@@ -209,19 +211,20 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const clearCart = () => setCart([]);
 
-  const addSale = (newSale: Omit<SaleRecord, 'id' | 'date'>) => {
-    const sale: SaleRecord = {
+  const addSale = async (newSale: Omit<SaleRecord, 'id' | 'date'>) => {
+    const docRef = doc(collection(db, 'sales'));
+    await setDoc(docRef, {
       ...newSale,
-      id: `sale-${Date.now()}`,
+      id: docRef.id,
       date: new Date().toISOString()
-    };
-    setSales(prev => [sale, ...prev]);
+    });
   };
 
-  const addSeller = (newS: Omit<SellerInfo, 'id' | 'joinedDate' | 'totalSales' | 'balance' | 'totalEarnings' | 'withdrawnAmount' | 'rating' | 'rank' | 'isVerified' | 'verificationStatus' | 'commissionRate'>) => {
-    const seller: SellerInfo = {
+  const addSeller = async (newS: Omit<SellerInfo, 'id' | 'joinedDate' | 'totalSales' | 'balance' | 'totalEarnings' | 'withdrawnAmount' | 'rating' | 'rank' | 'isVerified' | 'verificationStatus' | 'commissionRate'>) => {
+    const docRef = doc(collection(db, 'sellers'));
+    await setDoc(docRef, {
       ...newS,
-      id: `seller-${Date.now()}`,
+      id: docRef.id,
       joinedDate: new Date().toISOString(),
       totalSales: 0,
       balance: 0,
@@ -233,14 +236,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       verificationStatus: 'Pending',
       commissionRate: 10,
       responseTime: "24h"
-    };
-    setSellers(prev => [seller, ...prev]);
+    });
   };
 
-  const updateSaleStatus = (id: string, status: SaleRecord['status']) => {
-    setSales(prev => prev.map(sale => 
-      sale.id === id ? { ...sale, status } : sale
-    ));
+  const updateSaleStatus = async (id: string, status: SaleRecord['status']) => {
+    const docRef = doc(db, 'sales', id);
+    await updateDoc(docRef, { status });
   };
 
   return (
