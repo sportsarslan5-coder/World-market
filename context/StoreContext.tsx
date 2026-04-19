@@ -30,7 +30,7 @@ interface StoreContextType {
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [products, setProducts] = useState<Product[]>(PRODUCTS);
+  const [products, setProducts] = useState<Product[]>(PRODUCTS.filter(p => p.image && p.image.trim() !== '' && p.name && p.category));
   const [cart, setCart] = useState<CartItem[]>([]);
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [sales, setSales] = useState<SaleRecord[]>([]);

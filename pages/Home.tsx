@@ -27,7 +27,7 @@ import {
 
 const Home: React.FC = () => {
   const { showName: pathShowName } = useParams();
-  const { activeShowName: subdomainShowName, activeSeller, addToCart, formatPrice, setQuickViewProduct } = useStore();
+  const { activeShowName: subdomainShowName, activeSeller, addToCart, formatPrice, setQuickViewProduct, products, language } = useStore();
   const showName = pathShowName || subdomainShowName;
 
   useEffect(() => {
@@ -310,15 +310,18 @@ const Home: React.FC = () => {
             View All <ArrowRight size={14} />
           </Link>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-          {PRODUCTS.slice(0, 12).map(p => (
-            <div key={p.id} className="group flex flex-col gap-4 bg-white p-3 rounded-[2rem] border border-gray-100 hover:shadow-2xl hover:shadow-blue-500/10 transition-all">
-              <Link to={getProductLink(p.id)} className="aspect-square bg-gray-50 rounded-2xl overflow-hidden relative">
+        <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6">
+          {products.slice(0, 12).map(p => (
+            <div key={p.id} className="group flex flex-col gap-3 bg-white p-2 md:p-3 rounded-[1.5rem] md:rounded-[2rem] border border-gray-100 hover:shadow-2xl hover:shadow-blue-500/10 transition-all">
+              <Link to={getProductLink(p.id)} className="aspect-square bg-gray-50 rounded-xl md:rounded-2xl overflow-hidden relative">
                 <img 
                   src={p.image} 
                   alt={p.name} 
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                   loading="lazy"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/placeholder/400/400';
+                  }}
                 />
                 
                 {/* Badges */}
@@ -406,9 +409,9 @@ const Home: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {PRODUCTS.filter(p => p.rating >= 4.8).slice(0, 3).map((p, i) => (
-              <Link to={getProductLink(p.id)} key={p.id} className="group relative bg-white/5 border border-white/10 rounded-[3rem] p-8 flex items-center gap-8 hover:bg-white/10 transition-all">
-                <div className="w-32 h-32 bg-white rounded-2xl overflow-hidden flex-shrink-0">
+            {products.filter(p => p.rating >= 4.8).slice(0, 3).map((p, i) => (
+              <Link to={getProductLink(p.id)} key={p.id} className="group relative bg-white/5 border border-white/10 rounded-[2.5rem] md:rounded-[3rem] p-6 md:p-8 flex items-center gap-6 md:gap-8 hover:bg-white/10 transition-all">
+                <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-xl md:rounded-2xl overflow-hidden flex-shrink-0">
                   <img 
                     src={p.image} 
                     alt={p.name} 

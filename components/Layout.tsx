@@ -107,21 +107,66 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return to;
   };
 
+  const renderSuggestions = () => {
+    if (!showSuggestions || suggestions.length === 0) return null;
+    return (
+      <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[70] animate-fadeIn">
+        <div className="p-2">
+          {suggestions.map(p => (
+            <Link 
+              key={p.id}
+              to={getLink(`/products/${p.id}`)}
+              onClick={() => setShowSuggestions(false)}
+              className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl transition-colors group"
+            >
+              <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                <img 
+                  src={p.image} 
+                  alt={p.name} 
+                  className="w-full h-full object-cover" 
+                  loading="lazy"
+                />
+              </div>
+              <div className="flex-grow">
+                <h4 className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors uppercase truncate max-w-[150px] md:max-w-none">{p.name}</h4>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-xs font-black text-blue-600">{formatPrice(p.price)}</span>
+                  <span className="text-[10px] text-gray-400 uppercase font-bold">{p.category}</span>
+                </div>
+              </div>
+              <ArrowRight size={14} className="text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
+            </Link>
+          ))}
+        </div>
+        {searchQuery.length > 2 && (
+          <div className="bg-gray-50 p-3 border-t border-gray-100 text-center">
+            <button 
+              onClick={handleSearch}
+              className="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:underline"
+            >
+              See all results for "{searchQuery}"
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className={`min-h-screen flex flex-col font-sans selection:bg-blue-600 selection:text-white bg-white ${language.dir === 'rtl' ? 'rtl' : 'ltr'}`}>
       <SEO />
       {/* Top Bar */}
-      <div className="bg-gray-900 py-2 px-4 text-[10px] flex justify-between items-center uppercase font-bold text-gray-400 tracking-widest border-b border-white/5">
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1">
-            <span className="text-green-500">●</span> 
+      <div className="bg-gray-900 py-1.5 px-4 text-[10px] flex justify-between items-center uppercase font-bold text-gray-400 tracking-widest border-b border-white/5 overflow-hidden">
+        <div className="flex items-center gap-2 md:gap-4 truncate">
+          <span className="flex items-center gap-1 shrink-0">
+            <span className="text-green-500 animate-pulse">●</span> 
             {activeSeller 
-              ? `${activeSeller.fullName.toUpperCase()} OFFICIAL SHOW` 
+              ? `${activeSeller.fullName.toUpperCase()} OFFICIAL` 
               : currentShow 
-                ? `${currentShow.toUpperCase()} SHOW (NEW)` 
-                : '24/7 Seller Support'}
+                ? `${currentShow.toUpperCase()} SHOW` 
+                : '24/7 SUPPORT'}
           </span>
-          <div className="hidden md:flex items-center gap-4 border-l border-white/10 pl-4">
+          <div className="hidden sm:flex items-center gap-4 border-l border-white/10 pl-4">
             <div className="flex items-center gap-1 group cursor-pointer relative">
               <span className="group-hover:text-white transition-colors">{language.flag} {language.name}</span>
               <ChevronDown size={10} />
@@ -156,35 +201,36 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4 shrink-0">
           <Link 
             to="/admin" 
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-3 md:px-4 py-1 rounded-lg transition-all flex items-center gap-1.5 shadow-lg shadow-blue-500/20 active:scale-95"
           >
-            <ShieldCheck size={12} />
-            <span>Seller Login</span>
+            <ShieldCheck size={10} className="md:w-3 md:h-3" />
+            <span className="whitespace-nowrap">Seller Login / Dashboard</span>
           </Link>
-          <span className="text-gray-600">|</span>
-          <span>Ship to: Worldwide</span>
+          <span className="text-gray-700 hidden xs:inline">|</span>
+          <span className="hidden xs:inline">Worldwide</span>
         </div>
       </div>
 
       {/* Main Header */}
-      <nav className="bg-black text-white sticky top-0 z-50 shadow-2xl">
+      <nav className="bg-black text-white sticky top-0 z-50 shadow-2xl overflow-visible">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center h-20 gap-4 md:gap-8">
+          {/* Desktop/Tablet Row */}
+          <div className="flex items-center h-16 md:h-20 gap-4 md:gap-8 justify-between">
             {/* Logo */}
-            <Link to={getLink('/')} className="flex-shrink-0">
-              <BrandLogo />
+            <Link to={getLink('/')} className="flex-shrink-0 active:scale-95 transition-transform">
+              <BrandLogo className="h-8 md:h-10 w-auto" />
             </Link>
 
-            {/* Advanced Search */}
-            <div className="flex-grow relative max-w-3xl" ref={searchRef}>
+            {/* Advanced Search - Desktop */}
+            <div className="hidden md:block flex-grow relative max-w-3xl" ref={searchRef}>
               <form onSubmit={handleSearch} className="flex relative">
                 <input 
                   type="text" 
                   placeholder={t('search_placeholder')}
-                  className="w-full bg-white/5 border border-white/10 rounded-full py-2.5 pl-6 pr-12 focus:bg-white focus:text-black focus:ring-4 focus:ring-blue-500/30 transition-all outline-none text-sm font-semibold"
+                  className="w-full bg-white/10 border border-white/10 rounded-full py-2.5 pl-6 pr-12 focus:bg-white focus:text-black focus:ring-4 focus:ring-blue-500/30 transition-all outline-none text-sm font-semibold placeholder:text-gray-500"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -192,57 +238,18 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   }}
                   onFocus={() => setShowSuggestions(true)}
                 />
-                <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-500 transition-colors">
+                <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-500 transition-colors active:scale-125">
                   <Search size={18} />
                 </button>
               </form>
-
-              {/* Suggestions Dropdown */}
-              {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[70] animate-fadeIn">
-                  <div className="p-2">
-                    {suggestions.map(p => (
-                      <Link 
-                        key={p.id}
-                        to={getLink(`/products/${p.id}`)}
-                        onClick={() => setShowSuggestions(false)}
-                        className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl transition-colors group"
-                      >
-                        <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                          <img 
-                            src={p.image} 
-                            alt={p.name} 
-                            className="w-full h-full object-cover" 
-                            loading="lazy"
-                          />
-                        </div>
-                        <div className="flex-grow">
-                          <h4 className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{p.name}</h4>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs font-black text-blue-600">{formatPrice(p.price)}</span>
-                            <span className="text-[10px] text-gray-400 uppercase font-bold">{p.category}</span>
-                          </div>
-                        </div>
-                        <ArrowRight size={14} className="text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
-                      </Link>
-                    ))}
-                  </div>
-                  <div className="bg-gray-50 p-3 border-t border-gray-100 text-center">
-                    <button 
-                      onClick={handleSearch}
-                      className="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:underline"
-                    >
-                      See all results for "{searchQuery}"
-                    </button>
-                  </div>
-                </div>
-              )}
+              {/* Suggestions dropdown same as before */}
+              {renderSuggestions()}
             </div>
 
-            {/* Desktop Actions */}
-            <div className="hidden lg:flex items-center gap-6">
-              <div className="flex flex-col cursor-pointer group">
-                <span className="text-[10px] font-bold text-gray-500 uppercase">{t('account')}</span>
+            {/* Right Actions */}
+            <div className="flex items-center gap-3 md:gap-6">
+              <div className="hidden lg:flex flex-col cursor-pointer group">
+                <span className="text-[10px] font-bold text-gray-500 uppercase leading-none mb-1">{t('account')}</span>
                 <div className="flex items-center gap-1">
                   <span className="text-xs font-black tracking-tight group-hover:text-blue-500 transition-colors">Sign In</span>
                   <ChevronDown size={12} className="text-gray-500" />
@@ -269,11 +276,33 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
             {/* Mobile Menu Toggle */}
             <button 
-              className="lg:hidden p-2 hover:bg-white/5 rounded-xl"
+              className="md:hidden p-2 hover:bg-white/5 rounded-xl flex items-center gap-1 active:scale-95"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              <span className="text-[10px] font-black uppercase tracking-widest">{t('menu')}</span>
+              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
+          </div>
+
+          {/* Mobile Search Row - visible only on small screens */}
+          <div className="md:hidden pb-4" ref={searchRef}>
+            <form onSubmit={handleSearch} className="flex relative">
+              <input 
+                type="text" 
+                placeholder={t('search_placeholder')}
+                className="w-full bg-white/10 border border-white/10 rounded-full py-2.5 pl-5 pr-12 focus:bg-white focus:text-black focus:ring-4 focus:ring-blue-500/30 transition-all outline-none text-sm font-semibold placeholder:text-gray-500"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setShowSuggestions(true);
+                }}
+                onFocus={() => setShowSuggestions(true)}
+              />
+              <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 active:scale-125">
+                <Search size={18} />
+              </button>
+              {renderSuggestions()}
+            </form>
           </div>
         </div>
 
@@ -292,6 +321,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <Link to={getLink('/products?cat=Sportswear')} className="hover:text-blue-500">Sportswear</Link>
             <Link to={getLink('/products?cat=Bags')} className="hover:text-blue-500">Bags</Link>
             <Link to={getLink('/products?cat=Outdoor')} className="hover:text-blue-500">Outdoor</Link>
+            <Link to="/register-show" className="text-blue-400 hover:underline font-black">Become A Seller</Link>
             <Link to="/admin" className="ml-auto text-gray-400 hover:text-white">Seller Dashboard</Link>
           </div>
         </div>

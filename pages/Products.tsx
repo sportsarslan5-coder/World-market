@@ -225,39 +225,42 @@ const Products: React.FC = () => {
             {filteredProducts.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredProducts.map(p => (
-                  <div key={p.id} className="group flex flex-col gap-4 bg-white p-4 rounded-[2rem] border border-transparent hover:border-gray-100 hover:shadow-2xl transition-all">
-                    <div className="aspect-square bg-gray-50 rounded-3xl overflow-hidden relative">
+                  <div key={p.id} className="group flex flex-col gap-4 bg-white p-3 md:p-4 rounded-[1.5rem] md:rounded-[2rem] border border-transparent hover:border-gray-100 hover:shadow-2xl transition-all h-full">
+                    <Link to={getProductLink(p.id)} className="aspect-square bg-gray-50 rounded-2xl md:rounded-3xl overflow-hidden relative">
                       <img 
                         src={p.image} 
                         alt={p.name} 
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                         loading="lazy"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/placeholder/400/400';
+                        }}
                       />
                       
                       {/* Action Overlay */}
-                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <div className="absolute inset-0 bg-black/5 md:bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                         <button 
-                          onClick={() => setQuickViewProduct(p)}
-                          className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-900 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110"
+                          onClick={(e) => { e.preventDefault(); setQuickViewProduct(p); }}
+                          className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-900 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-lg"
                         >
                           <Eye size={18} />
                         </button>
                         <button 
-                          onClick={() => addToCart(p)}
-                          className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-900 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110"
+                          onClick={(e) => { e.preventDefault(); addToCart(p); }}
+                          className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-900 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-lg"
                         >
                           <ShoppingCart size={18} />
                         </button>
                       </div>
 
                       {p.stock === 0 && (
-                        <div className="absolute top-4 left-4 bg-red-600 text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded">
+                        <div className="absolute top-3 left-3 bg-red-600 text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded">
                           Out of Stock
                         </div>
                       )}
 
                       {p.badges && p.badges.length > 0 && (
-                        <div className="absolute top-4 left-4 flex flex-col gap-1">
+                        <div className="absolute top-3 left-3 flex flex-col gap-1">
                           {p.badges.map(badge => (
                             <span key={badge} className="bg-blue-600 text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-lg">
                               {badge}
@@ -265,9 +268,9 @@ const Products: React.FC = () => {
                           ))}
                         </div>
                       )}
-                    </div>
+                    </Link>
 
-                    <div className="px-2">
+                    <div className="flex flex-col flex-grow px-1 md:px-2">
                       <div className="flex justify-between items-start mb-1">
                         <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">{p.category}</span>
                         <div className="flex items-center gap-1 text-yellow-400">
@@ -276,15 +279,21 @@ const Products: React.FC = () => {
                         </div>
                       </div>
                       <Link to={getProductLink(p.id)}>
-                        <h4 className="font-bold text-sm line-clamp-1 group-hover:text-blue-600 transition-colors">{p.name}</h4>
+                        <h4 className="font-black uppercase tracking-tight text-xs md:text-sm line-clamp-2 h-8 md:h-10 group-hover:text-blue-600 transition-colors leading-tight">{p.name}</h4>
                       </Link>
-                      <div className="flex justify-between items-center mt-3">
-                        <span className="text-lg font-black tracking-tighter text-gray-900">{formatPrice(p.price)}</span>
+                      <div className="mt-auto pt-4">
+                        <div className="flex justify-between items-center mb-3">
+                          <span className="text-base md:text-xl font-black tracking-tighter text-gray-900">{formatPrice(p.price)}</span>
+                          {p.oldPrice && (
+                            <span className="text-[10px] font-bold text-gray-400 line-through">{formatPrice(p.oldPrice)}</span>
+                          )}
+                        </div>
                         <button 
                           onClick={() => addToCart(p)}
-                          className="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:underline"
+                          className="w-full bg-black text-white py-3 rounded-xl md:rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all active:scale-95 flex items-center justify-center gap-2"
                         >
-                          + Add
+                          <ShoppingCart size={12} />
+                          {t('add_to_cart')}
                         </button>
                       </div>
                     </div>

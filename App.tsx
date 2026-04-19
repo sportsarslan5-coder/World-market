@@ -2,6 +2,7 @@
 import React, { Suspense, lazy } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
+import BrandLogo from './components/BrandLogo';
 
 // Lazy load pages for better performance
 const Home = lazy(() => import('./pages/Home'));
@@ -28,9 +29,14 @@ const SellerRanking = lazy(() => import('./pages/SellerRanking'));
 const SportStore = lazy(() => import('./pages/SportStore'));
 
 const LoadingFallback = () => (
-  <div className="min-h-[60vh] flex flex-col items-center justify-center p-8">
-    <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Loading W-LORD Experience...</p>
+  <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-black">
+    <div className="mb-8 animate-pulse">
+      <BrandLogo className="h-12 w-auto" />
+    </div>
+    <div className="w-16 h-1 bg-gray-800 rounded-full overflow-hidden">
+      <div className="h-full bg-blue-600 w-1/2 animate-[progress_1.5s_ease-in-out_infinite]"></div>
+    </div>
+    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 mt-6 animate-pulse">Initializing Marketplace</p>
   </div>
 );
 

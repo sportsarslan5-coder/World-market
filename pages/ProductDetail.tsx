@@ -143,6 +143,9 @@ Secure manual payment confirmation via WhatsApp.`;
                 alt={product.name} 
                 className={`w-full h-full object-cover transition-transform duration-500 ${isZoomed ? 'scale-150' : 'scale-100'}`}
                 loading="lazy"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/placeholder/800/800';
+                }}
               />
               <div className="absolute top-4 right-4 flex flex-col gap-2">
                 <button className="bg-white/90 backdrop-blur-md p-2 rounded-full shadow-lg hover:bg-blue-600 hover:text-white transition-all">
@@ -518,23 +521,26 @@ Secure manual payment confirmation via WhatsApp.`;
               View All <ChevronRight size={14} />
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {relatedProducts.map(p => (
-              <Link to={getLink(`/products/${p.id}`)} key={p.id} className="group flex flex-col gap-4">
-                <div className="aspect-square bg-gray-50 rounded-3xl overflow-hidden relative border border-gray-100">
+              <Link to={getLink(`/products/${p.id}`)} key={p.id} className="group flex flex-col gap-3 bg-white p-2 md:p-3 rounded-2xl md:rounded-3xl border border-transparent hover:border-gray-100 hover:shadow-xl transition-all">
+                <div className="aspect-square bg-gray-50 rounded-xl md:rounded-2xl overflow-hidden relative border border-gray-100">
                   <img 
                     src={p.image} 
                     alt={p.name} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                     loading="lazy"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/placeholder/400/400';
+                    }}
                   />
-                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg text-[10px] font-black shadow-sm">
+                  <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg text-[8px] md:text-[10px] font-black shadow-sm">
                     ⭐ {p.rating}
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-bold text-xs line-clamp-1 group-hover:text-blue-600 transition-colors uppercase tracking-tight">{p.name}</h4>
-                  <div className="text-gray-900 font-black text-lg tracking-tighter mt-1">{formatPrice(p.price)}</div>
+                  <h4 className="font-black uppercase tracking-tight text-[10px] md:text-xs line-clamp-1 group-hover:text-blue-600 transition-colors">{p.name}</h4>
+                  <div className="text-gray-900 font-black text-sm md:text-lg tracking-tighter mt-1">{formatPrice(p.price)}</div>
                 </div>
               </Link>
             ))}
