@@ -60,13 +60,16 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       (snapshot) => {
         const productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
         if (productList.length === 0) {
-          // Bootstrap initial data if fresh database
-          const batch = writeBatch(db);
-          PRODUCTS.forEach(p => {
-            const docRef = doc(collection(db, 'products'));
-            batch.set(docRef, { ...p, id: docRef.id, datePosted: new Date().toISOString() });
-          });
-          batch.commit();
+          // Only attempt bootstrap if user is potentially an admin to avoid guest permission errors
+          const userEmail = auth.currentUser?.email;
+          if (userEmail === 'sportsarslan199@gmail.com') {
+            const batch = writeBatch(db);
+            PRODUCTS.forEach(p => {
+              const docRef = doc(collection(db, 'products'));
+              batch.set(docRef, { ...p, id: docRef.id, datePosted: new Date().toISOString() });
+            });
+            batch.commit().catch(err => console.warn("Failed to bootstrap products:", err));
+          }
         } else {
           setProducts(productList);
         }
@@ -92,13 +95,15 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       (snapshot) => {
         const sellerList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SellerInfo));
         if (sellerList.length === 0) {
-          // Bootstrap initial sellers
-          const batch = writeBatch(db);
-          SELLERS.forEach(s => {
-            const docRef = doc(db, 'sellers', s.id);
-            batch.set(docRef, s);
-          });
-          batch.commit();
+          const userEmail = auth.currentUser?.email;
+          if (userEmail === 'sportsarslan199@gmail.com') {
+            const batch = writeBatch(db);
+            SELLERS.forEach(s => {
+              const docRef = doc(db, 'sellers', s.id);
+              batch.set(docRef, s);
+            });
+            batch.commit().catch(err => console.warn("Failed to bootstrap sellers:", err));
+          }
         } else {
           setSellers(sellerList);
         }

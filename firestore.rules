@@ -27,7 +27,7 @@ service cloud.firestore {
     }
 
     match /products/{productId} {
-      allow read: if true; // Public catalog
+      allow read, list: if true; // Public catalog
       allow create: if isAdmin() && isValidProduct(incoming()) && isValidId(productId);
       allow update: if isAdmin() && isValidProduct(incoming());
       allow delete: if isAdmin();
@@ -55,7 +55,7 @@ service cloud.firestore {
     }
 
     match /sellers/{sellerId} {
-      allow read: if true; // Profile is public for routing
+      allow read, list: if true; // Profile is public for routing
       allow create: if isValidSeller(incoming()) && isValidId(sellerId);
       allow update: if isAdmin() || (isSignedIn() && request.auth.uid == sellerId);
       allow delete: if isAdmin();
