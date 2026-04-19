@@ -374,7 +374,11 @@ const SellerDashboard: React.FC = () => {
                             <span className="text-[10px] text-gray-400">{order.customerEmail}</span>
                           </div>
                         </td>
-                        <td className="px-10 py-6 text-xs font-bold text-gray-500 uppercase">{order.productName}</td>
+                        <td className="px-10 py-6 text-xs font-bold text-gray-500 uppercase">
+                          {order.items && order.items.length > 0 
+                            ? (order.items.length === 1 ? order.items[0].name : `${order.items[0].name} +${order.items.length - 1}`)
+                            : (order as any).productName || 'Direct Order'}
+                        </td>
                         <td className="px-10 py-6 text-sm font-black text-gray-900">{formatPrice(order.amount)}</td>
                         <td className="px-10 py-6">
                           <span className={`px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest ${

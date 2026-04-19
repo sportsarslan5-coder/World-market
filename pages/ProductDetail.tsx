@@ -50,13 +50,22 @@ const ProductDetail: React.FC = () => {
 
     // Store order in system
     addSale({
-      productId: product.id,
-      productName: product.name,
+      items: [{
+        productId: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: quantity,
+        size: selectedSize,
+        color: selectedColor
+      }],
       customerName: customerInfo.name,
+      customerPhone: customerInfo.phone,
       customerEmail: 'N/A',
+      customerAddress: 'Direct Link Order',
       amount: product.price * quantity,
       status: 'Pending Payment',
-      sellerId: activeSeller?.id
+      sellerId: activeSeller?.id,
+      sellerShopName: shopName
     });
 
     const message = `NEW ORDER RECEIVED

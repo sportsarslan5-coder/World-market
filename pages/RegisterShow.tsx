@@ -1,11 +1,13 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useStore } from '../context/StoreContext';
 import { ADMIN_WHATSAPP } from '../constants';
 import { generateProfessionalLink } from '../services/routingUtils';
 
 const RegisterShow: React.FC = () => {
   const navigate = useNavigate();
+  const { addSeller } = useStore();
   const [formData, setFormData] = useState({
     fullName: '',
     whatsapp: '',
@@ -26,6 +28,22 @@ const RegisterShow: React.FC = () => {
     // Format the shareable show ID
     const showId = formData.showName.toLowerCase().trim().replace(/\s+/g, '-');
     const proLink = generateProfessionalLink(showId);
+    
+    // Save to local system
+    addSeller({
+      fullName: formData.fullName,
+      whatsapp: formData.whatsapp,
+      email: formData.email,
+      country: formData.country,
+      city: formData.city,
+      contactNumber: formData.contactNumber,
+      paymentDetails: formData.paymentDetails,
+      showName: showId,
+      shopName: formData.showName,
+      businessType: 'Individual',
+      location: `${formData.city}, ${formData.country}`,
+      responseTime: '24h'
+    });
     
     // Format WhatsApp message for the Admin
     const message = `NEW SELLER REGISTERED – W-LORD MARKET Admin

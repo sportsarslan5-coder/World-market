@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
+import { X } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { CATEGORIES, SELLERS } from '../constants';
+import { CATEGORIES } from '../constants';
 
 const hashPassword = async (password: string) => {
   const encoder = new TextEncoder();
@@ -13,12 +14,23 @@ const hashPassword = async (password: string) => {
 };
 
 const Admin: React.FC = () => {
-  const { products, sales, customers, addProduct, updateSaleStatus, formatPrice } = useStore();
+  const { products, sales, customers, sellers, addProduct, updateSaleStatus, formatPrice } = useStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'inventory' | 'sales' | 'customers' | 'settings' | 'withdrawals'>('overview');
   const [adminPassword, setAdminPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState('');
   const [adminPanelUrl, setAdminPanelUrl] = useState('');
+
+  // Search and Detail State
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+
+  // Filtered sales
+  const filteredSales = sales.filter(s => 
+    s.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    s.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (s.sellerShopName && s.sellerShopName.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   // Password Update State
   const [newPassword, setNewPassword] = useState('');
@@ -141,7 +153,7 @@ const Admin: React.FC = () => {
             {[
               { label: 'Total Revenue', value: formatPrice(sales.reduce((acc, s) => acc + s.amount, 0)), icon: '💰', color: 'bg-green-50 text-green-600' },
               { label: 'Total Orders', value: sales.length, icon: '📦', color: 'bg-blue-50 text-blue-600' },
-              { label: 'Active Sellers', value: SELLERS.length, icon: '👥', color: 'bg-purple-50 text-purple-600' },
+              { label: 'Active Sellers', value: sellers.length, icon: '👥', color: 'bg-purple-50 text-purple-600' },
               { label: 'Pending Payments', value: sales.filter(s => s.status === 'Pending Payment').length, icon: '⏳', color: 'bg-orange-50 text-orange-600' }
             ].map((stat, i) => (
               <div key={i} className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-gray-100 flex items-center gap-6">
@@ -157,138 +169,228 @@ const Admin: React.FC = () => {
 
         {activeTab === 'sales' && (
           <div className="space-y-8">
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
               <h3 className="text-3xl font-black italic tracking-tighter uppercase">Order <span className="text-blue-600 underline">Management</span></h3>
-              <div className="flex gap-4">
-                <button className="bg-blue-600 text-white px-6 py-3 rounded-xl font-black text-xs uppercase shadow-lg">Process All</button>
-                <button className="bg-gray-100 text-gray-900 px-6 py-3 rounded-xl font-black text-xs uppercase">Export CSV</button>
+              <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                <input 
+                  type="text" 
+                  placeholder="Search Customer / Order ID..."
+                  className="bg-white border rounded-xl px-4 py-2.5 text-sm font-bold w-full md:w-64"
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                />
+                <div className="flex gap-2">
+                  <button className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-black text-xs uppercase shadow-lg flex-grow md:flex-grow-0">Process All</button>
+                  <button className="bg-gray-100 text-gray-900 px-6 py-2.5 rounded-xl font-black text-xs uppercase flex-grow md:flex-grow-0 text-center">Export</button>
+                </div>
               </div>
             </div>
             
-            <div className="bg-white rounded-[3rem] shadow-xl border border-gray-100 overflow-hidden">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Order ID</th>
-                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Customer</th>
-                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Product</th>
-                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Amount</th>
-                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
-                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {sales.map(s => (
-                    <tr key={s.id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-10 py-6">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">#{s.id.split('-')[1]}</span>
-                      </td>
-                      <td className="px-10 py-6">
-                        <div className="flex flex-col">
-                          <span className="text-sm font-black uppercase tracking-tighter text-gray-900">{s.customerName}</span>
-                          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{s.customerEmail}</span>
-                        </div>
-                      </td>
-                      <td className="px-10 py-6 text-xs font-bold text-gray-900 uppercase">{s.productName}</td>
-                      <td className="px-10 py-6 text-sm font-black text-gray-900">{formatPrice(s.amount)}</td>
-                      <td className="px-10 py-6">
-                        <span className={`px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest ${
-                          s.status === 'Confirmed' ? 'bg-green-50 text-green-600' : 
-                          s.status === 'Pending Payment' ? 'bg-orange-50 text-orange-600' : 
-                          'bg-blue-50 text-blue-600'
-                        }`}>
-                          {s.status}
-                        </span>
-                      </td>
-                      <td className="px-10 py-6">
-                        <div className="flex gap-4">
-                          {s.status === 'Pending Payment' && (
-                            <button 
-                              onClick={() => updateSaleStatus(s.id, 'Confirmed')}
-                              className="text-green-600 text-[10px] font-black uppercase tracking-widest hover:underline"
-                            >
-                              Confirm Payment
-                            </button>
-                          )}
-                          <button className="text-blue-600 text-[10px] font-black uppercase tracking-widest hover:underline">Details</button>
-                        </div>
-                      </td>
+            <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-xl border border-gray-100 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-gray-50 border-b border-gray-100">
+                      <th className="px-6 md:px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Order & Date</th>
+                      <th className="px-6 md:px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Customer Details</th>
+                      <th className="px-6 md:px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Seller / Shop</th>
+                      <th className="px-6 md:px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Amount</th>
+                      <th className="px-6 md:px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
+                      <th className="px-6 md:px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right pr-12">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {filteredSales.map(s => (
+                      <tr key={s.id} className="hover:bg-gray-50/50 transition-colors group">
+                        <td className="px-6 md:px-10 py-6">
+                          <div className="flex flex-col">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">#{s.id.slice(-6)}</span>
+                            <span className="text-[10px] font-bold text-gray-400 mt-1">{new Date(s.date).toLocaleDateString()}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 md:px-10 py-6">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-black uppercase tracking-tighter text-gray-900">{s.customerName}</span>
+                            <span className="text-[10px] text-blue-600 font-bold uppercase tracking-widest">{s.customerPhone}</span>
+                            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest truncate max-w-[150px]">{s.customerEmail}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 md:px-10 py-6">
+                          <div className="flex flex-col">
+                            <span className="text-xs font-black uppercase text-purple-600 tracking-tight">{s.sellerShopName || 'Main Store'}</span>
+                            <span className="text-[9px] text-gray-400 font-bold uppercase">{s.sellerId || 'Direct'}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 md:px-10 py-6">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-black text-gray-900">{formatPrice(s.amount)}</span>
+                            <span className="text-[10px] text-gray-400 font-bold">{s.items?.length || 1} Products</span>
+                          </div>
+                        </td>
+                        <td className="px-6 md:px-10 py-6">
+                          <span className={`px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest ${
+                            s.status === 'Confirmed' ? 'bg-green-50 text-green-600' : 
+                            s.status === 'Pending Payment' ? 'bg-orange-50 text-orange-600' : 
+                            'bg-blue-50 text-blue-600'
+                          }`}>
+                            {s.status}
+                          </span>
+                        </td>
+                        <td className="px-6 md:px-10 py-6 text-right pr-12">
+                          <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {s.status === 'Pending Payment' && (
+                              <button 
+                                onClick={() => updateSaleStatus(s.id, 'Confirmed')}
+                                className="bg-green-600 text-white px-4 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-all"
+                              >
+                                Confirm
+                              </button>
+                            )}
+                            <button 
+                              onClick={() => setSelectedOrder(s)}
+                              className="bg-black text-white px-4 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-all"
+                            >
+                              Details
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
+
+            {/* Order Details Modal */}
+            {selectedOrder && (
+              <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fadeIn">
+                <div className="bg-white rounded-[2rem] shadow-2xl max-w-2xl w-full overflow-hidden animate-scaleIn">
+                  <div className="bg-black text-white p-8 flex justify-between items-center">
+                    <div>
+                      <h2 className="text-3xl font-black italic tracking-tighter uppercase">Order <span className="text-blue-500 underline">Details</span></h2>
+                      <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-2 px-1">ID: #{selectedOrder.id}</p>
+                    </div>
+                    <button onClick={() => setSelectedOrder(null)} className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all text-white"><X size={20} /></button>
+                  </div>
+                  <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto">
+                    <div className="grid grid-cols-2 gap-8">
+                      <div>
+                        <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Customer Information</h4>
+                        <p className="text-sm font-black uppercase text-gray-900">{selectedOrder.customerName}</p>
+                        <p className="text-xs font-bold text-gray-500 mt-1">{selectedOrder.customerPhone}</p>
+                        <p className="text-xs font-bold text-gray-500">{selectedOrder.customerEmail}</p>
+                        <p className="text-[10px] font-bold text-gray-400 mt-4 uppercase">Shipping Address:</p>
+                        <p className="text-xs font-bold text-gray-500 leading-relaxed">{selectedOrder.customerAddress}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Seller Details</h4>
+                        <p className="text-sm font-black uppercase text-blue-600">{selectedOrder.sellerShopName || 'Main Admin Account'}</p>
+                        <p className="text-xs font-bold text-gray-500 mt-1">Ref Code: {selectedOrder.sellerId || 'Direct'}</p>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Ordered Items</h4>
+                      <div className="space-y-3">
+                        {selectedOrder.items?.map((item: any, idx: number) => (
+                          <div key={idx} className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                            <div>
+                              <p className="text-xs font-black uppercase text-gray-900">{item.name}</p>
+                              <p className="text-[9px] font-bold text-gray-400 uppercase mt-1">Size: {item.size} | Color: {item.color} | Qty: {item.quantity}</p>
+                            </div>
+                            <p className="font-black text-sm">{formatPrice(item.price * item.quantity)}</p>
+                          </div>
+                        )) || (
+                          <div className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                             <div>
+                              <p className="text-xs font-black uppercase text-gray-900">{selectedOrder.productName}</p>
+                              <p className="text-[9px] font-bold text-gray-400 uppercase mt-1">Legacy Record</p>
+                            </div>
+                            <p className="font-black text-sm">{formatPrice(selectedOrder.amount)}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="border-t border-gray-100 pt-6 flex justify-between items-center">
+                      <p className="text-lg font-black italic uppercase tracking-tighter">Total Due</p>
+                      <p className="text-3xl font-black italic tracking-tighter text-blue-600">{formatPrice(selectedOrder.amount)}</p>
+                    </div>
+                  </div>
+                  <div className="p-8 pt-0 flex gap-4">
+                     <button onClick={() => setSelectedOrder(null)} className="flex-grow bg-black text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl hover:bg-blue-600 transition-all">Close</button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === 'customers' && (
-          <div className="space-y-8">
-            <div className="flex justify-between items-center mb-8">
+          <div className="space-y-8 animate-fadeIn">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
               <h3 className="text-3xl font-black italic tracking-tighter uppercase">Seller <span className="text-blue-600 underline">Management</span></h3>
-              <div className="flex gap-4">
-                <button className="bg-blue-600 text-white px-6 py-3 rounded-xl font-black text-xs uppercase shadow-lg">Verify All</button>
-                <button className="bg-gray-100 text-gray-900 px-6 py-3 rounded-xl font-black text-xs uppercase">Export List</button>
+              <div className="flex gap-4 w-full md:w-auto">
+                <button className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-black text-xs uppercase shadow-lg flex-grow md:flex-grow-0">Verify All</button>
+                <button className="bg-gray-100 text-gray-900 px-6 py-2.5 rounded-xl font-black text-xs uppercase flex-grow md:flex-grow-0 text-center">Export List</button>
               </div>
             </div>
             
-            <div className="bg-white rounded-[3rem] shadow-xl border border-gray-100 overflow-hidden">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Seller Name</th>
-                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Rank</th>
-                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Commission</th>
-                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
-                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {SELLERS.map(s => (
-                    <tr key={s.id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-10 py-6">
-                        <div className="flex flex-col">
-                          <span className="text-sm font-black uppercase tracking-tighter text-gray-900">{s.fullName}</span>
-                          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{s.showName} • {s.country}</span>
-                        </div>
-                      </td>
-                      <td className="px-10 py-6">
-                        <span className={`px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest ${
-                          s.rank === 'Gold' ? 'bg-yellow-50 text-yellow-700' : 
-                          s.rank === 'Silver' ? 'bg-gray-100 text-gray-700' : 
-                          'bg-blue-50 text-blue-700'
-                        }`}>
-                          {s.rank}
-                        </span>
-                      </td>
-                      <td className="px-10 py-6">
-                        <div className="flex items-center gap-2">
-                          <input 
-                            type="text" 
-                            defaultValue={`${(s.commissionRate * 100).toFixed(1)}%`}
-                            className="w-20 bg-gray-50 border p-2 rounded-lg text-xs font-black text-center"
-                          />
-                          <button className="text-blue-600 text-[10px] font-black uppercase tracking-widest">Update</button>
-                        </div>
-                      </td>
-                      <td className="px-10 py-6">
-                        <span className={`px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest ${
-                          s.verificationStatus === 'Verified' ? 'bg-green-50 text-green-600' : 
-                          s.verificationStatus === 'Pending' ? 'bg-orange-50 text-orange-600' : 
-                          'bg-red-50 text-red-600'
-                        }`}>
-                          {s.verificationStatus || 'Verified'}
-                        </span>
-                      </td>
-                      <td className="px-10 py-6">
-                        <div className="flex gap-4">
-                          <button className="text-blue-600 text-[10px] font-black uppercase tracking-widest hover:underline">View KYC</button>
-                          <button className="text-red-600 text-[10px] font-black uppercase tracking-widest hover:underline">Suspend</button>
-                        </div>
-                      </td>
+            <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-xl border border-gray-100 overflow-hidden">
+               <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-gray-50 border-b border-gray-100">
+                      <th className="px-6 md:px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Seller & Shop</th>
+                      <th className="px-6 md:px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">WhatsApp / Contact</th>
+                      <th className="px-6 md:px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Location</th>
+                      <th className="px-6 md:px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400 text-center">Rank</th>
+                      <th className="px-6 md:px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
+                      <th className="px-6 md:px-10 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right pr-12">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {sellers.map(s => (
+                      <tr key={s.id} className="hover:bg-gray-50/50 transition-colors group">
+                        <td className="px-6 md:px-10 py-6">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-black uppercase tracking-tighter text-gray-900">{s.fullName}</span>
+                            <span className="text-[10px] text-blue-600 font-bold uppercase tracking-widest">{s.shopName || s.showName}</span>
+                            <span className="text-[9px] text-gray-400 font-bold uppercase truncate max-w-[150px]">{s.email}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 md:px-10 py-6">
+                          <div className="flex flex-col">
+                             <span className="text-xs font-black text-green-600 tracking-tight">{s.whatsapp}</span>
+                             <span className="text-[9px] text-gray-400 font-bold uppercase">{s.contactNumber}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 md:px-10 py-6 text-xs font-bold text-gray-900 uppercase">{s.location || `${s.city}, ${s.country}`}</td>
+                        <td className="px-6 md:px-10 py-6 text-center">
+                          <span className={`px-4 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest ${
+                            s.rank === 'Gold' ? 'bg-yellow-50 text-yellow-600' : 'bg-gray-50 text-gray-600'
+                          }`}>
+                            {s.rank}
+                          </span>
+                        </td>
+                        <td className="px-6 md:px-10 py-6">
+                          <span className={`px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest ${
+                            s.isVerified ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'
+                          }`}>
+                            {s.isVerified ? 'VERIFIED' : 'PENDING'}
+                          </span>
+                        </td>
+                        <td className="px-6 md:px-10 py-6 text-right pr-12">
+                          <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button className="text-blue-600 text-[10px] font-black uppercase tracking-widest hover:underline">Edit</button>
+                            <button className="text-red-500 text-[10px] font-black uppercase tracking-widest hover:underline">Ban</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
@@ -308,17 +410,17 @@ const Admin: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {[1, 2, 3].map(i => (
-                    <tr key={i} className="hover:bg-gray-50/50 transition-colors">
+                  {sellers.slice(0, 3).map((s, i) => (
+                    <tr key={s.id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-10 py-6 text-xs font-bold text-gray-500 uppercase">March {28 - i}, 2024</td>
                       <td className="px-10 py-6">
                         <div className="flex flex-col">
-                          <span className="text-sm font-black uppercase tracking-tighter text-gray-900">{SELLERS[i-1].fullName}</span>
-                          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{SELLERS[i-1].email}</span>
+                          <span className="text-sm font-black uppercase tracking-tighter text-gray-900">{s.fullName}</span>
+                          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{s.email}</span>
                         </div>
                       </td>
-                      <td className="px-10 py-6 text-sm font-black text-gray-900">$1,250.00</td>
-                      <td className="px-10 py-6 text-xs font-bold text-gray-500 uppercase">{SELLERS[i-1].paymentDetails}</td>
+                      <td className="px-10 py-6 text-sm font-black text-gray-900">{formatPrice(1250)}</td>
+                      <td className="px-10 py-6 text-xs font-bold text-gray-500 uppercase">{s.paymentDetails}</td>
                       <td className="px-10 py-6">
                         <div className="flex gap-4">
                           <button className="bg-green-600 text-white px-6 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-green-600/20">Approve</button>

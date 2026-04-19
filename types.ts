@@ -75,14 +75,23 @@ export interface CartItem extends Product {
 
 export interface SaleRecord {
   id: string;
-  productId: string;
-  productName: string;
+  items: {
+    productId: string;
+    name: string;
+    price: number;
+    quantity: number;
+    size?: string;
+    color?: string;
+  }[];
   customerName: string;
+  customerPhone: string;
   customerEmail: string;
+  customerAddress: string;
   amount: number;
   date: string;
-  status: 'Delivered' | 'Processing' | 'Shipped' | 'Pending Payment' | 'Confirmed';
+  status: 'Delivered' | 'Processing' | 'Shipped' | 'Pending Payment' | 'Confirmed' | 'Cancelled';
   sellerId?: string;
+  sellerShopName?: string;
   commissionEarned?: number;
 }
 
@@ -103,9 +112,11 @@ export interface SellerInfo {
   email: string;
   country: string;
   city: string;
+  location?: string;
   contactNumber: string;
   paymentDetails: string;
   showName: string;
+  shopName?: string;
   rank: SellerRank;
   rating: number;
   totalSales: number;

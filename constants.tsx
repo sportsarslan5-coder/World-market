@@ -1518,38 +1518,44 @@ export const BLOG_POSTS: BlogPost[] = [
 export const MOCK_ORDERS: SaleRecord[] = [
   {
     id: 'ORD-1001',
-    productId: 'hoodie-0',
-    productName: 'Professional Team Jersey',
+    items: [{ productId: 'hoodie-0', name: 'Professional Team Jersey', price: 150.00, quantity: 1 }],
     customerName: 'John Smith',
+    customerPhone: '+1 234 567 890',
     customerEmail: 'john@example.com',
+    customerAddress: 'Manchester, UK',
     amount: 150.00,
     date: '2024-03-20',
     status: 'Shipped',
     sellerId: 'seller-1',
+    sellerShopName: 'Elite Gear',
     commissionEarned: 12.00
   },
   {
     id: 'ORD-1002',
-    productId: 'hoodie-1',
-    productName: 'Elite Training Shorts',
+    items: [{ productId: 'hoodie-1', name: 'Elite Training Shorts', price: 85.00, quantity: 1 }],
     customerName: 'Sarah Wilson',
+    customerPhone: '+1 987 654 321',
     customerEmail: 'sarah@example.com',
+    customerAddress: 'London, UK',
     amount: 85.00,
     date: '2024-03-21',
     status: 'Processing',
     sellerId: 'seller-1',
+    sellerShopName: 'Elite Gear',
     commissionEarned: 6.80
   },
   {
     id: 'ORD-1003',
-    productId: 'hoodie-2',
-    productName: 'Performance Hoodie',
+    items: [{ productId: 'hoodie-2', name: 'Performance Hoodie', price: 120.00, quantity: 1 }],
     customerName: 'Mike Ross',
+    customerPhone: '+1 111 222 333',
     customerEmail: 'mike@example.com',
+    customerAddress: 'New York, USA',
     amount: 120.00,
     date: '2024-03-22',
     status: 'Delivered',
     sellerId: 'seller-1',
+    sellerShopName: 'Elite Gear',
     commissionEarned: 9.60
   }
 ];

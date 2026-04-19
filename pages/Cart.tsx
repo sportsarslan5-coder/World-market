@@ -41,16 +41,23 @@ const Cart: React.FC = () => {
     ).join('\n\n');
 
     // Store order in system
-    cart.forEach(item => {
-      addSale({
+    addSale({
+      items: cart.map(item => ({
         productId: item.id,
-        productName: item.name,
-        customerName: customerInfo.name,
-        customerEmail: customerInfo.email,
-        amount: item.price * item.quantity,
-        status: 'Pending Payment',
-        sellerId: activeSeller?.id
-      });
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        size: item.selectedSize,
+        color: item.selectedColor
+      })),
+      customerName: customerInfo.name,
+      customerPhone: customerInfo.phone,
+      customerEmail: customerInfo.email,
+      customerAddress: `${customerInfo.address}, ${customerInfo.city}, ${customerInfo.country} (Zip: ${customerInfo.zipCode})`,
+      amount: total,
+      status: 'Pending Payment',
+      sellerId: activeSeller?.id,
+      sellerShopName: activeSeller?.shopName || activeSeller?.showName || shopName
     });
 
     const message = `NEW ORDER RECEIVED

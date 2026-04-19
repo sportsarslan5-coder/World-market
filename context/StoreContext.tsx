@@ -12,6 +12,7 @@ interface StoreContextType {
   activeShowName: string | null;
   referralCode: string | null;
   activeSeller: SellerInfo | null;
+  sellers: SellerInfo[];
   currency: Currency;
   language: Language;
   quickViewProduct: Product | null;
@@ -24,6 +25,7 @@ interface StoreContextType {
   removeFromCart: (productId: string, selectedSize?: string, selectedColor?: string) => void;
   clearCart: () => void;
   addSale: (sale: Omit<SaleRecord, 'id' | 'date'>) => void;
+  addSeller: (seller: Omit<SellerInfo, 'id' | 'joinedDate' | 'totalSales' | 'balance' | 'totalEarnings' | 'withdrawnAmount' | 'rating' | 'rank' | 'isVerified' | 'verificationStatus' | 'commissionRate'>) => void;
   updateSaleStatus: (id: string, status: SaleRecord['status']) => void;
 }
 
@@ -42,6 +44,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (saved) return JSON.parse(saved);
     return [];
   });
+  const [sellers, setSellers] = useState<SellerInfo[]>(() => {
+    const saved = localStorage.getItem('wm_sellers');
+    if (saved) return JSON.parse(saved);
+    return SELLERS;
+  });
 
   // Save changes to localStorage
   useEffect(() => {
@@ -51,6 +58,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     localStorage.setItem('wm_sales', JSON.stringify(sales));
   }, [sales]);
+
+  useEffect(() => {
+    localStorage.setItem('wm_sellers', JSON.stringify(sellers));
+  }, [sellers]);
 
   const [activeShowName, setActiveShowName] = useState<string | null>(detectShowName());
   const [referralCode, setReferralCode] = useState<string | null>(null);
@@ -99,7 +110,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     const sellerId = referralCode || activeShowName;
     if (sellerId) {
-      const found = SELLERS.find(s => s.showName.toLowerCase() === sellerId.toLowerCase());
+      const found = sellers.find(s => s.showName.toLowerCase() === sellerId.toLowerCase());
       if (found) {
         setActiveSeller(found);
       } else {
@@ -108,7 +119,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } else {
       setActiveSeller(null);
     }
-  }, [activeShowName, referralCode]);
+  }, [activeShowName, referralCode, sellers]);
 
   const setCurrency = (code: CurrencyCode) => {
     const found = CURRENCIES.find(c => c.code === code);
@@ -133,22 +144,32 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     if (sales.length === 0) {
       const initialSales: SaleRecord[] = Array.from({ length: 50 }).map((_, i) => {
-      const p = products[i % products.length];
-      const c = customers[i % customers.length];
-      return {
-        id: `sale-${i}`,
-        productId: p.id,
-        productName: p.name,
-        customerName: c.name,
-        customerEmail: c.email,
-        amount: p.price,
-        date: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
-        status: i % 5 === 0 ? 'Processing' : 'Delivered'
-      };
-    });
-    setSales(initialSales);
+        const p = products[i % products.length];
+        const c = customers[i % customers.length];
+        return {
+          id: `sale-${i}`,
+          items: [{
+            productId: p.id,
+            name: p.name,
+            price: p.price,
+            quantity: 1,
+            size: p.sizes?.[0],
+            color: p.colors?.[0]
+          }],
+          customerName: c.name,
+          customerPhone: "+1234567890",
+          customerEmail: c.email,
+          customerAddress: "Mock Address 123",
+          amount: p.price,
+          date: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
+          status: i % 5 === 0 ? 'Processing' : 'Delivered',
+          sellerId: sellers[i % sellers.length].id,
+          sellerShopName: sellers[i % sellers.length].shopName || sellers[i % sellers.length].showName
+        };
+      });
+      setSales(initialSales);
     }
-  }, []);
+  }, [products, customers, sellers, sales.length]);
 
   const addProduct = (newP: Omit<Product, 'id' | 'datePosted'>) => {
     const fullProduct: Product = {
@@ -197,6 +218,25 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setSales(prev => [sale, ...prev]);
   };
 
+  const addSeller = (newS: Omit<SellerInfo, 'id' | 'joinedDate' | 'totalSales' | 'balance' | 'totalEarnings' | 'withdrawnAmount' | 'rating' | 'rank' | 'isVerified' | 'verificationStatus' | 'commissionRate'>) => {
+    const seller: SellerInfo = {
+      ...newS,
+      id: `seller-${Date.now()}`,
+      joinedDate: new Date().toISOString(),
+      totalSales: 0,
+      balance: 0,
+      totalEarnings: 0,
+      withdrawnAmount: 0,
+      rating: 5.0,
+      rank: 'Standard',
+      isVerified: false,
+      verificationStatus: 'Pending',
+      commissionRate: 10,
+      responseTime: "24h"
+    };
+    setSellers(prev => [seller, ...prev]);
+  };
+
   const updateSaleStatus = (id: string, status: SaleRecord['status']) => {
     setSales(prev => prev.map(sale => 
       sale.id === id ? { ...sale, status } : sale
@@ -205,11 +245,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   return (
     <StoreContext.Provider value={{ 
-      products, cart, sales, customers, activeShowName, referralCode, activeSeller,
+      products, cart, sales, customers, activeShowName, referralCode, activeSeller, sellers,
       currency, language, quickViewProduct,
       setCurrency, setLanguage, setQuickViewProduct, formatPrice,
       addProduct, addToCart, removeFromCart, clearCart,
-      addSale, updateSaleStatus
+      addSale, addSeller, updateSaleStatus
     }}>
       {children}
     </StoreContext.Provider>
