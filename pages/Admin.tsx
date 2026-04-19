@@ -1,25 +1,68 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES, SELLERS } from '../constants';
+
+const hashPassword = async (password: string) => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+};
 
 const Admin: React.FC = () => {
   const { products, sales, customers, addProduct, updateSaleStatus, formatPrice } = useStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'inventory' | 'sales' | 'customers' | 'settings' | 'withdrawals'>('overview');
-  const [accessCode, setAccessCode] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState('');
   const [adminPanelUrl, setAdminPanelUrl] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  // Password Update State
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordStatus, setPasswordStatus] = useState('');
+
+  useEffect(() => {
+    const checkDefaultPassword = async () => {
+      if (!localStorage.getItem('wm_admin_hash')) {
+        const defaultHash = await hashPassword('ADMIN_SECURE');
+        localStorage.setItem('wm_admin_hash', defaultHash);
+      }
+    };
+    checkDefaultPassword();
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // USA Code: +1, Pakistan Code: +92
-    if (accessCode.startsWith('+1') || accessCode.startsWith('+92') || accessCode === 'ADMIN_SECURE') {
+    const inputHash = await hashPassword(adminPassword);
+    const storedHash = localStorage.getItem('wm_admin_hash');
+
+    if (inputHash === storedHash) {
       setIsAuthenticated(true);
       setError('');
     } else {
-      setError('Access Not Allowed: Invalid country code security check.');
+      setError('Access Denied: Invalid Security Credentials');
     }
+  };
+
+  const handleUpdatePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      setPasswordStatus('Passwords do not match');
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPasswordStatus('Password must be at least 6 characters');
+      return;
+    }
+    const hash = await hashPassword(newPassword);
+    localStorage.setItem('wm_admin_hash', hash);
+    setPasswordStatus('Password updated successfully!');
+    setNewPassword('');
+    setConfirmPassword('');
+    setTimeout(() => setPasswordStatus(''), 3000);
   };
 
   const handlePost = (e: React.FormEvent) => {
@@ -42,11 +85,11 @@ const Admin: React.FC = () => {
 
           <form onSubmit={handleLogin} className="space-y-6">
             <input 
-              type="text" 
-              placeholder="+1 or +92 Access Code"
-              className="w-full bg-gray-50 border p-5 rounded-2xl focus:ring-4 focus:ring-blue-500/10 outline-none font-black text-center text-lg tracking-widest"
-              value={accessCode}
-              onChange={e => setAccessCode(e.target.value)}
+              type="password" 
+              placeholder="Enter Admin Password"
+              className="w-full bg-gray-50 border p-5 rounded-2xl focus:ring-4 focus:ring-blue-500/10 outline-none font-black text-center text-lg tracking-widest text-black"
+              value={adminPassword}
+              onChange={e => setAdminPassword(e.target.value)}
             />
             {error && <p className="text-red-500 text-[10px] font-black uppercase animate-bounce">{error}</p>}
             <button 
@@ -291,30 +334,59 @@ const Admin: React.FC = () => {
         )}
 
         {activeTab === 'settings' && (
-          <div className="animate-fadeIn bg-white p-10 rounded-3xl shadow-xl border border-gray-100 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-10">Advanced <span className="text-blue-600">Configuration</span></h3>
-            <div className="space-y-8">
-              <div>
-                <label className="block text-[10px] font-black uppercase text-gray-500 mb-2 tracking-widest text-left">Admin Panel URL (Placeholder)</label>
-                <div className="flex gap-2">
+          <div className="animate-fadeIn space-y-8 max-w-2xl mx-auto">
+            <div className="bg-white p-10 rounded-3xl shadow-xl border border-gray-100">
+              <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-10">Security <span className="text-blue-600">Upgrade</span></h3>
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-[10px] font-black uppercase text-gray-500 mb-2 tracking-widest text-left">New Admin Password</label>
                   <input 
-                    type="text" 
-                    className="flex-grow bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
-                    placeholder="https://admin-panel-v2.apex.com"
-                    value={adminPanelUrl}
-                    onChange={e => setAdminPanelUrl(e.target.value)}
+                    type="password" 
+                    className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
                   />
-                  <button className="bg-blue-600 text-white px-6 rounded-xl font-black text-xs uppercase shadow-lg">Save</button>
                 </div>
-                <p className="text-[9px] text-gray-400 mt-2 uppercase font-bold tracking-widest">Update the target URL for the centralized manufacturing controller.</p>
+                <div>
+                  <label className="block text-[10px] font-black uppercase text-gray-500 mb-2 tracking-widest text-left">Confirm Password</label>
+                  <input 
+                    type="password" 
+                    className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                  />
+                </div>
+                <button 
+                  onClick={handleUpdatePassword}
+                  className="w-full bg-black text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl hover:bg-blue-600 transition-all"
+                >
+                  Update Admin Password
+                </button>
+                {passwordStatus && (
+                  <p className={`text-center text-[10px] font-black uppercase tracking-widest ${passwordStatus.includes('success') ? 'text-green-600' : 'text-red-600'}`}>
+                    {passwordStatus}
+                  </p>
+                )}
               </div>
+            </div>
 
-              <div className="p-6 bg-blue-50 rounded-2xl border border-blue-100">
-                <h4 className="font-black uppercase text-xs text-blue-600 mb-2">Global Routing Rule</h4>
-                <p className="text-xs text-blue-900 leading-relaxed font-bold">
-                  All seller-created shows automatically pull inventory from this master admin panel. 
-                  Individual show links are publicly accessible and resolution-independent.
-                </p>
+            <div className="bg-white p-10 rounded-3xl shadow-xl border border-gray-100">
+              <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-10">Advanced <span className="text-blue-600">Configuration</span></h3>
+              <div className="space-y-8">
+                <div>
+                  <label className="block text-[10px] font-black uppercase text-gray-500 mb-2 tracking-widest text-left">Admin Panel URL (Placeholder)</label>
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      className="flex-grow bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
+                      placeholder="https://admin-panel-v2.apex.com"
+                      value={adminPanelUrl}
+                      onChange={e => setAdminPanelUrl(e.target.value)}
+                    />
+                    <button className="bg-blue-600 text-white px-6 rounded-xl font-black text-xs uppercase shadow-lg">Save</button>
+                  </div>
+                  <p className="text-[9px] text-gray-400 mt-2 uppercase font-bold tracking-widest">Update the target URL for the centralized manufacturing controller.</p>
+                </div>
               </div>
             </div>
           </div>

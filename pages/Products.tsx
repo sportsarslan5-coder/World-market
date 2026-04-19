@@ -33,8 +33,12 @@ const Products: React.FC = () => {
 
   const filteredProducts = useMemo(() => {
     let result = products.filter(p => {
-      const matchesQuery = p.name.toLowerCase().includes(query.toLowerCase()) || 
-                          p.description.toLowerCase().includes(query.toLowerCase());
+      const q = query.toLowerCase();
+      const matchesQuery = !query || 
+                          p.name.toLowerCase().includes(q) || 
+                          p.description.toLowerCase().includes(q) ||
+                          p.category.toLowerCase().includes(q) ||
+                          (p.tags && p.tags.some(t => t.toLowerCase().includes(q)));
       const matchesCategory = category === 'All' || p.category === category;
       const matchesPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
       const matchesRating = !selectedRating || p.rating >= selectedRating;

@@ -77,7 +77,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   const fuse = useMemo(() => new Fuse(PRODUCTS, {
-    keys: ['name', 'category', 'description'],
+    keys: ['name', 'category', 'description', 'tags'],
     threshold: 0.4,
     distance: 100,
     includeScore: true

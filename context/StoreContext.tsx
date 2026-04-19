@@ -30,10 +30,28 @@ interface StoreContextType {
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [products, setProducts] = useState<Product[]>(PRODUCTS.filter(p => p.image && p.image.trim() !== '' && p.name && p.category));
+  const [products, setProducts] = useState<Product[]>(() => {
+    const saved = localStorage.getItem('wm_products');
+    if (saved) return JSON.parse(saved);
+    return PRODUCTS.filter(p => p.image && p.image.trim() !== '' && p.name && p.category);
+  });
   const [cart, setCart] = useState<CartItem[]>([]);
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
-  const [sales, setSales] = useState<SaleRecord[]>([]);
+  const [sales, setSales] = useState<SaleRecord[]>(() => {
+    const saved = localStorage.getItem('wm_sales');
+    if (saved) return JSON.parse(saved);
+    return [];
+  });
+
+  // Save changes to localStorage
+  useEffect(() => {
+    localStorage.setItem('wm_products', JSON.stringify(products));
+  }, [products]);
+
+  useEffect(() => {
+    localStorage.setItem('wm_sales', JSON.stringify(sales));
+  }, [sales]);
+
   const [activeShowName, setActiveShowName] = useState<string | null>(detectShowName());
   const [referralCode, setReferralCode] = useState<string | null>(null);
   const [activeSeller, setActiveSeller] = useState<SellerInfo | null>(null);
@@ -111,9 +129,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return `${currency.symbol}${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
-  // Generate initial sales data based on products
+  // Generate initial sales data if empty
   useEffect(() => {
-    const initialSales: SaleRecord[] = Array.from({ length: 50 }).map((_, i) => {
+    if (sales.length === 0) {
+      const initialSales: SaleRecord[] = Array.from({ length: 50 }).map((_, i) => {
       const p = products[i % products.length];
       const c = customers[i % customers.length];
       return {
@@ -128,6 +147,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       };
     });
     setSales(initialSales);
+    }
   }, []);
 
   const addProduct = (newP: Omit<Product, 'id' | 'datePosted'>) => {

@@ -56,6 +56,7 @@ export interface Product {
   metaKeywords?: string;
   imageAlt?: string;
   badges?: string[];
+  tags?: string[];
   ratingCount?: number;
   ratingBreakdown?: {
     5: number;
