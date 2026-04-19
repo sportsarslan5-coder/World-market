@@ -55,42 +55,56 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Real-time synchronization with Firestore
   useEffect(() => {
     // Sync Products
-    const unsubscribeProducts = onSnapshot(query(collection(db, 'products'), orderBy('datePosted', 'desc')), (snapshot) => {
-      const productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
-      if (productList.length === 0) {
-        // Bootstrap initial data if fresh database
-        const batch = writeBatch(db);
-        PRODUCTS.forEach(p => {
-          const docRef = doc(collection(db, 'products'));
-          batch.set(docRef, { ...p, id: docRef.id, datePosted: new Date().toISOString() });
-        });
-        batch.commit();
-      } else {
-        setProducts(productList);
-      }
-    });
+    const unsubscribeProducts = onSnapshot(
+      query(collection(db, 'products'), orderBy('datePosted', 'desc')), 
+      (snapshot) => {
+        const productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+        if (productList.length === 0) {
+          // Bootstrap initial data if fresh database
+          const batch = writeBatch(db);
+          PRODUCTS.forEach(p => {
+            const docRef = doc(collection(db, 'products'));
+            batch.set(docRef, { ...p, id: docRef.id, datePosted: new Date().toISOString() });
+          });
+          batch.commit();
+        } else {
+          setProducts(productList);
+        }
+      },
+      (error) => console.error("Products sync error:", error)
+    );
 
     // Sync Sales
-    const unsubscribeSales = onSnapshot(query(collection(db, 'sales'), orderBy('date', 'desc')), (snapshot) => {
-      const salesList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SaleRecord));
-      setSales(salesList);
-    });
+    const unsubscribeSales = onSnapshot(
+      query(collection(db, 'sales'), orderBy('date', 'desc')), 
+      (snapshot) => {
+        const salesList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SaleRecord));
+        setSales(salesList);
+      },
+      (error) => {
+        console.warn("Sales access restricted or permission denied:", error.message);
+      }
+    );
 
     // Sync Sellers
-    const unsubscribeSellers = onSnapshot(collection(db, 'sellers'), (snapshot) => {
-      const sellerList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SellerInfo));
-      if (sellerList.length === 0) {
-        // Bootstrap initial sellers
-        const batch = writeBatch(db);
-        SELLERS.forEach(s => {
-          const docRef = doc(db, 'sellers', s.id);
-          batch.set(docRef, s);
-        });
-        batch.commit();
-      } else {
-        setSellers(sellerList);
-      }
-    });
+    const unsubscribeSellers = onSnapshot(
+      collection(db, 'sellers'), 
+      (snapshot) => {
+        const sellerList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SellerInfo));
+        if (sellerList.length === 0) {
+          // Bootstrap initial sellers
+          const batch = writeBatch(db);
+          SELLERS.forEach(s => {
+            const docRef = doc(db, 'sellers', s.id);
+            batch.set(docRef, s);
+          });
+          batch.commit();
+        } else {
+          setSellers(sellerList);
+        }
+      },
+      (error) => console.error("Sellers sync error:", error)
+    );
 
     return () => {
       unsubscribeProducts();

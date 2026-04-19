@@ -6,12 +6,23 @@ import { CATEGORIES } from '../constants';
 import { auth } from '../services/firebase';
 import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, User } from 'firebase/auth';
 
+const hashPassword = async (password: string) => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+};
+
 const Admin: React.FC = () => {
   const { products, sales, customers, sellers, addProduct, updateSaleStatus, formatPrice } = useStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'inventory' | 'sales' | 'customers' | 'settings' | 'withdrawals'>('overview');
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [isPassAuthenticated, setIsPassAuthenticated] = useState(false);
 
   // Search and Detail State
   const [searchTerm, setSearchTerm] = useState('');
@@ -49,6 +60,21 @@ const Admin: React.FC = () => {
 
   const handleLogout = async () => {
     await signOut(auth);
+    setIsPassAuthenticated(false);
+  };
+
+  const handlePasswordLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const inputHash = await hashPassword(adminPassword);
+    // Secure Hash for 'ADMIN_SECURE'
+    const masterHash = '2bb68926d2e07172ca78680d971a1796c836c2f9d656910609a63c638e874936'; 
+    
+    if (inputHash === masterHash) {
+      setIsPassAuthenticated(true);
+      setError('');
+    } else {
+      setError('Access Denied: Invalid Master Key');
+    }
   };
 
   // Filtered sales
@@ -95,9 +121,9 @@ const Admin: React.FC = () => {
     );
   }
 
-  const isAdmin = user?.email === 'sportsarslan199@gmail.com';
+  const isAdmin = isPassAuthenticated || user?.email === 'sportsarslan199@gmail.com';
 
-  if (!user || !isAdmin) {
+  if (!isAdmin) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center bg-gray-100 p-4">
         <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-2xl max-w-md w-full border border-gray-200 text-center">
@@ -106,32 +132,57 @@ const Admin: React.FC = () => {
           </div>
           <h2 className="text-3xl font-black italic tracking-tighter uppercase mb-2">Admin <span className="text-blue-600">Gate</span></h2>
           <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mb-10 leading-loose">
-            High Security Authentication <br/> Restricted to sportsarslan199@gmail.com
+            High Security Authentication <br/> Restricted to Authorized Personnel
           </p>
 
-          {!user ? (
-            <button 
-              onClick={handleGoogleLogin}
-              className="w-full bg-black text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4"
-            >
-              <LogIn size={20} />
-              Login with Google
-            </button>
-          ) : (
-            <div className="space-y-6">
+          <div className="space-y-6">
+            {!user ? (
+              <button 
+                onClick={handleGoogleLogin}
+                className="w-full bg-black text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4"
+              >
+                <LogIn size={20} />
+                Login with Google
+              </button>
+            ) : (
               <div className="p-4 bg-red-50 text-red-600 rounded-2xl border border-red-100">
                 <p className="text-[10px] font-black uppercase tracking-widest">Unauthorized Account</p>
                 <p className="text-xs font-bold mt-1">{user.email}</p>
               </div>
+            )}
+
+            <div className="relative flex items-center py-4">
+              <div className="flex-grow border-t border-gray-200"></div>
+              <span className="flex-shrink mx-4 text-[10px] font-black uppercase text-gray-400 tracking-widest">Or Use Master Key</span>
+              <div className="flex-grow border-t border-gray-200"></div>
+            </div>
+
+            <form onSubmit={handlePasswordLogin} className="space-y-4">
+              <input 
+                type="password" 
+                placeholder="Enter Master Security Key"
+                className="w-full bg-gray-50 border p-5 rounded-2xl focus:ring-4 focus:ring-blue-500/10 outline-none font-black text-center text-xs tracking-widest text-black"
+                value={adminPassword}
+                onChange={e => setAdminPassword(e.target.value)}
+              />
+              <button 
+                type="submit"
+                className="w-full bg-gray-100 text-gray-900 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all shadow-lg"
+              >
+                Verify Key
+              </button>
+            </form>
+
+            {(user || error) && (
               <button 
                 onClick={handleLogout}
-                className="w-full bg-gray-100 text-gray-900 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-gray-200 transition-all"
+                className="w-full text-gray-400 text-[10px] font-black uppercase tracking-widest hover:text-red-500 transition-colors"
               >
-                Logout & Try Different Email
+                Reset Access
               </button>
-            </div>
-          )}
-          {error && <p className="mt-4 text-red-500 text-[10px] font-black uppercase">{error}</p>}
+            )}
+          </div>
+          {error && <p className="mt-6 text-red-500 text-[10px] font-black uppercase animate-pulse">{error}</p>}
         </div>
       </div>
     );
