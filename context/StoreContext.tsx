@@ -70,29 +70,58 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Initial Load of Products
     const fetchInitialProducts = async () => {
       setIsProductsLoading(true);
+      console.log("Fetching initial products from Firestore...");
       try {
         const q = query(collection(db, 'products'), orderBy('datePosted', 'desc'), limit(24));
         const snapshot = await getDocs(q);
         
+        console.log(`Firestore Response: Found ${snapshot.size} products in immediate query.`);
+        
         const productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
         
-        if (productList.length === 0) {
-          // Check if we should bootstrap
-          // We'll allow bootstrapping if user is confirmed admin
-          const userEmail = auth.currentUser?.email;
-          if (userEmail === 'sportsarslan199@gmail.com') {
-            console.log("Empty database detected. Bootstrapping initial products...");
-            const batch = writeBatch(db);
-            PRODUCTS.forEach(p => {
-              const docRef = doc(collection(db, 'products'));
-              batch.set(docRef, { ...p, id: docRef.id, datePosted: new Date(Date.now() - Math.random() * 10000000).toISOString() });
-            });
-            await batch.commit();
-            // Re-fetch after bootstrap
-            const reSnapshot = await getDocs(q);
-            const reList = reSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
-            setProducts(reList);
-            setLastVisible(reSnapshot.docs[reSnapshot.docs.length - 1]);
+        // MIGRATION LOGIC: If database has fewer products than our mock data, ensure migration
+        // We check for a reasonable threshold or specifically if we're below a certain count
+        if (productList.length < 50) {
+          console.log(`Product count low (${productList.length}). Checking if migration is needed...`);
+          
+          // One-time check: see if we have already migrated by checking total count
+          const totalSnapshot = await getDocs(collection(db, 'products'));
+          console.log(`Total products in collection: ${totalSnapshot.size}`);
+          
+          if (totalSnapshot.size < PRODUCTS.length - 10) { 
+            console.log("Migration required. Uploading full product catalog...");
+            
+            // Chunking for Firestore batch limits (max 500 per batch)
+            const chunks = [];
+            for (let i = 0; i < PRODUCTS.length; i += 450) {
+              chunks.push(PRODUCTS.slice(i, i + 450));
+            }
+            
+            for (const chunk of chunks) {
+              const batch = writeBatch(db);
+              chunk.forEach(p => {
+                const docRef = doc(db, 'products', p.id);
+                // Use set with merge to avoid overwriting user edits but ensuring mock data exists
+                batch.set(docRef, { 
+                  ...p, 
+                  datePosted: p.datePosted || new Date().toISOString() 
+                }, { merge: true });
+              });
+              await batch.commit();
+              console.log(`Batch of ${chunk.length} products migrated.`);
+            }
+            
+            // Re-fetch everything after migration to ensure UI is up to date
+            const finalSnapshot = await getDocs(q);
+            const finalProducts = finalSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+            setProducts(finalProducts);
+            setLastVisible(finalSnapshot.docs[finalSnapshot.docs.length - 1]);
+            setHasMoreProducts(finalSnapshot.docs.length === 24);
+          } else {
+            console.log("Migration not needed, most products already present.");
+            setProducts(productList);
+            setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
+            setHasMoreProducts(snapshot.docs.length === 24);
           }
         } else {
           setProducts(productList);
@@ -100,7 +129,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           setHasMoreProducts(snapshot.docs.length === 24);
         }
       } catch (error) {
-        console.error("Products fetch error:", error);
+        console.error("CRITICAL: Products fetch/migration error:", error);
       } finally {
         setIsProductsLoading(false);
       }

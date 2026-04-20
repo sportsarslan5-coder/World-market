@@ -35,8 +35,8 @@
               "name": { "type": "string" },
               "price": { "type": "number" },
               "quantity": { "type": "integer" },
-              "selectedSize": { "type": "string" },
-              "selectedColor": { "type": "string" }
+              "size": { "type": "string" },
+              "color": { "type": "string" }
             }
           }
         },
@@ -49,11 +49,11 @@
         "customerZip": { "type": "string" },
         "amount": { "type": "number" },
         "date": { "type": "string", "format": "date-time" },
-        "status": { "type": "string", "enum": ["Processing", "Shipped", "Delivered", "Cancelled"] },
+        "status": { "type": "string", "enum": ["Processing", "Shipped", "Delivered", "Cancelled", "Pending Payment", "Confirmed"] },
         "sellerId": { "type": "string" },
         "sellerShopName": { "type": "string" }
       },
-      "required": ["customerName", "amount", "status"]
+      "required": ["customerName", "amount", "status", "customerCity", "customerCountry", "customerZip"]
     },
     "SellerInfo": {
       "title": "Seller Information",

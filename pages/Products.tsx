@@ -34,6 +34,10 @@ const Products: React.FC = () => {
   const filteredProducts = useMemo(() => {
     // 1. First apply search if query exists
     let result = query ? searchProducts(query) : products;
+    
+    console.log(`Filtering ${result.length} products (Total in store: ${products.length})`);
+    if (query) console.log(`Search query active: "${query}"`);
+    if (category !== 'All') console.log(`Category filter active: "${category}"`);
 
     // 2. Then apply other filters
     result = result.filter(p => {
