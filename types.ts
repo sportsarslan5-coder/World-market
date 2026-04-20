@@ -92,7 +92,7 @@ export interface SaleRecord {
   customerZip: string;
   amount: number;
   date: string;
-  status: 'Delivered' | 'Processing' | 'Shipped' | 'Pending Payment' | 'Confirmed' | 'Cancelled';
+  status: 'Delivered' | 'Processing' | 'Shipped' | 'Pending Payment' | 'Confirmed' | 'Cancelled' | 'Completed';
   sellerId?: string;
   sellerShopName?: string;
   commissionEarned?: number;

@@ -30,7 +30,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { 
-    cart, currency, language, setCurrency, setLanguage, formatPrice,
+    products, cart, currency, language, setCurrency, setLanguage, formatPrice,
     quickViewProduct, setQuickViewProduct, addToCart, activeSeller
   } = useStore();
   const { t } = useTranslation(language.code);
@@ -76,17 +76,17 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
-  const fuse = useMemo(() => new Fuse(PRODUCTS, {
+  const fuse = useMemo(() => new Fuse(products, {
     keys: ['name', 'category', 'description', 'tags'],
     threshold: 0.4,
     distance: 100,
     includeScore: true
-  }), []);
+  }), [products]);
 
   const suggestions = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const results = fuse.search(searchQuery);
-    return results.slice(0, 6).map(r => r.item);
+    return results.slice(0, 10).map(r => r.item);
   }, [searchQuery, fuse]);
 
   const handleSearch = (e: React.FormEvent) => {

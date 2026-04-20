@@ -21,6 +21,18 @@ const Search: React.FC = () => {
     return fuse.search(query).map(r => r.item);
   }, [query, fuse, products]);
 
+  const handleInlineSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const newQuery = formData.get('inline-search') as string;
+    if (newQuery) {
+      window.history.pushState({}, '', `/search?q=${encodeURIComponent(newQuery)}`);
+      // Update search params manually if needed or let route handle it
+      const event = new PopStateEvent('popstate');
+      window.dispatchEvent(event);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Search Header */}
@@ -39,7 +51,19 @@ const Search: React.FC = () => {
                   <>Explore <span className="text-blue-600 underline">Catalog</span></>
                 )}
               </h1>
-              <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-4">
+              <div className="mt-8 max-w-xl">
+                 <form onSubmit={handleInlineSearch} className="relative group">
+                    <input 
+                      name="inline-search"
+                      type="text" 
+                      defaultValue={query}
+                      placeholder="Refine your search..."
+                      className="w-full bg-white border-2 border-gray-100 rounded-2xl py-4 pl-12 pr-6 focus:border-blue-600 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none text-sm font-bold shadow-lg shadow-gray-200/50"
+                    />
+                    <SearchIcon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                 </form>
+              </div>
+              <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-6">
                 Found {results.length} professional sportswear items matching your query
               </p>
             </div>

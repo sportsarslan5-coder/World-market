@@ -318,6 +318,14 @@ const Admin: React.FC = () => {
                                 Confirm
                               </button>
                             )}
+                            {s.status === 'Confirmed' && (
+                              <button 
+                                onClick={() => updateSaleStatus(s.id, 'Completed')}
+                                className="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-all"
+                              >
+                                Complete Order
+                              </button>
+                            )}
                             <button 
                               onClick={() => setSelectedOrder(s)}
                               className="bg-black text-white px-4 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-all"
@@ -353,8 +361,8 @@ const Admin: React.FC = () => {
                         <p className="text-xs font-bold text-gray-500">{selectedOrder.customerEmail}</p>
                         <p className="text-[10px] font-bold text-gray-400 mt-4 uppercase">Shipping Address:</p>
                         <p className="text-xs font-bold text-gray-500 leading-relaxed">
-                          {selectedOrder.customerAddress}<br/>
-                          {selectedOrder.customerCity && `${selectedOrder.customerCity}, `}{selectedOrder.customerCountry}<br/>
+                          {selectedOrder.customerAddress || 'No Address'}<br/>
+                          {selectedOrder.customerCity && `${selectedOrder.customerCity}, `}{selectedOrder.customerCountry || 'No Country'}<br/>
                           {selectedOrder.customerZip && `Zip: ${selectedOrder.customerZip}`}
                         </p>
                       </div>

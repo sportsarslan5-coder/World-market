@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { Product, CartItem, SaleRecord, Customer, Currency, Language, CurrencyCode, LanguageCode, SellerInfo } from '../types';
 import { PRODUCTS, MOCK_CUSTOMERS, CURRENCIES, LANGUAGES, SELLERS } from '../constants';
 import { detectShowName } from '../services/routingUtils';
@@ -204,17 +204,18 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  // Initialize Fuse for search
+  const fuse = useMemo(() => {
+    return new Fuse(products, {
+      keys: ['name', 'category', 'description', 'tags'],
+      threshold: 0.35,
+      distance: 100,
+      includeScore: true
+    });
+  }, [products]);
+
   const searchProducts = (term: string) => {
     if (!term) return products;
-    
-    console.log(`Executing search for: "${term}"`);
-    const options = {
-      keys: ['name', 'category', 'description', 'tags'],
-      threshold: 0.3, // Lower is stricter, 0.3 is decent for typo tolerance
-      includeScore: true
-    };
-    
-    const fuse = new Fuse(products, options);
     const results = fuse.search(term);
     return results.map(r => r.item);
   };
@@ -332,12 +333,26 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const clearCart = () => setCart([]);
 
   const addSale = async (newSale: Omit<SaleRecord, 'id' | 'date'>) => {
-    const docRef = doc(collection(db, 'sales'));
-    await setDoc(docRef, {
-      ...newSale,
-      id: docRef.id,
-      date: new Date().toISOString()
-    });
+    try {
+      const docRef = doc(collection(db, 'sales'));
+      const saleData = {
+        ...newSale,
+        id: docRef.id,
+        date: new Date().toISOString(),
+        status: newSale.status || 'Pending Payment'
+      };
+      
+      // Ensure specific fields are present for Admin visibility
+      if (!saleData.customerCity) saleData.customerCity = 'N/A';
+      if (!saleData.customerCountry) saleData.customerCountry = 'N/A';
+      if (!saleData.customerZip) saleData.customerZip = 'N/A';
+      
+      await setDoc(docRef, saleData);
+      console.log(`Order created successfully: ${docRef.id}`);
+    } catch (error) {
+      console.error("Error creating sale:", error);
+      throw error;
+    }
   };
 
   const addSeller = async (newS: Omit<SellerInfo, 'id' | 'joinedDate' | 'totalSales' | 'balance' | 'totalEarnings' | 'withdrawnAmount' | 'rating' | 'rank' | 'isVerified' | 'verificationStatus' | 'commissionRate'>) => {
