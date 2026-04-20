@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import SEO from '../components/SEO';
-import { CATEGORIES, PRODUCTS } from '../constants';
+import { CATEGORIES } from '../constants';
 import { useStore } from '../context/StoreContext';
 import { getEnvironmentMode } from '../services/routingUtils';
 import BrandLogo from '../components/BrandLogo';
@@ -181,14 +181,14 @@ const Home: React.FC = () => {
             { title: 'Jackets', cat: 'Clothing', kw: 'jacket' },
             { title: 'Backpacks', cat: 'Bags', kw: 'backpack' }
           ].map((block) => {
-            const images = PRODUCTS
+            const images = products
               .filter(p => p.category === block.cat && p.name.toLowerCase().includes(block.kw))
               .map(p => p.image)
               .slice(0, 4);
             
             // Fallback if not enough images
             if (images.length < 4) {
-              const fallback = PRODUCTS.filter(p => p.category === block.cat).map(p => p.image).slice(0, 4 - images.length);
+              const fallback = products.filter(p => p.category === block.cat).map(p => p.image).slice(0, 4 - images.length);
               images.push(...fallback);
             }
 

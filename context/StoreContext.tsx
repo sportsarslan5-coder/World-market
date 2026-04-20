@@ -72,62 +72,54 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setIsProductsLoading(true);
       console.log("Fetching initial products from Firestore...");
       try {
-        const q = query(collection(db, 'products'), orderBy('datePosted', 'desc'), limit(24));
+        // Increase limit to 250 to ensure most products are loaded on first hit
+        const q = query(collection(db, 'products'), orderBy('datePosted', 'desc'), limit(250));
         const snapshot = await getDocs(q);
         
         console.log(`Firestore Response: Found ${snapshot.size} products in immediate query.`);
         
         const productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+        setProducts(productList);
+        setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
+        setHasMoreProducts(snapshot.size === 250);
         
-        // MIGRATION LOGIC: If database has fewer products than our mock data, ensure migration
-        // We check for a reasonable threshold or specifically if we're below a certain count
-        if (productList.length < 50) {
-          console.log(`Product count low (${productList.length}). Checking if migration is needed...`);
-          
-          // One-time check: see if we have already migrated by checking total count
-          const totalSnapshot = await getDocs(collection(db, 'products'));
-          console.log(`Total products in collection: ${totalSnapshot.size}`);
-          
-          if (totalSnapshot.size < PRODUCTS.length - 10) { 
-            console.log("Migration required. Uploading full product catalog...");
-            
-            // Chunking for Firestore batch limits (max 500 per batch)
-            const chunks = [];
-            for (let i = 0; i < PRODUCTS.length; i += 450) {
-              chunks.push(PRODUCTS.slice(i, i + 450));
-            }
-            
-            for (const chunk of chunks) {
-              const batch = writeBatch(db);
-              chunk.forEach(p => {
-                const docRef = doc(db, 'products', p.id);
-                // Use set with merge to avoid overwriting user edits but ensuring mock data exists
-                batch.set(docRef, { 
-                  ...p, 
-                  datePosted: p.datePosted || new Date().toISOString() 
-                }, { merge: true });
-              });
-              await batch.commit();
-              console.log(`Batch of ${chunk.length} products migrated.`);
-            }
-            
-            // Re-fetch everything after migration to ensure UI is up to date
-            const finalSnapshot = await getDocs(q);
-            const finalProducts = finalSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
-            setProducts(finalProducts);
-            setLastVisible(finalSnapshot.docs[finalSnapshot.docs.length - 1]);
-            setHasMoreProducts(finalSnapshot.docs.length === 24);
-          } else {
-            console.log("Migration not needed, most products already present.");
-            setProducts(productList);
-            setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
-            setHasMoreProducts(snapshot.docs.length === 24);
+        // MIGRATION LOGIC: Check if we need to bootstrap/migrate only if the current user is an admin
+        const triggerMigration = async () => {
+          const user = auth.currentUser;
+          if (user?.email === 'sportsarslan199@gmail.com') {
+             const totalSnapshot = await getDocs(collection(db, 'products'));
+             console.log(`Admin context: Checking total inventory (Found ${totalSnapshot.size} vs Mock ${PRODUCTS.length})`);
+             
+             if (totalSnapshot.size < PRODUCTS.length - 10) {
+               console.log("Migration required. Synchronizing full product catalog...");
+               // ... chunking logic
+               const chunks = [];
+               for (let i = 0; i < PRODUCTS.length; i += 450) {
+                 chunks.push(PRODUCTS.slice(i, i + 450));
+               }
+               
+               for (const chunk of chunks) {
+                 const batch = writeBatch(db);
+                 chunk.forEach(p => {
+                   const docRef = doc(db, 'products', p.id);
+                   batch.set(docRef, { 
+                     ...p, 
+                     datePosted: p.datePosted || new Date().toISOString() 
+                   }, { merge: true });
+                 });
+                 await batch.commit();
+               }
+               console.log("Migration complete. Refreshing local state.");
+               const refreshSnapshot = await getDocs(q);
+               const finalProducts = refreshSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+               setProducts(finalProducts);
+               setLastVisible(refreshSnapshot.docs[refreshSnapshot.docs.length - 1]);
+               setHasMoreProducts(refreshSnapshot.size === 250);
+             }
           }
-        } else {
-          setProducts(productList);
-          setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
-          setHasMoreProducts(snapshot.docs.length === 24);
-        }
+        };
+
+        triggerMigration();
       } catch (error) {
         console.error("CRITICAL: Products fetch/migration error:", error);
       } finally {

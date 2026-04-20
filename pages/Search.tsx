@@ -1,7 +1,6 @@
 
 import React, { useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { PRODUCTS } from '../constants';
 import { useStore } from '../context/StoreContext';
 import Fuse from 'fuse.js';
 import { Search as SearchIcon, Filter, Grid, List as ListIcon, Star, ArrowRight, ShoppingBag } from 'lucide-react';
@@ -9,18 +8,18 @@ import { Search as SearchIcon, Filter, Grid, List as ListIcon, Star, ArrowRight,
 const Search: React.FC = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
-  const { formatPrice, setQuickViewProduct } = useStore();
+  const { formatPrice, setQuickViewProduct, products } = useStore();
 
-  const fuse = useMemo(() => new Fuse(PRODUCTS, {
+  const fuse = useMemo(() => new Fuse(products, {
     keys: ['name', 'category', 'description', 'tags'],
     threshold: 0.4,
     distance: 100,
-  }), []);
+  }), [products]);
 
   const results = useMemo(() => {
-    if (!query.trim()) return PRODUCTS;
+    if (!query.trim()) return products;
     return fuse.search(query).map(r => r.item);
-  }, [query, fuse]);
+  }, [query, fuse, products]);
 
   return (
     <div className="min-h-screen bg-white">
