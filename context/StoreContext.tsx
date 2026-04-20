@@ -14,9 +14,14 @@ import {
   addDoc,
   serverTimestamp,
   getDocs,
-  writeBatch
+  writeBatch,
+  limit,
+  startAfter,
+  QueryDocumentSnapshot,
+  DocumentData
 } from 'firebase/firestore';
-import { db } from '../services/firebase';
+import { db, auth } from '../services/firebase';
+import Fuse from 'fuse.js';
 
 interface StoreContextType {
   products: Product[];
@@ -30,6 +35,8 @@ interface StoreContextType {
   currency: Currency;
   language: Language;
   quickViewProduct: Product | null;
+  isProductsLoading: boolean;
+  hasMoreProducts: boolean;
   setCurrency: (code: CurrencyCode) => void;
   setLanguage: (code: LanguageCode) => void;
   setQuickViewProduct: (product: Product | null) => void;
@@ -41,6 +48,8 @@ interface StoreContextType {
   addSale: (sale: Omit<SaleRecord, 'id' | 'date'>) => Promise<void>;
   addSeller: (seller: Omit<SellerInfo, 'id' | 'joinedDate' | 'totalSales' | 'balance' | 'totalEarnings' | 'withdrawnAmount' | 'rating' | 'rank' | 'isVerified' | 'verificationStatus' | 'commissionRate'>) => Promise<void>;
   updateSaleStatus: (id: string, status: SaleRecord['status']) => Promise<void>;
+  loadMoreProducts: () => Promise<void>;
+  searchProducts: (query: string) => Product[];
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -51,36 +60,59 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [sales, setSales] = useState<SaleRecord[]>([]);
   const [sellers, setSellers] = useState<SellerInfo[]>([]);
+  
+  const [isProductsLoading, setIsProductsLoading] = useState(false);
+  const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
+  const [hasMoreProducts, setHasMoreProducts] = useState(true);
 
   // Real-time synchronization with Firestore
   useEffect(() => {
-    // Sync Products
-    const unsubscribeProducts = onSnapshot(
-      query(collection(db, 'products'), orderBy('datePosted', 'desc')), 
-      (snapshot) => {
+    // Initial Load of Products
+    const fetchInitialProducts = async () => {
+      setIsProductsLoading(true);
+      try {
+        const q = query(collection(db, 'products'), orderBy('datePosted', 'desc'), limit(24));
+        const snapshot = await getDocs(q);
+        
         const productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+        
         if (productList.length === 0) {
-          // Only attempt bootstrap if user is potentially an admin to avoid guest permission errors
+          // Check if we should bootstrap
+          // We'll allow bootstrapping if user is confirmed admin
           const userEmail = auth.currentUser?.email;
           if (userEmail === 'sportsarslan199@gmail.com') {
+            console.log("Empty database detected. Bootstrapping initial products...");
             const batch = writeBatch(db);
             PRODUCTS.forEach(p => {
               const docRef = doc(collection(db, 'products'));
-              batch.set(docRef, { ...p, id: docRef.id, datePosted: new Date().toISOString() });
+              batch.set(docRef, { ...p, id: docRef.id, datePosted: new Date(Date.now() - Math.random() * 10000000).toISOString() });
             });
-            batch.commit().catch(err => console.warn("Failed to bootstrap products:", err));
+            await batch.commit();
+            // Re-fetch after bootstrap
+            const reSnapshot = await getDocs(q);
+            const reList = reSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+            setProducts(reList);
+            setLastVisible(reSnapshot.docs[reSnapshot.docs.length - 1]);
           }
         } else {
           setProducts(productList);
+          setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
+          setHasMoreProducts(snapshot.docs.length === 24);
         }
-      },
-      (error) => console.error("Products sync error:", error)
-    );
+      } catch (error) {
+        console.error("Products fetch error:", error);
+      } finally {
+        setIsProductsLoading(false);
+      }
+    };
 
-    // Sync Sales
+    fetchInitialProducts();
+
+    // Sync Sales (Real-time for Admin)
     const unsubscribeSales = onSnapshot(
       query(collection(db, 'sales'), orderBy('date', 'desc')), 
       (snapshot) => {
+        console.log(`Sales update received: ${snapshot.size} records`);
         const salesList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SaleRecord));
         setSales(salesList);
       },
@@ -112,11 +144,59 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     );
 
     return () => {
-      unsubscribeProducts();
       unsubscribeSales();
       unsubscribeSellers();
     };
   }, []);
+
+  const loadMoreProducts = async () => {
+    if (!lastVisible || !hasMoreProducts || isProductsLoading) return;
+    
+    setIsProductsLoading(true);
+    try {
+      const q = query(
+        collection(db, 'products'), 
+        orderBy('datePosted', 'desc'), 
+        startAfter(lastVisible), 
+        limit(24)
+      );
+      const snapshot = await getDocs(q);
+      
+      const newProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+      
+      if (newProducts.length > 0) {
+        setProducts(prev => {
+          // Prevent duplicates
+          const existingIds = new Set(prev.map(p => p.id));
+          const uniqueNew = newProducts.filter(p => !existingIds.has(p.id));
+          return [...prev, ...uniqueNew];
+        });
+        setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
+        setHasMoreProducts(snapshot.docs.length === 24);
+      } else {
+        setHasMoreProducts(false);
+      }
+    } catch (error) {
+      console.error("Load more products error:", error);
+    } finally {
+      setIsProductsLoading(false);
+    }
+  };
+
+  const searchProducts = (term: string) => {
+    if (!term) return products;
+    
+    console.log(`Executing search for: "${term}"`);
+    const options = {
+      keys: ['name', 'category', 'description', 'tags'],
+      threshold: 0.3, // Lower is stricter, 0.3 is decent for typo tolerance
+      includeScore: true
+    };
+    
+    const fuse = new Fuse(products, options);
+    const results = fuse.search(term);
+    return results.map(r => r.item);
+  };
 
   const [activeShowName, setActiveShowName] = useState<string | null>(detectShowName());
   const [referralCode, setReferralCode] = useState<string | null>(null);
@@ -266,10 +346,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <StoreContext.Provider value={{ 
       products, cart, sales, customers, activeShowName, referralCode, activeSeller, sellers,
-      currency, language, quickViewProduct,
+      currency, language, quickViewProduct, isProductsLoading, hasMoreProducts,
       setCurrency, setLanguage, setQuickViewProduct, formatPrice,
       addProduct, addToCart, removeFromCart, clearCart,
-      addSale, addSeller, updateSaleStatus
+      addSale, addSeller, updateSaleStatus, loadMoreProducts, searchProducts
     }}>
       {children}
     </StoreContext.Provider>

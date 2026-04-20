@@ -43,7 +43,7 @@ service cloud.firestore {
 
     match /sales/{saleId} {
       allow create: if isValidSale(incoming()) && isValidId(saleId);
-      allow read, list: if true; 
+      allow read, list: if isAdmin(); 
       allow update: if isAdmin() || (isSignedIn() && existing().sellerId == request.auth.uid && incoming().diff(existing()).affectedKeys().hasOnly(['status']));
     }
 

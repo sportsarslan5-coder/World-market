@@ -7,6 +7,7 @@ import { ADMIN_WHATSAPP } from '../constants';
 const Cart: React.FC = () => {
   const { cart, removeFromCart, clearCart, activeShowName, referralCode, activeSeller, addSale } = useStore();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
     name: '',
     email: '',
@@ -31,6 +32,9 @@ const Cart: React.FC = () => {
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    
+    console.log("Preparing to submit order to Firebase...");
     
     const urlParams = new URLSearchParams(window.location.search);
     const shopName = urlParams.get('seller') || (activeSeller ? activeSeller.showName : (activeShowName || "Main Store"));
@@ -41,8 +45,7 @@ const Cart: React.FC = () => {
     ).join('\n\n');
  
     try {
-      // Store order in system
-      await addSale({
+      const orderData = {
         items: cart.map(item => ({
           productId: item.id,
           name: item.name,
@@ -59,10 +62,16 @@ const Cart: React.FC = () => {
         customerCountry: customerInfo.country,
         customerZip: customerInfo.zipCode,
         amount: total,
-        status: 'Pending Payment',
-        sellerId: activeSeller?.id,
+        status: 'Pending Payment' as const,
+        sellerId: activeSeller?.id || sellerCode,
         sellerShopName: activeSeller?.shopName || activeSeller?.showName || shopName
-      });
+      };
+
+      console.log("Order Data Payload:", orderData);
+
+      // Store order in system
+      await addSale(orderData);
+      console.log("Order saved successfully to Firestore.");
 
       const message = `NEW ORDER RECEIVED
 --------------------------------
@@ -92,13 +101,15 @@ Secure manual payment confirmation via WhatsApp.`;
 
       const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;
       
+      setIsSubmitting(false);
       window.open(waLink, '_blank');
       clearCart();
       setIsCheckingOut(false);
-      alert("Order details saved to Cloud & sent to WhatsApp! Our team will provide payment instructions shortly.");
-    } catch (error) {
-      console.error("Order submission failed:", error);
-      alert("System Error: Could not reach Cloud Database. Please check your internet connection.");
+      alert("Order success! Order details saved to Cloud & sent to WhatsApp! Our team will provide payment instructions shortly.");
+    } catch (error: any) {
+      setIsSubmitting(false);
+      console.error("CRITICAL: Order submission failed:", error);
+      alert(`System Error: Could not save order. ${error.message || 'Please check your connection.'}`);
     }
   };
 
@@ -205,9 +216,11 @@ Secure manual payment confirmation via WhatsApp.`;
                     </button>
                     <button 
                       type="submit"
-                      className="flex-[2] bg-blue-600 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-blue-500/20 hover:bg-black transition-all"
+                      disabled={isSubmitting}
+                      className="flex-[2] bg-blue-600 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-blue-500/20 hover:bg-black transition-all flex items-center justify-center gap-3 disabled:opacity-50"
                     >
-                      Place Order via WhatsApp
+                      {isSubmitting && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
+                      {isSubmitting ? 'Processing...' : 'Place Order via WhatsApp'}
                     </button>
                   </div>
                   <p className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest pt-4">

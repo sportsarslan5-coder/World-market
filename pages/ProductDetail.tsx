@@ -33,7 +33,11 @@ const ProductDetail: React.FC = () => {
   const [customerInfo, setCustomerInfo] = useState({
     name: '',
     phone: '',
-    address: ''
+    email: '',
+    address: '',
+    city: '',
+    country: 'Pakistan',
+    zipCode: ''
   });
 
   const handleWhatsAppOrder = (e?: React.FormEvent) => {
@@ -60,11 +64,14 @@ const ProductDetail: React.FC = () => {
       }],
       customerName: customerInfo.name,
       customerPhone: customerInfo.phone,
-      customerEmail: 'N/A',
-      customerAddress: 'Direct Link Order',
+      customerEmail: customerInfo.email || 'N/A',
+      customerAddress: customerInfo.address,
+      customerCity: customerInfo.city || 'Direct',
+      customerCountry: customerInfo.country || 'N/A',
+      customerZip: customerInfo.zipCode || '0000',
       amount: product.price * quantity,
       status: 'Pending Payment',
-      sellerId: activeSeller?.id,
+      sellerId: activeSeller?.id || referralCode || 'Direct',
       sellerShopName: shopName
     });
 
@@ -334,22 +341,34 @@ Secure manual payment confirmation via WhatsApp.`;
                 <div className="space-y-3 pt-4">
                   {isOrdering ? (
                     <form onSubmit={handleWhatsAppOrder} className="space-y-4 animate-fadeIn">
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Full Name</label>
-                        <input 
-                          required
-                          className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold text-sm"
-                          value={customerInfo.name}
-                          onChange={e => setCustomerInfo({...customerInfo, name: e.target.value})}
-                        />
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Full Name</label>
+                          <input 
+                            required
+                            className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold text-sm"
+                            value={customerInfo.name}
+                            onChange={e => setCustomerInfo({...customerInfo, name: e.target.value})}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Phone Number</label>
+                          <input 
+                            required
+                            className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold text-sm"
+                            value={customerInfo.phone}
+                            onChange={e => setCustomerInfo({...customerInfo, phone: e.target.value})}
+                          />
+                        </div>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Phone Number</label>
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Email Address</label>
                         <input 
                           required
+                          type="email"
                           className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold text-sm"
-                          value={customerInfo.phone}
-                          onChange={e => setCustomerInfo({...customerInfo, phone: e.target.value})}
+                          value={customerInfo.email}
+                          onChange={e => setCustomerInfo({...customerInfo, email: e.target.value})}
                         />
                       </div>
                       <div className="space-y-1">
@@ -361,6 +380,26 @@ Secure manual payment confirmation via WhatsApp.`;
                           value={customerInfo.address}
                           onChange={e => setCustomerInfo({...customerInfo, address: e.target.value})}
                         />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">City</label>
+                          <input 
+                            required
+                            className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold text-sm"
+                            value={customerInfo.city}
+                            onChange={e => setCustomerInfo({...customerInfo, city: e.target.value})}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Zip Code</label>
+                          <input 
+                            required
+                            className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold text-sm"
+                            value={customerInfo.zipCode}
+                            onChange={e => setCustomerInfo({...customerInfo, zipCode: e.target.value})}
+                          />
+                        </div>
                       </div>
                       <div className="flex gap-2">
                         <button 

@@ -17,7 +17,7 @@ import {
 
 const Products: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { products, addToCart, formatPrice, language, setQuickViewProduct } = useStore();
+  const { products, addToCart, formatPrice, language, setQuickViewProduct, isProductsLoading, hasMoreProducts, loadMoreProducts, searchProducts } = useStore();
   const { t } = useTranslation(language.code);
   const { showName } = useParams();
 
@@ -32,13 +32,11 @@ const Products: React.FC = () => {
   const category = searchParams.get('cat') || 'All';
 
   const filteredProducts = useMemo(() => {
-    let result = products.filter(p => {
-      const q = query.toLowerCase();
-      const matchesQuery = !query || 
-                          p.name.toLowerCase().includes(q) || 
-                          p.description.toLowerCase().includes(q) ||
-                          p.category.toLowerCase().includes(q) ||
-                          (p.tags && p.tags.some(t => t.toLowerCase().includes(q)));
+    // 1. First apply search if query exists
+    let result = query ? searchProducts(query) : products;
+
+    // 2. Then apply other filters
+    result = result.filter(p => {
       const matchesCategory = category === 'All' || p.category === category;
       const matchesPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
       const matchesRating = !selectedRating || p.rating >= selectedRating;
@@ -47,7 +45,7 @@ const Products: React.FC = () => {
                                   (availability === 'inStock' && p.stock > 0) ||
                                   (availability === 'outOfStock' && p.stock === 0);
       
-      return matchesQuery && matchesCategory && matchesPrice && matchesRating && matchesAvailability;
+      return matchesCategory && matchesPrice && matchesRating && matchesAvailability;
     });
 
     switch (sortBy) {
@@ -226,10 +224,16 @@ const Products: React.FC = () => {
 
           {/* Product Grid */}
           <div className="flex-grow">
-            {filteredProducts.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredProducts.map(p => (
-                  <div key={p.id} className="group flex flex-col gap-4 bg-white p-3 md:p-4 rounded-[1.5rem] md:rounded-[2rem] border border-transparent hover:border-gray-100 hover:shadow-2xl transition-all h-full">
+            {isProductsLoading && products.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-32">
+                 <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+                 <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Syncing with Cloud Marketplace...</p>
+              </div>
+            ) : filteredProducts.length > 0 ? (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {filteredProducts.map(p => (
+                    <div key={p.id} className="group flex flex-col gap-4 bg-white p-3 md:p-4 rounded-[1.5rem] md:rounded-[2rem] border border-transparent hover:border-gray-100 hover:shadow-2xl transition-all h-full">
                     <Link to={getProductLink(p.id)} className="aspect-square bg-gray-50 rounded-2xl md:rounded-3xl overflow-hidden relative">
                       <img 
                         src={p.image} 
@@ -304,6 +308,20 @@ const Products: React.FC = () => {
                   </div>
                 ))}
               </div>
+
+              {hasMoreProducts && (
+                <div className="mt-16 text-center">
+                  <button 
+                    onClick={loadMoreProducts}
+                    disabled={isProductsLoading}
+                    className="bg-black text-white px-12 py-5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-4 mx-auto"
+                  >
+                    {isProductsLoading && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
+                    {isProductsLoading ? 'Loading Marketplace...' : 'Load More Products'}
+                  </button>
+                </div>
+              )}
+              </>
             ) : (
               <div className="text-center py-32 bg-white rounded-[3rem] border border-dashed border-gray-200">
                 <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-300">
