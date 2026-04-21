@@ -32,8 +32,8 @@ const Products: React.FC = () => {
   const category = searchParams.get('cat') || 'All';
 
   const filteredProducts = useMemo(() => {
-    // 1. First apply search if query exists
-    let result = query ? searchProducts(query) : products;
+    // 1. First apply search if query exists, pass current category context
+    let result = searchProducts(query, category);
     
     console.log(`Filtering ${result.length} products (Total in store: ${products.length})`);
     if (query) console.log(`Search query active: "${query}"`);
@@ -41,7 +41,6 @@ const Products: React.FC = () => {
 
     // 2. Then apply other filters
     result = result.filter(p => {
-      const matchesCategory = category === 'All' || p.category === category;
       const matchesPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
       const matchesRating = !selectedRating || p.rating >= selectedRating;
       const matchesCountry = !selectedCountry || p.shippingCountry === selectedCountry;
@@ -49,7 +48,7 @@ const Products: React.FC = () => {
                                   (availability === 'inStock' && p.stock > 0) ||
                                   (availability === 'outOfStock' && p.stock === 0);
       
-      return matchesCategory && matchesPrice && matchesRating && matchesAvailability;
+      return matchesPrice && matchesRating && matchesAvailability && matchesCountry;
     });
 
     switch (sortBy) {
@@ -74,11 +73,29 @@ const Products: React.FC = () => {
       <div className="bg-white border-b border-gray-200 py-8">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
+            <div className="flex-grow">
               <h1 className="text-3xl font-black italic uppercase tracking-tighter">
                 {query ? `Results for "${query}"` : category !== 'All' ? category : 'All Products'}
               </h1>
-              <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">
+              <div className="mt-4 max-w-md relative group">
+                <input 
+                  type="text" 
+                  placeholder={`Search in ${category}...`}
+                  value={query}
+                  onChange={(e) => setSearchParams({ q: e.target.value, cat: category })}
+                  className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl py-3 pl-10 pr-4 focus:border-blue-600 focus:bg-white transition-all outline-none text-sm font-bold"
+                />
+                <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                {query && (
+                  <button 
+                    onClick={() => setSearchParams({ cat: category })}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
+              <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-4">
                 {filteredProducts.length} items found
               </p>
             </div>

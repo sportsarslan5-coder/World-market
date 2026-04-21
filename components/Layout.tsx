@@ -7,7 +7,6 @@ import { useStore } from '../context/StoreContext';
 import { detectShowName } from '../services/routingUtils';
 import { CURRENCIES, LANGUAGES, PRODUCTS } from '../constants';
 import Fuse from 'fuse.js';
-import { useTranslation } from '../src/translations';
 import { 
   Search, 
   ShoppingCart, 
@@ -23,7 +22,11 @@ import {
   Facebook,
   Twitter,
   Instagram,
-  Linkedin
+  Linkedin,
+  MapPin,
+  Package,
+  Heart,
+  HelpCircle
 } from 'lucide-react';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -33,7 +36,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     products, cart, currency, language, setCurrency, setLanguage, formatPrice,
     quickViewProduct, setQuickViewProduct, addToCart, activeSeller
   } = useStore();
-  const { t } = useTranslation(language.code);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -93,8 +95,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       const path = currentShow ? `/${currentShow}/search` : '/search';
-      navigate(`${path}?q=${encodeURIComponent(searchQuery)}`);
+      const encodedQuery = encodeURIComponent(searchQuery);
+      // Support for global search reset
+      navigate(`${path}?q=${encodedQuery}`);
       setShowSuggestions(false);
+      setSearchQuery(''); // Reset search input after nav if desired, or keep for context
     }
   };
 
@@ -152,85 +157,160 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     );
   };
 
+  const t = (key: string, options?: { count?: number }) => {
+    const translations: Record<string, any> = {
+      en: {
+        search_placeholder: "Search for items, brands and more...",
+        cart: "Cart",
+        account: "Account",
+        returns: "Returns",
+        orders: "Orders",
+        menu: "Menu",
+        cart_items_count: (count: number) => `${count} Item${count !== 1 ? 's' : ''}`
+      },
+      es: {
+        search_placeholder: "Buscar artículos, marcas y más...",
+        cart: "Carrito",
+        account: "Cuenta",
+        returns: "Devoluciones",
+        orders: "Pedidos",
+        menu: "Menú",
+        cart_items_count: (count: number) => `${count} Artículo${count !== 1 ? 's' : ''}`
+      }
+    };
+
+    const lang = language.code as string;
+    const langSet = translations[lang] || translations['en'];
+    const value = langSet[key] || (translations['en'] && translations['en'][key]) || key;
+    
+    if (typeof value === 'function' && options?.count !== undefined) {
+      return value(options.count);
+    }
+    return value;
+  };
+
   return (
-    <div className={`min-h-screen flex flex-col font-sans selection:bg-blue-600 selection:text-white bg-white ${language.dir === 'rtl' ? 'rtl' : 'ltr'}`}>
+    <div className={`min-h-screen flex flex-col font-sans selection:bg-yellow-400 selection:text-black bg-white ${language.dir === 'rtl' ? 'rtl' : 'ltr'}`}>
       <SEO />
-      {/* Top Bar */}
-      <div className="bg-gray-900 py-1.5 px-4 text-[10px] flex justify-between items-center uppercase font-bold text-gray-400 tracking-widest border-b border-white/5 overflow-hidden">
-        <div className="flex items-center gap-2 md:gap-4 truncate">
-          <span className="flex items-center gap-1 shrink-0">
-            <span className="text-green-500 animate-pulse">●</span> 
-            {activeSeller 
-              ? `${activeSeller.fullName.toUpperCase()} OFFICIAL` 
-              : currentShow 
-                ? `${currentShow.toUpperCase()} SHOW` 
-                : '24/7 SUPPORT'}
-          </span>
-          <div className="hidden sm:flex items-center gap-4 border-l border-white/10 pl-4">
-            <div className="flex items-center gap-1 group cursor-pointer relative">
-              <span className="group-hover:text-white transition-colors">{language.flag} {language.name}</span>
-              <ChevronDown size={10} />
-              <div className="absolute top-full left-0 mt-2 w-40 bg-gray-900 border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[60] p-2">
-                {LANGUAGES.map(l => (
-                  <button 
-                    key={l.code}
-                    onClick={() => setLanguage(l.code)}
-                    className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 transition-colors flex items-center gap-2 ${language.code === l.code ? 'text-blue-500' : 'text-gray-400'}`}
-                  >
-                    <span>{l.flag}</span>
-                    <span>{l.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center gap-1 group cursor-pointer relative">
-              <span className="group-hover:text-white transition-colors">{currency.code} ({currency.symbol})</span>
-              <ChevronDown size={10} />
-              <div className="absolute top-full left-0 mt-2 w-48 bg-gray-900 border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[60] p-2">
-                {CURRENCIES.map(c => (
-                  <button 
-                    key={c.code}
-                    onClick={() => setCurrency(c.code)}
-                    className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 transition-colors flex items-center justify-between ${currency.code === c.code ? 'text-blue-500' : 'text-gray-400'}`}
-                  >
-                    <span>{c.code} - {c.name}</span>
-                    <span>{c.symbol}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+      
+      {/* Amazon Style Desktop Top Bar */}
+      <div className="bg-[#131921] py-2 px-4 hidden md:flex justify-between items-center text-xs font-bold text-white tracking-tight border-b border-white/5">
+        <div className="flex items-center gap-8">
+           <div className="flex items-center gap-2 hover:outline outline-white outline-1 p-1 px-2 cursor-pointer transition-all">
+             <MapPin size={16} className="text-gray-400" />
+             <div className="flex flex-col leading-none">
+               <span className="text-gray-400 text-[10px]">Deliver to</span>
+               <span className="font-black">{language.name}</span>
+             </div>
+           </div>
+           
+           <div className="flex items-center gap-4 text-gray-300">
+             <Link to={getLink('/products')} className="hover:text-white transition-colors">Customer Service</Link>
+             <Link to={getLink('/')} className="hover:text-white transition-colors">Registry</Link>
+             <Link to={getLink('/products')} className="hover:text-white transition-colors">Gift Cards</Link>
+             <Link to={getLink('/products')} className="hover:text-white transition-colors">Sell</Link>
+           </div>
         </div>
-        <div className="flex items-center gap-2 md:gap-4 shrink-0">
-          <Link 
-            to="/admin" 
-            className="bg-blue-600 hover:bg-blue-700 text-white px-3 md:px-4 py-1 rounded-lg transition-all flex items-center gap-1.5 shadow-lg shadow-blue-500/20 active:scale-95"
-          >
-            <ShieldCheck size={10} className="md:w-3 md:h-3" />
-            <span className="whitespace-nowrap">Seller Login / Dashboard</span>
-          </Link>
-          <span className="text-gray-700 hidden xs:inline">|</span>
-          <span className="hidden xs:inline">Worldwide</span>
+        
+        <div className="flex items-center gap-6">
+           <div className="group relative">
+             <div className="flex items-center gap-1 hover:outline outline-white outline-1 p-1 px-2 cursor-pointer">
+               <span className="text-xl leading-none">{language.flag}</span>
+               <span className="font-black uppercase">{language.code}</span>
+               <ChevronDown size={12} />
+             </div>
+             <div className="absolute top-full right-0 mt-0 w-64 bg-white border border-gray-200 rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[100] p-4">
+                <p className="text-gray-900 font-black mb-4 uppercase tracking-widest text-[10px]">Select Language</p>
+                <div className="space-y-2">
+                  {LANGUAGES.map(l => (
+                    <button 
+                      key={l.code}
+                      onClick={() => setLanguage(l.code)}
+                      className={`w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-900 flex items-center justify-between ${language.code === l.code ? 'bg-blue-50 font-black text-blue-600' : ''}`}
+                    >
+                      <span>{l.flag} {l.name}</span>
+                      {language.code === l.code && <div className="w-1.5 h-1.5 bg-blue-600 rounded-full" />}
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-4 pt-4 border-t border-gray-100 space-y-4">
+                  <p className="text-gray-900 font-black uppercase tracking-widest text-[10px]">Select Currency</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {CURRENCIES.map(c => (
+                      <button 
+                        key={c.code}
+                        onClick={() => setCurrency(c.code)}
+                        className={`text-left px-2 py-1.5 rounded-lg border text-[10px] font-bold ${currency.code === c.code ? 'border-blue-600 bg-blue-50 text-blue-600' : 'border-gray-100 text-gray-500 hover:border-gray-300'}`}
+                      >
+                        {c.code} ({c.symbol})
+                      </button>
+                    ))}
+                  </div>
+                </div>
+             </div>
+           </div>
+
+           <div className="hover:outline outline-white outline-1 p-1 px-2 cursor-pointer">
+             <div className="flex flex-col leading-none">
+                <span className="text-gray-400 text-[10px]">Hello, sign in</span>
+                <span className="font-black">Account & Lists</span>
+             </div>
+           </div>
+           
+           <Link to={getLink('/products')} className="hover:outline outline-white outline-1 p-1 px-2 cursor-pointer transition-all">
+             <div className="flex flex-col leading-none">
+                <span className="text-gray-400 text-[10px]">Returns</span>
+                <span className="font-black">& Orders</span>
+             </div>
+           </Link>
         </div>
       </div>
 
-      {/* Main Header */}
-      <nav className="bg-black text-white sticky top-0 z-50 shadow-2xl overflow-visible">
-        <div className="max-w-7xl mx-auto px-4">
-          {/* Desktop/Tablet Row */}
-          <div className="flex items-center h-16 md:h-20 gap-4 md:gap-8 justify-between">
+      {/* Main Header - Sticky & Amazon-Themed */}
+      <nav className="bg-[#232f3e] text-white sticky top-0 z-50 shadow-xl overflow-visible">
+        <div className="max-w-7xl mx-auto px-4 md:px-0">
+          <div className="flex items-center h-16 md:h-20 gap-2 md:gap-4 p-2">
+            
+            {/* Mobile Menu Icon */}
+            <button 
+              className="md:hidden p-2 active:bg-white/10 rounded-lg"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <Menu size={28} className="text-white" />
+            </button>
+
             {/* Logo */}
-            <Link to={getLink('/')} className="flex-shrink-0 active:scale-95 transition-transform">
-              <BrandLogo className="h-8 md:h-10 w-auto" />
+            <Link to={getLink('/')} className="flex-shrink-0 active:scale-95 transition-transform md:px-4 md:hover:outline outline-white outline-1 py-2">
+              <BrandLogo className="h-8 md:h-12 w-auto" />
             </Link>
 
-            {/* Advanced Search - Desktop */}
-            <div className="hidden md:block flex-grow relative max-w-3xl" ref={searchRef}>
-              <form onSubmit={handleSearch} className="flex relative">
+            {/* Mobile Profile & Cart (Always Visible on mobile right) */}
+            <div className="flex md:hidden items-center ml-auto gap-2">
+               <button className="p-2 flex items-center">
+                  <span className="text-[10px] font-black mr-1">Sign In</span>
+                  <User size={24} />
+               </button>
+               <Link to={getLink('/cart')} className="relative p-2 flex items-center">
+                  <ShoppingCart size={28} />
+                  {cartCount > 0 && (
+                    <span className="absolute top-1 right-1 bg-yellow-400 text-black text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#232f3e]">
+                      {cartCount}
+                    </span>
+                  )}
+               </Link>
+            </div>
+
+            {/* Advanced Search - Expanded for Desktop & Prominent for Mobile */}
+            <div className="hidden md:block flex-grow relative max-w-4xl" ref={searchRef}>
+              <form onSubmit={handleSearch} className="flex h-11 rounded-full overflow-hidden shadow-2xl">
+                <div className="bg-gray-100 px-4 flex items-center gap-1 border-r border-gray-300 text-gray-600 text-xs font-bold hover:bg-gray-200 cursor-pointer transition-colors max-w-[120px]">
+                   <span>All</span>
+                   <ChevronDown size={14} />
+                </div>
                 <input 
                   type="text" 
                   placeholder={t('search_placeholder')}
-                  className="w-full bg-white/10 border border-white/10 rounded-full py-2.5 pl-6 pr-12 focus:bg-white focus:text-black focus:ring-4 focus:ring-blue-500/30 transition-all outline-none text-sm font-semibold placeholder:text-gray-500"
+                  className="flex-grow bg-white px-6 py-2 pb-2.5 focus:ring-4 focus:ring-yellow-400/50 transition-all outline-none text-base font-semibold text-gray-900 placeholder:text-gray-400"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -238,59 +318,37 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   }}
                   onFocus={() => setShowSuggestions(true)}
                 />
-                <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-500 transition-colors active:scale-125">
-                  <Search size={18} />
+                <button type="submit" className="bg-[#febd69] hover:bg-[#f3a847] text-black w-14 flex items-center justify-center transition-colors active:scale-95 border-none">
+                  <Search size={22} className="stroke-[3]" />
                 </button>
               </form>
-              {/* Suggestions dropdown same as before */}
               {renderSuggestions()}
             </div>
 
-            {/* Right Actions */}
-            <div className="flex items-center gap-3 md:gap-6">
-              <div className="hidden lg:flex flex-col cursor-pointer group">
-                <span className="text-[10px] font-bold text-gray-500 uppercase leading-none mb-1">{t('account')}</span>
-                <div className="flex items-center gap-1">
-                  <span className="text-xs font-black tracking-tight group-hover:text-blue-500 transition-colors">Sign In</span>
-                  <ChevronDown size={12} className="text-gray-500" />
-                </div>
-              </div>
-              <Link to={getLink('/products')} className="flex flex-col group">
-                <span className="text-[10px] font-bold text-gray-500 uppercase">{t('returns')}</span>
-                <span className="text-xs font-black tracking-tight group-hover:text-blue-500 transition-colors">& {t('orders')}</span>
-              </Link>
-            </div>
-
-            {/* Cart - Always Visible */}
-            <Link to={getLink('/cart')} className="relative flex items-center gap-2 group p-2 hover:bg-white/5 rounded-xl transition-all">
+            {/* Desktop Cart */}
+            <Link to={getLink('/cart')} className="hidden md:flex relative items-center gap-2 group md:hover:outline outline-white outline-1 h-full px-4 transition-all">
               <div className="relative">
-                <ShoppingCart size={24} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
+                <ShoppingCart size={32} className="text-white" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-blue-600 text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-black animate-bounce">
+                  <span className="absolute -top-1 right-0 bg-yellow-400 text-black text-[12px] font-black w-5 h-5 flex items-center justify-center rounded-full">
                     {cartCount}
                   </span>
                 )}
               </div>
-              <span className="hidden xl:block text-xs font-black uppercase tracking-widest mt-1">{t('cart')}</span>
+              <div className="flex flex-col justify-center leading-none mt-1">
+                 <span className="text-[10px] font-black text-white/70 uppercase">Cart</span>
+                 <span className="text-sm font-black whitespace-nowrap">{t('cart_items_count', { count: cartCount })}</span>
+              </div>
             </Link>
-
-            {/* Mobile Menu Toggle */}
-            <button 
-              className="md:hidden p-2 hover:bg-white/5 rounded-xl flex items-center gap-1 active:scale-95"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              <span className="text-[10px] font-black uppercase tracking-widest">{t('menu')}</span>
-              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
           </div>
 
-          {/* Mobile Search Row - visible only on small screens */}
-          <div className="md:hidden pb-4" ref={searchRef}>
-            <form onSubmit={handleSearch} className="flex relative">
+          {/* Amazon Mobile Search Bar (Sticky-ish Below header) */}
+          <div className="md:hidden px-4 pb-3" ref={searchRef}>
+            <form onSubmit={handleSearch} className="flex relative h-12 rounded-xl overflow-hidden shadow-lg border-2 border-[#131921]">
               <input 
                 type="text" 
                 placeholder={t('search_placeholder')}
-                className="w-full bg-white/10 border border-white/10 rounded-full py-2.5 pl-5 pr-12 focus:bg-white focus:text-black focus:ring-4 focus:ring-blue-500/30 transition-all outline-none text-sm font-semibold placeholder:text-gray-500"
+                className="w-full bg-white px-5 py-3 focus:bg-white focus:text-black transition-all outline-none text-sm font-semibold text-gray-900 placeholder:text-gray-500"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -298,82 +356,110 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 }}
                 onFocus={() => setShowSuggestions(true)}
               />
-              <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 active:scale-125">
-                <Search size={18} />
+              <button type="submit" className="bg-[#febd69] text-black w-14 flex items-center justify-center active:scale-95 border-none">
+                <Search size={22} className="stroke-[3]" />
               </button>
               {renderSuggestions()}
             </form>
           </div>
         </div>
 
-        {/* Sub-nav */}
-        <div className="bg-gray-800/50 backdrop-blur-md border-t border-white/5">
-          <div className="max-w-7xl mx-auto px-4 flex py-2 gap-6 text-[11px] font-black uppercase tracking-widest overflow-x-auto whitespace-nowrap scrollbar-hide">
-            <button className="flex items-center gap-1 hover:text-blue-500 group">
-              <Menu size={14} />
-              <span>All</span>
+        {/* Amazon Sub-nav (Global Links) */}
+        <div className="bg-[#37475a] text-white">
+          <div className="max-w-7xl mx-auto flex items-center px-4 py-2 gap-4 md:gap-8 text-xs font-bold whitespace-nowrap overflow-x-auto scrollbar-hide no-scrollbar">
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="flex items-center gap-1.5 hover:outline outline-white outline-1 py-1 pr-4 md:pr-2"
+            >
+              <Menu size={20} />
+              <span className="uppercase font-black text-[11px] tracking-tight">All</span>
             </button>
-            <Link to={getLink('/products')} className="hover:text-blue-500">Today's Deals</Link>
-            <Link to="/sport-store" className="text-yellow-500 hover:underline">Sport Store 🔥</Link>
-            <Link to={getLink('/ai-designer')} className="text-blue-500 hover:underline">AI Design Studio</Link>
-            <Link to={getLink('/products?cat=Clothing')} className="hover:text-blue-500">Clothing</Link>
-            <Link to={getLink('/products?cat=Shoes')} className="hover:text-blue-500">Shoes</Link>
-            <Link to={getLink('/products?cat=Sportswear')} className="hover:text-blue-500">Sportswear</Link>
-            <Link to={getLink('/products?cat=Bags')} className="hover:text-blue-500">Bags</Link>
-            <Link to={getLink('/products?cat=Outdoor')} className="hover:text-blue-500">Outdoor</Link>
-            <Link to="/register-show" className="text-blue-400 hover:underline font-black">Become A Seller</Link>
-            <Link to="/admin" className="ml-auto text-gray-400 hover:text-white">Seller Dashboard</Link>
+            <div className="flex items-center gap-4 md:gap-6 border-l border-white/10 pl-4 md:pl-6">
+              <Link to={getLink('/products')} className="hover:outline outline-white outline-1 p-1">Professional Gear</Link>
+              <Link to={getLink('/products?cat=Sportswear')} className="hover:outline outline-white outline-1 p-1">Export Items</Link>
+              <Link to={getLink('/admin')} className="text-yellow-400 hover:outline outline-white outline-1 p-1">Seller Central</Link>
+              <Link to={getLink('/register-show')} className="hover:outline outline-white outline-1 p-1">Launch Store</Link>
+              <Link to={getLink('/products?cat=Accessories')} className="hover:outline outline-white outline-1 p-1">Bulk Buy</Link>
+              <Link to={getLink('/blog')} className="hover:outline outline-white outline-1 p-1">Blog</Link>
+            </div>
+            
+            <div className="ml-auto hidden md:flex items-center gap-2 text-[#febd69] font-black uppercase text-[10px] tracking-widest">
+               <Package size={14} />
+               <span>Fast Global Delivery</span>
+            </div>
           </div>
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Location Bar (Amazon-Style Blue Gradient) */}
+      <div className="md:hidden bg-gradient-to-r from-[#232f3e] to-[#37475a] py-2.5 px-6 flex items-center gap-2 text-white border-t border-white/5">
+         <MapPin size={14} className="text-gray-400" />
+         <span className="text-[11px] font-medium truncate">Deliver to {language.name} - Choose location</span>
+         <ChevronDown size={14} className="ml-auto" />
+      </div>
+
+      {/* Mobile Menu Side Drawer (Amazon Style) */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl lg:hidden animate-fadeIn">
-          <div className="p-6 flex flex-col h-full">
-            <div className="flex justify-between items-center mb-12">
-              <BrandLogo />
-              <button onClick={() => setIsMobileMenuOpen(false)} className="text-white p-2">
-                <X size={32} />
-              </button>
+        <div className="fixed inset-0 z-[200] overflow-hidden">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={() => setIsMobileMenuOpen(false)} />
+          <div className="absolute top-0 left-0 bottom-0 w-4/5 max-w-sm bg-white shadow-2xl animate-slideRight flex flex-col">
+            
+            {/* Header User Section */}
+            <div className="bg-[#232f3e] p-6 pt-10 text-white flex flex-col gap-4">
+               <div className="flex justify-between items-start">
+                  <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center text-xl">
+                    <User size={28} />
+                  </div>
+                  <button onClick={() => setIsMobileMenuOpen(false)} className="p-2">
+                    <X size={32} />
+                  </button>
+               </div>
+               <h3 className="text-xl font-black italic tracking-tighter">Hello, Sign In</h3>
             </div>
             
-            <div className="space-y-8 overflow-y-auto flex-grow">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/5 p-4 rounded-2xl border border-white/10">
-                  <span className="text-[10px] font-bold text-gray-500 uppercase block mb-2">Language</span>
-                  <select 
-                    className="bg-transparent text-white font-black w-full outline-none"
-                    value={language.code}
-                    onChange={(e) => setLanguage(e.target.value as any)}
-                  >
-                    {LANGUAGES.map(l => <option key={l.code} value={l.code} className="bg-black">{l.flag} {l.name}</option>)}
-                  </select>
-                </div>
-                <div className="bg-white/5 p-4 rounded-2xl border border-white/10">
-                  <span className="text-[10px] font-bold text-gray-500 uppercase block mb-2">Currency</span>
-                  <select 
-                    className="bg-transparent text-white font-black w-full outline-none"
-                    value={currency.code}
-                    onChange={(e) => setCurrency(e.target.value as any)}
-                  >
-                    {CURRENCIES.map(c => <option key={c.code} value={c.code} className="bg-black">{c.code} ({c.symbol})</option>)}
-                  </select>
-                </div>
-              </div>
+            <div className="flex-grow overflow-y-auto bg-gray-100">
+               <div className="bg-white mb-2 pb-4">
+                  <h4 className="px-6 py-4 text-lg font-black uppercase italic tracking-tighter text-gray-900 border-b border-gray-100 mb-2">Shop by Category</h4>
+                  <div className="flex flex-col">
+                    {['Clothing', 'Shoes', 'Sportswear', 'Bags', 'Accessories'].map(cat => (
+                      <Link 
+                        key={cat} 
+                        to={getLink(`/products?cat=${cat}`)}
+                        className="px-6 py-4 flex items-center justify-between text-sm font-bold text-gray-700 hover:bg-gray-50 active:bg-gray-100"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {cat}
+                        <ArrowRight size={16} className="text-gray-300" />
+                      </Link>
+                    ))}
+                  </div>
+               </div>
 
-              <div className="flex flex-col gap-6">
-                <Link to={getLink('/')} className="text-3xl font-black uppercase italic tracking-tighter text-white hover:text-blue-500" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
-                <Link to={getLink('/products')} className="text-3xl font-black uppercase italic tracking-tighter text-white hover:text-blue-500" onClick={() => setIsMobileMenuOpen(false)}>Shop All</Link>
-                <Link to={getLink('/ai-designer')} className="text-3xl font-black uppercase italic tracking-tighter text-blue-500" onClick={() => setIsMobileMenuOpen(false)}>AI Designer</Link>
-                <Link to={getLink('/cart')} className="text-3xl font-black uppercase italic tracking-tighter text-white hover:text-blue-500" onClick={() => setIsMobileMenuOpen(false)}>Cart ({cartCount})</Link>
-              </div>
+               <div className="bg-white mb-2 pb-4">
+                  <h4 className="px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Help & Settings</h4>
+                  <div className="flex flex-col">
+                    <div className="px-6 py-4 flex items-center justify-between text-sm font-bold text-gray-700">
+                      <span>Your Account</span>
+                    </div>
+                    <div className="px-6 py-4 flex items-center justify-between text-sm font-bold text-gray-700">
+                      <span>{language.name} ({language.code.toUpperCase()})</span>
+                      <span className="text-xl leading-none">{language.flag}</span>
+                    </div>
+                    <Link to="/admin" className="px-6 py-4 flex items-center justify-between text-sm font-black text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>
+                      Seller Sign In
+                    </Link>
+                  </div>
+               </div>
             </div>
-
-            <div className="mt-auto pt-8 border-t border-white/10 space-y-4">
-              <Link to="/admin" className="block w-full bg-blue-600 text-white text-center py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-blue-500/20" onClick={() => setIsMobileMenuOpen(false)}>
-                Seller Login / Dashboard
-              </Link>
+            
+            <div className="p-6 bg-white border-t border-gray-200">
+               <Link 
+                 to={getLink('/products')} 
+                 className="flex items-center justify-center w-full bg-[#febd69] text-black py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-xl shadow-yellow-400/20"
+                 onClick={() => setIsMobileMenuOpen(false)}
+               >
+                 Sign In
+               </Link>
             </div>
           </div>
         </div>

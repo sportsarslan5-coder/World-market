@@ -6,31 +6,20 @@ import Fuse from 'fuse.js';
 import { Search as SearchIcon, Filter, Grid, List as ListIcon, Star, ArrowRight, ShoppingBag } from 'lucide-react';
 
 const Search: React.FC = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
-  const { formatPrice, setQuickViewProduct, products } = useStore();
-
-  const fuse = useMemo(() => new Fuse(products, {
-    keys: ['name', 'category', 'description', 'tags'],
-    threshold: 0.4,
-    distance: 100,
-  }), [products]);
+  const category = searchParams.get('cat') || 'All';
+  const { formatPrice, setQuickViewProduct, products, searchProducts } = useStore();
 
   const results = useMemo(() => {
-    if (!query.trim()) return products;
-    return fuse.search(query).map(r => r.item);
-  }, [query, fuse, products]);
+    return searchProducts(query, category);
+  }, [query, category, searchProducts]);
 
   const handleInlineSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const newQuery = formData.get('inline-search') as string;
-    if (newQuery) {
-      window.history.pushState({}, '', `/search?q=${encodeURIComponent(newQuery)}`);
-      // Update search params manually if needed or let route handle it
-      const event = new PopStateEvent('popstate');
-      window.dispatchEvent(event);
-    }
+    const newQuery = (formData.get('inline-search') as string) || '';
+    setSearchParams({ q: newQuery, cat: category });
   };
 
   return (

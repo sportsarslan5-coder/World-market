@@ -49,7 +49,7 @@ interface StoreContextType {
   addSeller: (seller: Omit<SellerInfo, 'id' | 'joinedDate' | 'totalSales' | 'balance' | 'totalEarnings' | 'withdrawnAmount' | 'rating' | 'rank' | 'isVerified' | 'verificationStatus' | 'commissionRate'>) => Promise<void>;
   updateSaleStatus: (id: string, status: SaleRecord['status']) => Promise<void>;
   loadMoreProducts: () => Promise<void>;
-  searchProducts: (query: string) => Product[];
+  searchProducts: (query: string, category?: string) => Product[];
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -72,56 +72,74 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setIsProductsLoading(true);
       console.log("Fetching initial products from Firestore...");
       try {
-        // Increase limit to 250 to ensure most products are loaded on first hit
-        const q = query(collection(db, 'products'), orderBy('datePosted', 'desc'), limit(250));
+        // Increase limit significantly for initial fetch
+        const q = query(collection(db, 'products'), orderBy('datePosted', 'desc'), limit(1000));
         const snapshot = await getDocs(q);
         
-        console.log(`Firestore Response: Found ${snapshot.size} products in immediate query.`);
+        console.log(`Firestore Response: Found ${snapshot.size} products.`);
         
-        const productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+        let productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+        
+        // CRITICAL FIX: If Firestore is empty or nearly empty, use the constant PRODUCTS as immediate fallback
+        // to prevent the "Only 2 products showing" issue while migration happens in background.
+        if (productList.length < 5) {
+          console.warn("Firestore inventory low. Using local constant PRODUCTS as temporary source.");
+          productList = PRODUCTS;
+          setHasMoreProducts(false);
+        } else {
+          setHasMoreProducts(snapshot.size === 1000);
+        }
+        
         setProducts(productList);
-        setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
-        setHasMoreProducts(snapshot.size === 250);
+        if (snapshot.docs.length > 0) {
+          setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
+        }
         
-        // MIGRATION LOGIC: Check if we need to bootstrap/migrate only if the current user is an admin
+        // MIGRATION / BOOTSTRAP LOGIC
         const triggerMigration = async () => {
-          const user = auth.currentUser;
-          if (user?.email === 'sportsarslan199@gmail.com') {
-             const totalSnapshot = await getDocs(collection(db, 'products'));
-             console.log(`Admin context: Checking total inventory (Found ${totalSnapshot.size} vs Mock ${PRODUCTS.length})`);
-             
-             if (totalSnapshot.size < PRODUCTS.length - 10) {
-               console.log("Migration required. Synchronizing full product catalog...");
-               // ... chunking logic
-               const chunks = [];
-               for (let i = 0; i < PRODUCTS.length; i += 450) {
-                 chunks.push(PRODUCTS.slice(i, i + 450));
-               }
-               
-               for (const chunk of chunks) {
-                 const batch = writeBatch(db);
-                 chunk.forEach(p => {
-                   const docRef = doc(db, 'products', p.id);
-                   batch.set(docRef, { 
-                     ...p, 
-                     datePosted: p.datePosted || new Date().toISOString() 
-                   }, { merge: true });
-                 });
-                 await batch.commit();
-               }
-               console.log("Migration complete. Refreshing local state.");
-               const refreshSnapshot = await getDocs(q);
-               const finalProducts = refreshSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
-               setProducts(finalProducts);
-               setLastVisible(refreshSnapshot.docs[refreshSnapshot.docs.length - 1]);
-               setHasMoreProducts(refreshSnapshot.size === 250);
-             }
+          // Allow migration if inventory is significantly lower than PRODUCTS constant
+          // We check total count first
+          const totalSnapshot = await getDocs(collection(db, 'products'));
+          
+          if (totalSnapshot.size < PRODUCTS.length - 5) {
+            console.log(`Migration required. Inventory: ${totalSnapshot.size} vs Expected: ${PRODUCTS.length}`);
+            
+            // Logic: Chunk upload all products
+            const chunks = [];
+            for (let i = 0; i < PRODUCTS.length; i += 450) {
+              chunks.push(PRODUCTS.slice(i, i + 450));
+            }
+            
+            for (const chunk of chunks) {
+              const batch = writeBatch(db);
+              chunk.forEach(p => {
+                const docRef = doc(db, 'products', p.id);
+                batch.set(docRef, { 
+                  ...p, 
+                  datePosted: p.datePosted || new Date().toISOString() 
+                }, { merge: true });
+              });
+              await batch.commit();
+            }
+            console.log("Migration complete.");
+            
+            // Refresh products if we were showing the fallback
+            const finalQ = query(collection(db, 'products'), orderBy('datePosted', 'desc'), limit(1000));
+            const finalSnapshot = await getDocs(finalQ);
+            const finalProducts = finalSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+            setProducts(finalProducts);
           }
         };
 
-        triggerMigration();
+        // We still restrict migration to the admin or if current count is extremely low
+        const user = auth.currentUser;
+        if (user?.email === 'sportsarslan199@gmail.com' || snapshot.size < 5) {
+          triggerMigration();
+        }
       } catch (error) {
         console.error("CRITICAL: Products fetch/migration error:", error);
+        // Disaster fallback: always show local products if Firestore fails
+        if (products.length === 0) setProducts(PRODUCTS);
       } finally {
         setIsProductsLoading(false);
       }
@@ -214,9 +232,23 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
   }, [products]);
 
-  const searchProducts = (term: string) => {
-    if (!term) return products;
-    const results = fuse.search(term);
+  const searchProducts = (term: string, category: string = 'All') => {
+    if (!term && category === 'All') return products;
+    
+    let baseProducts = products;
+    if (category !== 'All') {
+      baseProducts = products.filter(p => p.category === category);
+    }
+    
+    if (!term) return baseProducts;
+
+    const fuseInstance = new Fuse(baseProducts, {
+      keys: ['name', 'category', 'description', 'tags'],
+      threshold: 0.35,
+      distance: 100,
+    });
+    
+    const results = fuseInstance.search(term);
     return results.map(r => r.item);
   };
 
