@@ -190,8 +190,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col font-sans selection:bg-yellow-400 selection:text-black bg-white ${language.dir === 'rtl' ? 'rtl' : 'ltr'}`}>
-      <SEO />
+    location.pathname.toLowerCase().includes('/sport-store') ? (
+      <div className="min-h-screen">
+        <SEO />
+        {children}
+      </div>
+    ) : (
+      <div className={`min-h-screen flex flex-col font-sans selection:bg-yellow-400 selection:text-black bg-white ${language.dir === 'rtl' ? 'rtl' : 'ltr'}`}>
+        <SEO />
       
       {/* Amazon Style Desktop Top Bar */}
       <div className="bg-[#131921] py-2 px-4 hidden md:flex justify-between items-center text-xs font-bold text-white tracking-tight border-b border-white/5">
@@ -708,7 +714,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         </div>
       </footer>
-    </div>
+      </div>
+    )
   );
 };
 

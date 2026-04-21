@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   MessageCircle, 
@@ -13,21 +13,18 @@ import {
   Maximize2, 
   ZoomIn,
   ChevronRight,
-  Info
+  Info,
+  Search,
+  ChevronDown
 } from 'lucide-react';
 import BrandLogo from '../components/BrandLogo';
 import { ADMIN_WHATSAPP } from '../constants';
 
-interface ProductItem {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  category: string;
-}
-
 const SportStore: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
   const categories = [
     {
@@ -350,6 +347,21 @@ const SportStore: React.FC = () => {
     window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${message}`, '_blank');
   };
 
+  const filteredCategories = useMemo(() => {
+    return categories
+      .filter(cat => activeCategory === 'all' || cat.id === activeCategory)
+      .map(cat => {
+        if (!searchQuery.trim()) return cat;
+        const filteredImages = cat.images.filter((_, idx) => {
+          const searchTerms = searchQuery.toLowerCase().split(' ');
+          const itemName = `${cat.title} Design #${idx + 1}`.toLowerCase();
+          return searchTerms.every(term => itemName.includes(term) || cat.title.toLowerCase().includes(term));
+        });
+        return { ...cat, images: filteredImages };
+      })
+      .filter(cat => cat.images.length > 0);
+  }, [searchQuery, activeCategory]);
+
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
       {/* Sticky WhatsApp Button */}
@@ -482,10 +494,75 @@ const SportStore: React.FC = () => {
         </div>
       </section>
 
+      {/* Sport Navigation & Search Bar */}
+      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row gap-4 items-center justify-between">
+          {/* Category Dropdown/Selector */}
+          <div className="relative w-full md:w-64">
+            <button 
+              onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+              className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-black uppercase tracking-widest text-gray-900 hover:bg-gray-100 transition-colors"
+            >
+              <span className="flex items-center gap-2">
+                <ChevronDown size={16} className={`transition-transform duration-300 ${isCategoryOpen ? 'rotate-180' : ''}`} />
+                {activeCategory === 'all' ? 'All Collections' : categories.find(c => c.id === activeCategory)?.title}
+              </span>
+            </button>
+            <AnimatePresence>
+              {isCategoryOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden"
+                >
+                  <button 
+                    onClick={() => { setActiveCategory('all'); setIsCategoryOpen(false); }}
+                    className={`w-full text-left px-5 py-3 text-xs font-black uppercase tracking-widest hover:bg-blue-50 transition-colors ${activeCategory === 'all' ? 'bg-blue-50 text-blue-600' : 'text-gray-600'}`}
+                  >
+                    All Collections
+                  </button>
+                  {categories.map(cat => (
+                    <button 
+                      key={cat.id}
+                      onClick={() => { setActiveCategory(cat.id); setIsCategoryOpen(false); }}
+                      className={`w-full text-left px-5 py-3 text-xs font-black uppercase tracking-widest hover:bg-blue-50 transition-colors ${activeCategory === cat.id ? 'bg-blue-50 text-blue-600' : 'text-gray-600'}`}
+                    >
+                      {cat.title}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Dedicated Sport Search */}
+          <div className="relative w-full md:max-w-xl">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <input 
+              type="text"
+              placeholder="Search sports designs (e.g. 'T-Shirt #5')..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-sm font-semibold transition-all"
+            />
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-12">
-        {categories.map((category) => (
-          <section key={category.id} className="mb-24">
+        {filteredCategories.length > 0 ? (
+          filteredCategories.map((category) => (
+            <section key={category.id} className="mb-24">
             {/* Category Header */}
             <div className="mb-12 border-l-8 border-blue-600 pl-8">
               <h2 className="text-4xl font-black italic uppercase tracking-tighter mb-4">{category.title}</h2>
@@ -559,7 +636,22 @@ const SportStore: React.FC = () => {
               ))}
             </div>
           </section>
-        ))}
+        ))
+      ) : (
+        <div className="py-24 text-center">
+          <div className="inline-flex p-6 bg-gray-100 rounded-full mb-6">
+            <Search size={48} className="text-gray-300" />
+          </div>
+          <h3 className="text-2xl font-black uppercase mb-2">No matching designs found</h3>
+          <p className="text-gray-500 font-medium mb-8">Try adjusting your search terms or selecting a different collection.</p>
+          <button 
+            onClick={() => { setSearchQuery(''); setActiveCategory('all'); }}
+            className="px-8 py-3 bg-gray-900 text-white font-black uppercase tracking-widest text-xs rounded-xl hover:bg-blue-600 transition-colors"
+          >
+            Reset All Filters
+          </button>
+        </div>
+      )}
       </main>
 
       {/* Image Modal */}
