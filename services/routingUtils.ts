@@ -5,7 +5,7 @@
  */
 
 const RESERVED_NAMES = [
-  'products', 'ai-designer', 'contact', 'admin', 'cart', 'register-show', 'checkout'
+  'products', 'ai-designer', 'contact', 'admin', 'cart', 'register-show', 'checkout', 'sport-store'
 ];
 
 export const getEnvironmentMode = () => {

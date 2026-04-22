@@ -190,14 +190,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    location.pathname.toLowerCase().includes('/sport-store') ? (
-      <div className="min-h-screen">
-        <SEO />
-        {children}
-      </div>
-    ) : (
-      <div className={`min-h-screen flex flex-col font-sans selection:bg-yellow-400 selection:text-black bg-white ${language.dir === 'rtl' ? 'rtl' : 'ltr'}`}>
-        <SEO />
+    <div className={`min-h-screen flex flex-col font-sans selection:bg-yellow-400 selection:text-black bg-white ${language.dir === 'rtl' ? 'rtl' : 'ltr'}`}>
+      <SEO />
       
       {/* Amazon Style Desktop Top Bar */}
       <div className="bg-[#131921] py-2 px-4 hidden md:flex justify-between items-center text-xs font-bold text-white tracking-tight border-b border-white/5">
@@ -381,6 +375,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <span className="uppercase font-black text-[11px] tracking-tight">All</span>
             </button>
             <div className="flex items-center gap-4 md:gap-6 border-l border-white/10 pl-4 md:pl-6">
+              <Link to="/sport-store" className="text-yellow-400 font-black hover:outline outline-white outline-1 p-1">Sports Store</Link>
               <Link to={getLink('/products')} className="hover:outline outline-white outline-1 p-1">Professional Gear</Link>
               <Link to={getLink('/products?cat=Sportswear')} className="hover:outline outline-white outline-1 p-1">Export Items</Link>
               <Link to={getLink('/admin')} className="text-yellow-400 hover:outline outline-white outline-1 p-1">Seller Central</Link>
@@ -427,6 +422,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                <div className="bg-white mb-2 pb-4">
                   <h4 className="px-6 py-4 text-lg font-black uppercase italic tracking-tighter text-gray-900 border-b border-gray-100 mb-2">Shop by Category</h4>
                   <div className="flex flex-col">
+                    <Link 
+                      to="/sport-store"
+                      className="px-6 py-4 flex items-center justify-between text-sm font-black text-blue-600 bg-blue-50"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Sports Store (Direct Factory)
+                      <ArrowRight size={16} />
+                    </Link>
                     {['Clothing', 'Shoes', 'Sportswear', 'Bags', 'Accessories'].map(cat => (
                       <Link 
                         key={cat} 
@@ -714,8 +717,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         </div>
       </footer>
-      </div>
-    )
+    </div>
   );
 };
 
