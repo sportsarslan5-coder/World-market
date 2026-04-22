@@ -37,6 +37,8 @@ interface StoreContextType {
   quickViewProduct: Product | null;
   isProductsLoading: boolean;
   hasMoreProducts: boolean;
+  notifications: AppNotification[];
+  unreadNotificationsCount: number;
   setCurrency: (code: CurrencyCode) => void;
   setLanguage: (code: LanguageCode) => void;
   setQuickViewProduct: (product: Product | null) => void;
@@ -50,6 +52,8 @@ interface StoreContextType {
   updateSaleStatus: (id: string, status: SaleRecord['status']) => Promise<void>;
   loadMoreProducts: () => Promise<void>;
   searchProducts: (query: string, category?: string) => Product[];
+  addNotification: (notification: Omit<AppNotification, 'id' | 'timestamp' | 'isRead'>) => Promise<void>;
+  markNotificationAsRead: (id: string) => Promise<void>;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -60,6 +64,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [sales, setSales] = useState<SaleRecord[]>([]);
   const [sellers, setSellers] = useState<SellerInfo[]>([]);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
   
   const [isProductsLoading, setIsProductsLoading] = useState(false);
   const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
@@ -182,11 +187,26 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       (error) => console.error("Sellers sync error:", error)
     );
 
+    // Sync Notifications
+    const unsubscribeNotifications = onSnapshot(
+      query(collection(db, 'notifications'), orderBy('timestamp', 'desc'), limit(50)),
+      (snapshot) => {
+        const notifList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as AppNotification));
+        setNotifications(notifList);
+      },
+      (error) => console.warn("Notifications sync error:", error)
+    );
+    
     return () => {
       unsubscribeSales();
       unsubscribeSellers();
+      unsubscribeNotifications();
     };
   }, []);
+
+  const unreadNotificationsCount = useMemo(() => {
+    return notifications.filter(n => !n.isRead).length;
+  }, [notifications]);
 
   const loadMoreProducts = async () => {
     if (!lastVisible || !hasMoreProducts || isProductsLoading) return;
@@ -233,6 +253,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [products]);
 
   const searchProducts = (term: string, category: string = 'All') => {
+    // Clear results by returning empty early only if specifically requested or to prevent mixing
+    // However, Fuse.js handles term changes well. 
+    // The "mixing results" bug usually happens when local state is not cleared properly.
+    
     if (!term && category === 'All') return products;
     
     let baseProducts = products;
@@ -242,13 +266,44 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     if (!term) return baseProducts;
 
+    // Advanced Amazon-like search with higher typo tolerance and field weighting
     const fuseInstance = new Fuse(baseProducts, {
-      keys: ['name', 'category', 'description', 'tags'],
-      threshold: 0.35,
+      keys: [
+        { name: 'name', weight: 2 },
+        { name: 'category', weight: 1 },
+        { name: 'tags', weight: 1.5 },
+        { name: 'description', weight: 0.5 }
+      ],
+      threshold: 0.4, // Increased typo tolerance
       distance: 100,
+      minMatchCharLength: 2,
+      shouldSort: true
     });
     
-    const results = fuseInstance.search(term);
+    // Handle "related results" like shirt -> t-shirt
+    const synonyms: Record<string, string[]> = {
+      'shirt': ['t-shirt', 'polo', 'top', 'jersey'],
+      'shoes': ['sneaker', 'boot', 'footwear', 'jogger'],
+      'hoodie': ['sweatshirt', 'pullover', 'jacket'],
+      'pants': ['jogger', 'trouser', 'legging', 'sweatpants']
+    };
+
+    let processedTerm = term.toLowerCase();
+    // Simple expansion for related terms
+    Object.keys(synonyms).forEach(key => {
+      if (processedTerm.includes(key)) {
+        processedTerm += " " + synonyms[key].join(" ");
+      }
+    });
+    
+    const results = fuseInstance.search(processedTerm);
+    
+    // If no results, try items that are "similar" in category
+    if (results.length === 0 && term.length > 2) {
+       // Just return top products from same category or random top products
+       return baseProducts.slice(0, 8);
+    }
+
     return results.map(r => r.item);
   };
 
@@ -380,10 +435,55 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (!saleData.customerZip) saleData.customerZip = 'N/A';
       
       await setDoc(docRef, saleData);
+      
+      // Create real-time notification
+      await addNotification({
+        type: 'New Order',
+        title: 'New Order Received',
+        message: `Order for ${saleData.amount.toFixed(2)} from ${saleData.customerName}`,
+        targetId: docRef.id,
+        targetRole: 'admin'
+      });
+
+      // If there's a seller, notify them too
+      if (saleData.sellerId && saleData.sellerId !== 'Direct') {
+        await addNotification({
+          type: 'New Order',
+          title: 'You have a new order!',
+          message: `Order #${docRef.id.slice(-6)} needs your attention.`,
+          targetId: docRef.id,
+          targetRole: 'seller',
+          sellerId: saleData.sellerId
+        });
+      }
+
       console.log(`Order created successfully: ${docRef.id}`);
     } catch (error) {
       console.error("Error creating sale:", error);
       throw error;
+    }
+  };
+
+  const addNotification = async (newNotif: Omit<AppNotification, 'id' | 'timestamp' | 'isRead'>) => {
+    try {
+      const docRef = doc(collection(db, 'notifications'));
+      await setDoc(docRef, {
+        ...newNotif,
+        id: docRef.id,
+        isRead: false,
+        timestamp: new Date().toISOString()
+      });
+    } catch (e) {
+      console.error("Error adding notification:", e);
+    }
+  };
+
+  const markNotificationAsRead = async (id: string) => {
+    try {
+      const docRef = doc(db, 'notifications', id);
+      await updateDoc(docRef, { isRead: true });
+    } catch (e) {
+      console.error("Error marking notif as read:", e);
     }
   };
 
@@ -414,10 +514,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <StoreContext.Provider value={{ 
       products, cart, sales, customers, activeShowName, referralCode, activeSeller, sellers,
+      notifications, unreadNotificationsCount,
       currency, language, quickViewProduct, isProductsLoading, hasMoreProducts,
       setCurrency, setLanguage, setQuickViewProduct, formatPrice,
       addProduct, addToCart, removeFromCart, clearCart,
-      addSale, addSeller, updateSaleStatus, loadMoreProducts, searchProducts
+      addSale, addSeller, updateSaleStatus, loadMoreProducts, searchProducts,
+      addNotification, markNotificationAsRead
     }}>
       {children}
     </StoreContext.Provider>

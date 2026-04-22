@@ -29,6 +29,8 @@ const SellerDashboard = lazy(() => import('./pages/SellerDashboard'));
 const SellerRanking = lazy(() => import('./pages/SellerRanking'));
 const SportStore = lazy(() => import('./pages/SportStore'));
 
+import SellerPanel from './pages/SellerPanel';
+
 const LoadingFallback = () => (
   <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-black">
     <div className="mb-8 animate-pulse">
@@ -70,6 +72,7 @@ const App: React.FC = () => {
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/seller/:sellerId" element={<SellerProfile />} />
+          <Route path="/seller-panel/:id" element={<SellerPanel />} />
           <Route path="/seller-dashboard" element={<SellerDashboard />} />
           <Route path="/seller-ranking" element={<SellerRanking />} />
 

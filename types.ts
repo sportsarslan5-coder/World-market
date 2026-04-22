@@ -135,6 +135,18 @@ export interface SellerInfo {
   withdrawnAmount: number;
 }
 
+export interface AppNotification {
+  id: string;
+  type: 'New Order' | 'New Seller' | 'Payment Request' | 'Stock Alert';
+  title: string;
+  message: string;
+  targetId?: string;
+  targetRole: 'admin' | 'seller';
+  sellerId?: string;
+  isRead: boolean;
+  timestamp: string;
+}
+
 export interface BlogPost {
   id: string;
   title: string;

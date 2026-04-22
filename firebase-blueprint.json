@@ -66,6 +66,12 @@
         "shopName": { "type": "string" },
         "email": { "type": "string" },
         "phone": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "contactNumber": { "type": "string" },
+        "city": { "type": "string" },
+        "country": { "type": "string" },
+        "location": { "type": "string" },
+        "paymentDetails": { "type": "string" },
         "category": { "type": "string" },
         "joinedDate": { "type": "string", "format": "date-time" },
         "totalSales": { "type": "integer" },
@@ -80,6 +86,23 @@
         "responseTime": { "type": "string" }
       },
       "required": ["fullName", "showName", "email"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "A real-time notification for admin or sellers",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string", "enum": ["New Order", "New Seller", "Payment Request", "Stock Alert"] },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "targetId": { "type": "string" },
+        "targetRole": { "type": "string", "enum": ["admin", "seller"] },
+        "sellerId": { "type": "string" },
+        "isRead": { "type": "boolean" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["type", "title", "message", "targetRole"]
     }
   },
   "firestore": {
@@ -94,6 +117,10 @@
     "/sellers/{sellerId}": {
       "schema": "SellerInfo",
       "description": "Store marketplace seller profiles"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "Real-time system notifications"
     }
   }
 }

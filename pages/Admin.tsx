@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Trash2, Edit2, ShieldCheck, Mail, LogIn } from 'lucide-react';
+import { X, Plus, Trash2, Edit2, ShieldCheck, Mail, LogIn, Bell, User as UserIcon, Phone, MapPin, Globe } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES } from '../constants';
 import { auth } from '../services/firebase';
@@ -16,7 +16,10 @@ const hashPassword = async (password: string) => {
 };
 
 const Admin: React.FC = () => {
-  const { products, sales, customers, sellers, addProduct, updateSaleStatus, formatPrice } = useStore();
+  const { 
+    products, sales, customers, sellers, notifications, unreadNotificationsCount,
+    addProduct, updateSaleStatus, formatPrice, markNotificationAsRead 
+  } = useStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'inventory' | 'sales' | 'customers' | 'settings' | 'withdrawals'>('overview');
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,6 +30,8 @@ const Admin: React.FC = () => {
   // Search and Detail State
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [selectedSeller, setSelectedSeller] = useState<any>(null);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   // New Product State
   const [isAddingProduct, setIsAddingProduct] = useState(false);
@@ -196,7 +201,53 @@ const Admin: React.FC = () => {
             <h1 className="text-5xl font-black italic tracking-tighter">ADMIN <span className="text-blue-500 underline">PATCH SHOP</span></h1>
             <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-2">Centralized Global Control</p>
           </div>
-          <button onClick={handleLogout} className="bg-red-600 text-white px-6 py-2 rounded-full text-xs font-black uppercase">Logout</button>
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <button 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="bg-white/10 p-3 rounded-xl hover:bg-white/20 transition-all relative"
+              >
+                <Bell size={20} />
+                {unreadNotificationsCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center animate-bounce shadow-lg">
+                    {unreadNotificationsCount}
+                  </span>
+                )}
+              </button>
+
+              {showNotifications && (
+                <div className="absolute right-0 mt-4 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden text-black scale-in-top">
+                  <div className="p-4 bg-gray-50 border-b flex justify-between items-center">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Recent Notifications</span>
+                    <button onClick={() => setShowNotifications(false)} className="text-gray-400 hover:text-black"><X size={14}/></button>
+                  </div>
+                  <div className="max-h-96 overflow-y-auto divide-y divide-gray-50">
+                    {notifications.length === 0 ? (
+                      <div className="p-8 text-center text-gray-400 text-[10px] font-black uppercase tracking-widest">No notifications</div>
+                    ) : (
+                      notifications.map(n => (
+                        <div 
+                          key={n.id} 
+                          onClick={() => {
+                            markNotificationAsRead(n.id);
+                            if (n.type === 'New Order') setActiveTab('sales');
+                            setShowNotifications(false);
+                          }}
+                          className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${!n.isRead ? 'bg-blue-50/30' : ''}`}
+                        >
+                          <p className="text-[10px] font-black uppercase text-blue-600 mb-1">{n.type}</p>
+                          <p className="text-xs font-bold text-gray-900">{n.title}</p>
+                          <p className="text-[10px] text-gray-500 mt-1">{n.message}</p>
+                          <p className="text-[8px] text-gray-400 mt-2 font-bold">{new Date(n.timestamp).toLocaleString()}</p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+            <button onClick={handleLogout} className="bg-red-600 text-white px-6 py-2 rounded-full text-xs font-black uppercase">Logout</button>
+          </div>
         </div>
       </div>
 
@@ -466,8 +517,13 @@ const Admin: React.FC = () => {
                         </td>
                         <td className="px-6 md:px-10 py-6 text-right pr-12">
                           <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button 
+                              onClick={() => setSelectedSeller(s)}
+                              className="bg-black text-white px-4 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-all"
+                            >
+                              Details
+                            </button>
                             <button className="text-blue-600 text-[10px] font-black uppercase tracking-widest hover:underline">Edit</button>
-                            <button className="text-red-500 text-[10px] font-black uppercase tracking-widest hover:underline">Ban</button>
                           </div>
                         </td>
                       </tr>
@@ -476,6 +532,80 @@ const Admin: React.FC = () => {
                 </table>
               </div>
             </div>
+
+            {/* Seller Details Modal */}
+            {selectedSeller && (
+              <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fadeIn">
+                <div className="bg-white rounded-[2rem] shadow-2xl max-w-2xl w-full overflow-hidden animate-scaleIn">
+                  <div className="bg-purple-600 text-white p-8 flex justify-between items-center">
+                    <div>
+                      <h2 className="text-3xl font-black italic tracking-tighter uppercase">Seller <span className="text-black underline">Profile</span></h2>
+                      <p className="text-purple-100 text-[10px] font-black uppercase tracking-widest mt-2 px-1">Shop: {selectedSeller.shopName || selectedSeller.showName}</p>
+                    </div>
+                    <button onClick={() => setSelectedSeller(null)} className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all text-white"><X size={20} /></button>
+                  </div>
+                  <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto">
+                    <div className="grid grid-cols-2 gap-8 text-left">
+                      <div className="space-y-4">
+                        <section>
+                          <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 flex items-center gap-2"><UserIcon size={12}/> Personal Info</h4>
+                          <p className="text-sm font-black uppercase text-gray-900">{selectedSeller.fullName}</p>
+                          <p className="text-xs font-bold text-gray-500 mt-1 flex items-center gap-2"><Mail size={12}/> {selectedSeller.email}</p>
+                        </section>
+                        <section>
+                          <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 flex items-center gap-2"><Phone size={12}/> Contact</h4>
+                          <p className="text-xs font-bold text-gray-900">WA: {selectedSeller.whatsapp}</p>
+                          <p className="text-xs font-bold text-gray-500 mt-1">ALT: {selectedSeller.contactNumber}</p>
+                        </section>
+                      </div>
+                      <div className="space-y-4">
+                         <section>
+                          <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 flex items-center gap-2"><MapPin size={12}/> Location</h4>
+                          <p className="text-xs font-bold text-gray-900 uppercase">{selectedSeller.city}, {selectedSeller.country}</p>
+                          <p className="text-[10px] font-bold text-gray-500 mt-1 uppercase">{selectedSeller.location}</p>
+                        </section>
+                        <section>
+                          <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 flex items-center gap-2"><ShieldCheck size={12}/> business</h4>
+                          <p className="text-[10px] font-black text-purple-600 bg-purple-50 px-2 py-1 rounded inline-block uppercase">{selectedSeller.businessType}</p>
+                        </section>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                      <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-4">Financial Overview</h4>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-[9px] font-bold text-gray-400 uppercase">Available Balance</p>
+                          <p className="text-xl font-black text-green-600">{formatPrice(selectedSeller.balance)}</p>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-bold text-gray-400 uppercase">Total Sales</p>
+                          <p className="text-xl font-black text-gray-900">{selectedSeller.totalSales}</p>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-bold text-gray-400 uppercase">Comm. Rate</p>
+                          <p className="text-xl font-black text-blue-600">{(selectedSeller.commissionRate * 100).toFixed(0)}%</p>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-bold text-gray-400 uppercase">Response Time</p>
+                          <p className="text-xl font-black text-gray-900">{selectedSeller.responseTime}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-4">
+                      <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Verification Info</h4>
+                      <p className="text-xs font-bold text-gray-600 flex items-center gap-2">
+                        Status: <span className={`font-black uppercase ${selectedSeller.isVerified ? 'text-green-600' : 'text-orange-500'}`}>{selectedSeller.verificationStatus}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="p-8 pt-0 flex gap-4">
+                      <button onClick={() => setSelectedSeller(null)} className="flex-grow bg-black text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl hover:bg-purple-600 transition-all">Close</button>
+                    </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
