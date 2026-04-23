@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Plus, Trash2, Edit2, ShieldCheck, Mail, LogIn, Bell, User as UserIcon, Phone, MapPin, Globe } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES } from '../constants';
+import { Product } from '../types';
 import { auth } from '../services/firebase';
 import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, User } from 'firebase/auth';
 
@@ -18,7 +19,7 @@ const hashPassword = async (password: string) => {
 const Admin: React.FC = () => {
   const { 
     products, sales, customers, sellers, notifications, unreadNotificationsCount,
-    addProduct, deleteProduct, updateSaleStatus, formatPrice, markNotificationAsRead 
+    addProduct, updateProduct, deleteProduct, updateSaleStatus, formatPrice, markNotificationAsRead 
   } = useStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'inventory' | 'sales' | 'customers' | 'settings' | 'withdrawals'>('overview');
   const [user, setUser] = useState<User | null>(null);
@@ -35,6 +36,8 @@ const Admin: React.FC = () => {
 
   // New Product State
   const [isAddingProduct, setIsAddingProduct] = useState(false);
+  const [isEditingProduct, setIsEditingProduct] = useState(false);
+  const [editProductData, setEditProductData] = useState<Product | null>(null);
   const [newProduct, setNewProduct] = useState({
     name: '',
     price: 0,
@@ -421,14 +424,16 @@ const Admin: React.FC = () => {
                       <div>
                         <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Customer Information</h4>
                         <p className="text-sm font-black uppercase text-gray-900">{selectedOrder.customerName}</p>
-                        <p className="text-xs font-bold text-gray-500 mt-1">Phone: {selectedOrder.customerPhone}</p>
-                        <p className="text-xs font-bold text-gray-500">Email: {selectedOrder.customerEmail}</p>
-                        <p className="text-[10px] font-bold text-gray-400 mt-4 uppercase">Shipping Address:</p>
-                        <p className="text-xs font-bold text-gray-500 leading-relaxed bg-gray-50 p-3 rounded-xl border border-gray-100 mt-2">
-                          {selectedOrder.customerAddress || 'No Address'}<br/>
-                          {selectedOrder.customerCity && `${selectedOrder.customerCity}, `}{selectedOrder.customerCountry || 'No Country'}<br/>
-                          {selectedOrder.customerZip && `Zip Code: ${selectedOrder.customerZip}`}
-                        </p>
+                        <div className="flex flex-col gap-1 mt-1">
+                          <p className="text-xs font-bold text-gray-500">Phone: {selectedOrder.customerPhone || 'N/A'}</p>
+                          <p className="text-xs font-bold text-gray-400 break-all">Email: {selectedOrder.customerEmail || 'N/A'}</p>
+                        </div>
+                        <p className="text-[10px] font-bold text-gray-400 mt-4 uppercase tracking-widest">Delivery Address:</p>
+                        <div className="text-xs font-bold text-gray-500 leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100 mt-2">
+                          <p className="uppercase">{selectedOrder.customerAddress || 'No Address'}</p>
+                          <p className="uppercase">{selectedOrder.customerCity && `${selectedOrder.customerCity}, `}{selectedOrder.customerCountry || 'No Country'}</p>
+                          <p className="mt-2 text-blue-600 font-black tracking-widest">ZIP: {selectedOrder.customerZip || 'N/A'}</p>
+                        </div>
                       </div>
                       <div>
                         <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Seller Details</h4>
@@ -441,22 +446,29 @@ const Admin: React.FC = () => {
                       <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Ordered Items</h4>
                       <div className="space-y-3">
                         {selectedOrder.products?.map((item: any, idx: number) => (
-                          <div key={idx} className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                          <div key={idx} className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100 group hover:border-blue-200 transition-all">
                             <div>
-                              <p className="text-xs font-black uppercase text-gray-900">{item.name}</p>
-                              <p className="text-[9px] font-bold text-gray-400 uppercase mt-1">Size: {item.size} | Color: {item.color} | Qty: {item.quantity}</p>
+                              <p className="text-xs font-black uppercase text-gray-900 group-hover:text-blue-600 transition-colors">{item.name}</p>
+                              <p className="text-[9px] font-bold text-gray-400 uppercase mt-1">
+                                Size: <span className="text-gray-900 font-black">{item.size || 'N/A'}</span> • 
+                                Color: <span className="text-gray-900 font-black ml-1">{item.color || 'N/A'}</span> • 
+                                Qty: <span className="text-blue-600 font-black ml-1">x{item.quantity}</span>
+                              </p>
                             </div>
-                            <p className="font-black text-sm">{formatPrice(item.price * item.quantity)}</p>
+                            <div className="text-right">
+                              <p className="font-black text-sm">{formatPrice(item.price * item.quantity)}</p>
+                              <p className="text-[8px] font-bold text-gray-400 uppercase">Unit: {formatPrice(item.price)}</p>
+                            </div>
                           </div>
-                        )) || (
-                          <div className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        )) || [
+                          <div key="legacy" className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100">
                              <div>
-                              <p className="text-xs font-black uppercase text-gray-900">{selectedOrder.productName}</p>
-                              <p className="text-[9px] font-bold text-gray-400 uppercase mt-1">Legacy Record</p>
+                              <p className="text-xs font-black uppercase text-gray-900">{selectedOrder.productName || 'Direct Entry'}</p>
+                              <p className="text-[9px] font-bold text-gray-400 uppercase mt-1">Legacy Record • Qty: {selectedOrder.quantity || 1}</p>
                             </div>
                             <p className="font-black text-sm">{formatPrice(selectedOrder.amount)}</p>
                           </div>
-                        )}
+                        ]}
                       </div>
                     </div>
 
@@ -703,7 +715,15 @@ const Admin: React.FC = () => {
                   <div className="aspect-square bg-gray-100 relative group-hover:scale-105 transition-transform duration-700">
                     <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                     <div className="absolute top-4 right-4 flex gap-2">
-                       <button className="bg-white text-gray-900 p-2 rounded-lg shadow-lg hover:bg-blue-600 hover:text-white transition-all"><Edit2 size={14}/></button>
+                       <button 
+                        onClick={() => {
+                          setEditProductData(product);
+                          setIsEditingProduct(true);
+                        }}
+                        className="bg-white text-gray-900 p-2 rounded-lg shadow-lg hover:bg-blue-600 hover:text-white transition-all"
+                       >
+                         <Edit2 size={14}/>
+                       </button>
                        <button 
                          onClick={() => handleDeleteProduct(product.id)}
                          className="bg-white text-red-600 p-2 rounded-lg shadow-lg hover:bg-red-600 hover:text-white transition-all"
@@ -798,6 +818,88 @@ const Admin: React.FC = () => {
                     </div>
                     <div className="pt-6">
                       <button type="submit" className="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:bg-black transition-all">Publish to Global Store</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {/* Edit Product Modal */}
+            {isEditingProduct && editProductData && (
+              <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+                <div className="bg-white rounded-[3rem] shadow-2xl max-w-2xl w-full overflow-hidden animate-scaleIn">
+                  <div className="bg-purple-600 text-white p-10 flex justify-between items-center">
+                    <div>
+                      <h2 className="text-3xl font-black italic tracking-tighter uppercase">Edit <span className="text-black underline">Product</span></h2>
+                      <p className="text-purple-100 text-[10px] font-black uppercase tracking-widest mt-2">{editProductData.id}</p>
+                    </div>
+                    <button onClick={() => setIsEditingProduct(false)} className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all text-white"><X size={20} /></button>
+                  </div>
+                  <form 
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      try {
+                        await updateProduct(editProductData.id, editProductData);
+                        setIsEditingProduct(false);
+                        alert("Product updated successfully!");
+                      } catch (err: any) {
+                        alert(`Error: ${err.message}`);
+                      }
+                    }} 
+                    className="p-10 space-y-6 max-h-[60vh] overflow-y-auto"
+                  >
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Product Name</label>
+                      <input 
+                        required
+                        className="w-full bg-gray-50 border p-4 rounded-xl font-bold"
+                        value={editProductData.name}
+                        onChange={e => setEditProductData({...editProductData, name: e.target.value})}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Price ($)</label>
+                        <input 
+                          required
+                          type="number"
+                          className="w-full bg-gray-50 border p-4 rounded-xl font-bold"
+                          value={isNaN(editProductData.price) ? '' : editProductData.price}
+                          onChange={e => setEditProductData({...editProductData, price: parseFloat(e.target.value) || 0})}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Category</label>
+                        <select 
+                          className="w-full bg-gray-50 border p-4 rounded-xl font-bold uppercase text-xs"
+                          value={editProductData.category}
+                          onChange={e => setEditProductData({...editProductData, category: e.target.value})}
+                        >
+                          {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Image URL</label>
+                      <input 
+                        required
+                        className="w-full bg-gray-50 border p-4 rounded-xl font-bold"
+                        value={editProductData.image}
+                        onChange={e => setEditProductData({...editProductData, image: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Stock Level</label>
+                      <input 
+                        required
+                        type="number"
+                        className="w-full bg-gray-50 border p-4 rounded-xl font-bold"
+                        value={isNaN(editProductData.stock) ? 0 : editProductData.stock}
+                        onChange={e => setEditProductData({...editProductData, stock: parseInt(e.target.value) || 0})}
+                      />
+                    </div>
+                    <div className="pt-6">
+                      <button type="submit" className="w-full bg-purple-600 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:bg-black transition-all">Save Changes</button>
                     </div>
                   </form>
                 </div>

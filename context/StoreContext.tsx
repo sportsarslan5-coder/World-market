@@ -237,12 +237,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     const fuseInstance = new Fuse(baseProducts, {
       keys: [
-        { name: 'name', weight: 3 },
+        { name: 'name', weight: 4 },
         { name: 'category', weight: 1 },
         { name: 'tags', weight: 2 },
         { name: 'description', weight: 0.5 }
       ],
-      threshold: 0.45, // Balanced for typo tolerance vs precision
+      threshold: 0.38, // Strict but allowing small typos
       distance: 100,
       minMatchCharLength: 2,
       shouldSort: true
@@ -250,8 +250,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     const results = fuseInstance.search(finalSearchQuery);
     
-    if (results.length === 0 && term.length > 2) {
-       // if no match, return popular items in the same category or general trending items
+    // Fallback: If no match, return items in same category or general trending
+    if (results.length === 0) {
        return baseProducts.length > 0 ? baseProducts.slice(0, 8) : products.slice(0, 8);
     }
 

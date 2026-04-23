@@ -378,8 +378,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <Link to="/sport-store" className="text-yellow-400 font-black hover:outline outline-white outline-1 p-1">Sports Store</Link>
               <Link to={getLink('/products')} className="hover:outline outline-white outline-1 p-1">Professional Gear</Link>
               <Link to={getLink('/products?cat=Sportswear')} className="hover:outline outline-white outline-1 p-1">Export Items</Link>
-              <Link to={getLink('/admin')} className="text-yellow-400 hover:outline outline-white outline-1 p-1">Seller Central</Link>
-              <Link to={getLink('/register-show')} className="hover:outline outline-white outline-1 p-1">Launch Store</Link>
               <Link to={getLink('/products?cat=Accessories')} className="hover:outline outline-white outline-1 p-1">Bulk Buy</Link>
               <Link to={getLink('/blog')} className="hover:outline outline-white outline-1 p-1">Blog</Link>
             </div>
@@ -454,9 +452,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                       <span>{language.name} ({language.code.toUpperCase()})</span>
                       <span className="text-xl leading-none">{language.flag}</span>
                     </div>
-                    <Link to="/admin" className="px-6 py-4 flex items-center justify-between text-sm font-black text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>
-                      Seller Sign In
-                    </Link>
                   </div>
                </div>
             </div>
@@ -669,8 +664,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <div className="space-y-8">
               <h4 className="text-xs font-black uppercase tracking-widest text-blue-500">Seller Central</h4>
               <ul className="space-y-4">
-                <li><Link to="/become-seller" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">Become a Seller</Link></li>
-                <li><Link to="/seller-dashboard" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">Seller Dashboard</Link></li>
                 <li><Link to="/seller-ranking" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">Ranking System</Link></li>
                 <li><Link to="/terms" className="text-gray-400 hover:text-white text-sm font-bold transition-colors">Seller Terms</Link></li>
               </ul>
