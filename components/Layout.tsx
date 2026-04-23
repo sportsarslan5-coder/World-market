@@ -256,6 +256,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <span className="font-black">Account & Lists</span>
              </div>
            </div>
+
+           <Link to="/seller-login" className="hover:outline outline-blue-400 outline-1 p-1 px-3 border border-gray-600 rounded-lg cursor-pointer bg-gray-800 flex flex-col justify-center gap-1 group">
+             <span className="text-blue-400 text-[9px] font-black uppercase tracking-widest leading-none group-hover:text-white transition-colors">Seller Login</span>
+             <span className="text-white text-[10px] font-black uppercase tracking-tight leading-none tracking-widest">Sign In</span>
+           </Link>
            
            <Link to={getLink('/products')} className="hover:outline outline-white outline-1 p-1 px-2 cursor-pointer transition-all">
              <div className="flex flex-col leading-none">

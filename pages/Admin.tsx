@@ -59,7 +59,13 @@ const Admin: React.FC = () => {
   const handleGoogleLogin = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      if (result.user.email !== 'sportsarslan199@gmail.com') {
+        await signOut(auth);
+        setError('Unauthorized: Only the master administrator can access this panel.');
+      } else {
+        setError('');
+      }
     } catch (err: any) {
       console.error(err);
       setError(err.message);
@@ -68,21 +74,6 @@ const Admin: React.FC = () => {
 
   const handleLogout = async () => {
     await signOut(auth);
-    setIsPassAuthenticated(false);
-  };
-
-  const handlePasswordLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const inputHash = await hashPassword(adminPassword);
-    // Secure Hash for 'ADMIN_SECURE'
-    const masterHash = '2bb68926d2e07172ca78680d971a1796c836c2f9d656910609a63c638e874936'; 
-    
-    if (inputHash === masterHash) {
-      setIsPassAuthenticated(true);
-      setError('');
-    } else {
-      setError('Access Denied: Invalid Master Key');
-    }
   };
 
   // Filtered sales
@@ -139,7 +130,7 @@ const Admin: React.FC = () => {
     );
   }
 
-  const isAdmin = isPassAuthenticated || user?.email === 'sportsarslan199@gmail.com';
+  const isAdmin = user?.email === 'sportsarslan199@gmail.com';
 
   if (!isAdmin) {
     return (
@@ -420,7 +411,7 @@ const Admin: React.FC = () => {
                     <button onClick={() => setSelectedOrder(null)} className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all text-white"><X size={20} /></button>
                   </div>
                   <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto">
-                    <div className="grid grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div>
                         <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Customer Information</h4>
                         <p className="text-sm font-black uppercase text-gray-900">{selectedOrder.customerName}</p>
@@ -436,9 +427,18 @@ const Admin: React.FC = () => {
                         </div>
                       </div>
                       <div>
-                        <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Seller Details</h4>
-                        <p className="text-sm font-black uppercase text-blue-600">{selectedOrder.sellerShopName || 'Main Admin Account'}</p>
-                        <p className="text-xs font-bold text-gray-500 mt-1">Ref Code: {selectedOrder.sellerId || 'Direct'}</p>
+                        <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Order Metadata</h4>
+                        <div className="space-y-4">
+                          <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                            <p className="text-[10px] font-black uppercase text-blue-600 tracking-widest mb-1">Order Time</p>
+                            <p className="text-xs font-black uppercase">{new Date(selectedOrder.date).toLocaleString()}</p>
+                          </div>
+                          <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                             <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Seller Shop</p>
+                             <p className="text-xs font-black uppercase text-gray-900">{selectedOrder.sellerShopName || 'Main Admin'}</p>
+                             <p className="text-[9px] font-bold text-gray-400 mt-1">ID: {selectedOrder.sellerId || 'Direct'}</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     
@@ -447,28 +447,21 @@ const Admin: React.FC = () => {
                       <div className="space-y-3">
                         {selectedOrder.products?.map((item: any, idx: number) => (
                           <div key={idx} className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100 group hover:border-blue-200 transition-all">
-                            <div>
-                              <p className="text-xs font-black uppercase text-gray-900 group-hover:text-blue-600 transition-colors">{item.name}</p>
-                              <p className="text-[9px] font-bold text-gray-400 uppercase mt-1">
-                                Size: <span className="text-gray-900 font-black">{item.size || 'N/A'}</span> • 
-                                Color: <span className="text-gray-900 font-black ml-1">{item.color || 'N/A'}</span> • 
-                                Qty: <span className="text-blue-600 font-black ml-1">x{item.quantity}</span>
-                              </p>
+                            <div className="overflow-hidden">
+                              <p className="text-xs font-black uppercase text-gray-900 group-hover:text-blue-600 transition-colors truncate">{item.name}</p>
+                              <div className="flex flex-wrap gap-2 mt-1">
+                                <p className="text-[9px] font-black text-gray-400 uppercase">ID: <span className="text-gray-900">{item.productId || item.id || 'N/A'}</span></p>
+                                <p className="text-[9px] font-black text-gray-400 uppercase">Size: <span className="text-gray-900">{item.size || 'N/A'}</span></p>
+                                <p className="text-[9px] font-black text-gray-400 uppercase">Color: <span className="text-gray-900">{item.color || 'N/A'}</span></p>
+                                <p className="text-[9px] font-black text-blue-600 uppercase">Qty: {item.quantity}</p>
+                              </div>
                             </div>
-                            <div className="text-right">
-                              <p className="font-black text-sm">{formatPrice(item.price * item.quantity)}</p>
-                              <p className="text-[8px] font-bold text-gray-400 uppercase">Unit: {formatPrice(item.price)}</p>
+                            <div className="text-right shrink-0">
+                               <p className="font-black text-sm">{formatPrice(item.price * item.quantity)}</p>
+                               <p className="text-[8px] font-bold text-gray-400 uppercase">Unit: {formatPrice(item.price)}</p>
                             </div>
                           </div>
-                        )) || [
-                          <div key="legacy" className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                             <div>
-                              <p className="text-xs font-black uppercase text-gray-900">{selectedOrder.productName || 'Direct Entry'}</p>
-                              <p className="text-[9px] font-bold text-gray-400 uppercase mt-1">Legacy Record • Qty: {selectedOrder.quantity || 1}</p>
-                            </div>
-                            <p className="font-black text-sm">{formatPrice(selectedOrder.amount)}</p>
-                          </div>
-                        ]}
+                        ))}
                       </div>
                     </div>
 

@@ -19,7 +19,7 @@ const SellerPanel: React.FC = () => {
     formatPrice, addProduct, updateSaleStatus, markNotificationAsRead 
   } = useStore();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'orders' | 'products' | 'notifications' | 'profile'>('overview');
+  const [activeTab, setActiveTab] = useState<'orders' | 'notifications'>('orders');
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
@@ -90,7 +90,7 @@ const SellerPanel: React.FC = () => {
         name: '', price: 0, category: CATEGORIES[0], image: '', description: '',
         sizes: ['S', 'M', 'L', 'XL'], colors: ['Black', 'Navy', 'White']
       });
-      alert('Product added successfully!');
+      alert('Product added successfully to market!');
     } catch (err: any) {
       alert(`Error: ${err.message}`);
     }
@@ -100,478 +100,183 @@ const SellerPanel: React.FC = () => {
   const unreadCount = sellerNotifications.filter(n => !n.isRead).length;
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] flex flex-col md:flex-row font-sans text-gray-900">
-      {/* Sidebar - Desktop */}
-      <aside className="hidden md:flex flex-col w-72 bg-white border-r border-gray-100 p-8 h-screen sticky top-0 shadow-sm">
-        <div className="mb-12">
-          <h2 className="text-2xl font-black italic tracking-tighter">PARTNER <span className="text-blue-600">CENTRAL</span></h2>
-          <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mt-1">Global Distribution Network</p>
-        </div>
-
-        <nav className="flex-grow space-y-2">
-          {[
-            { id: 'overview', label: 'Dashboard', icon: BarChart3 },
-            { id: 'orders', label: 'My Orders', icon: ShoppingBag },
-            { id: 'products', label: 'My Products', icon: Box },
-            { id: 'notifications', label: 'Alerts', icon: Bell, badge: unreadCount },
-            { id: 'profile', label: 'Shop Details', icon: Settings }
-          ].map(item => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id as any)}
-              className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all ${
-                activeTab === item.id 
-                ? 'bg-blue-600 text-white shadow-xl shadow-blue-500/20' 
-                : 'text-gray-400 hover:text-black hover:bg-gray-50'
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <item.icon size={20} />
-                <span className="text-xs font-black uppercase tracking-widest">{item.label}</span>
-              </div>
-              {item.badge !== undefined && item.badge > 0 && (
-                <span className="bg-red-500 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center">
-                  {item.badge}
-                </span>
-              )}
-            </button>
-          ))}
-        </nav>
-
-        <div className="mt-auto pt-8 border-t border-gray-50 space-y-4">
-          <button 
-            onClick={() => navigate('/seller-login')}
-            className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest text-red-500 hover:bg-red-50 transition-all"
-          >
-            <LogOut size={18} />
-            Logout
-          </button>
-          
-          <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
-            <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center font-black">
-              {seller.shopName?.charAt(0) || 'S'}
-            </div>
-            <div className="overflow-hidden">
-              <p className="text-[10px] font-black uppercase truncate">{seller.shopName || seller.showName}</p>
-              <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Verified Partner</p>
-            </div>
+    <div className="min-h-screen bg-[#F8F9FA] flex flex-col font-sans text-gray-900 pb-20">
+      {/* Simple Top Header */}
+      <header className="bg-white border-b px-6 py-6 sticky top-0 z-40 shadow-sm flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-black italic tracking-tighter shrink-0">SELLER <span className="text-blue-600 underline">PANEL</span></h2>
+          <div className="flex items-center gap-2 mt-1">
+             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+             <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">{seller.shopName || seller.showName}</p>
           </div>
         </div>
-      </aside>
-
-      {/* Mobile Header */}
-      <header className="md:hidden bg-white border-b p-4 sticky top-0 z-40 flex justify-between items-center">
-        <h2 className="text-xl font-black italic tracking-tighter">PARTNER <span className="text-blue-600">CENTRAL</span></h2>
-        <div className="flex items-center gap-4">
-           <button onClick={() => setActiveTab('notifications')} className="relative p-2">
+        <div className="flex items-center gap-2 md:gap-4">
+           <button 
+            onClick={() => setActiveTab('notifications')} 
+            className={`relative p-3 rounded-xl transition-all ${activeTab === 'notifications' ? 'bg-blue-600 text-white shadow-lg' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+           >
             <Bell size={20} />
-            {unreadCount > 0 && <span className="absolute top-0 right-0 bg-red-500 w-2 h-2 rounded-full border-2 border-white"></span>}
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
+                {unreadCount}
+              </span>
+            )}
            </button>
-           <button onClick={() => setActiveTab('profile')} className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center"><Settings size={18}/></button>
+           <button 
+            onClick={() => navigate('/seller-login')} 
+            className="flex items-center gap-2 bg-gray-100 text-gray-600 p-3 rounded-xl hover:text-red-500 hover:bg-red-50 transition-all"
+            title="Logout"
+           >
+            <LogOut size={20}/>
+           </button>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-grow p-4 md:p-12 max-w-6xl mx-auto w-full">
-        <AnimatePresence mode="wait">
-          {activeTab === 'overview' && (
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-8"
-            >
-              <header>
-                <h2 className="text-4xl font-black italic tracking-tighter uppercase leading-tight">Welcome, <br/><span className="text-blue-600 underline">{seller.fullName.split(' ')[0]}</span></h2>
-                <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mt-2">Seller Control Panel | Shop: {seller.shopName || seller.showName}</p>
-              </header>
+      {/* Main Content Areas */}
+      <main className="max-w-4xl mx-auto w-full p-4 md:p-8 space-y-8">
+        
+        {/* Quick Actions Bar */}
+        <section className="bg-black text-white p-6 rounded-3xl shadow-2xl flex flex-col md:flex-row justify-between items-center gap-6">
+           <div className="text-center md:text-left">
+             <p className="text-blue-400 text-[10px] font-black uppercase tracking-widest mb-1">Store Actions</p>
+             <h3 className="text-xl font-black italic uppercase tracking-tighter">Manage your shop catalog</h3>
+           </div>
+           <button 
+             onClick={() => setIsAddingProduct(true)}
+             className="bg-blue-600 text-white px-10 py-4 rounded-xl font-black uppercase text-xs tracking-widest flex items-center gap-2 hover:bg-white hover:text-black transition-all shadow-xl"
+           >
+             <Plus size={20}/> Add New Product
+           </button>
+        </section>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-xl font-black uppercase italic tracking-tighter mb-4 text-blue-600">Quick Actions</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <button onClick={() => setActiveTab('orders')} className="bg-gray-50 p-6 rounded-2xl border hover:border-blue-600 transition-all text-left group">
-                        <ShoppingBag className="text-blue-600 mb-4 group-hover:scale-110 transition-transform" />
-                        <p className="text-[10px] font-black uppercase text-gray-400">View</p>
-                        <p className="text-sm font-black uppercase">Orders</p>
-                      </button>
-                      <button onClick={() => setIsAddingProduct(true)} className="bg-gray-50 p-6 rounded-2xl border hover:border-blue-600 transition-all text-left group">
-                        <Plus className="text-blue-600 mb-4 group-hover:scale-110 transition-transform" />
-                        <p className="text-[10px] font-black uppercase text-gray-400">New</p>
-                        <p className="text-sm font-black uppercase">Product</p>
-                      </button>
+        {/* Tab Selection */}
+        <div className="flex gap-4 border-b border-gray-200">
+           <button 
+            onClick={() => setActiveTab('orders')}
+            className={`px-6 py-4 text-xs font-black uppercase tracking-widest border-b-2 transition-all ${activeTab === 'orders' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-400 opacity-60'}`}
+           >
+             My Orders ({sellerSales.length})
+           </button>
+           <button 
+            onClick={() => setActiveTab('notifications')}
+            className={`px-6 py-4 text-xs font-black uppercase tracking-widest border-b-2 transition-all ${activeTab === 'notifications' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-400 opacity-60'}`}
+           >
+             Notifications ({unreadCount})
+           </button>
+        </div>
+
+        <section className="animate-fadeIn">
+          {activeTab === 'orders' ? (
+            <div className="space-y-4">
+              {sellerSales.length === 0 ? (
+                <div className="bg-white p-20 rounded-[2rem] border border-dashed text-center">
+                   <ShoppingBag className="mx-auto mb-4 text-gray-200" size={48}/>
+                   <p className="text-xs font-black uppercase text-gray-400 tracking-widest">No orders received yet</p>
+                </div>
+              ) : (
+                sellerSales.map(order => (
+                  <div key={order.id} className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col md:flex-row justify-between items-center gap-6 group hover:shadow-xl hover:border-blue-200 transition-all">
+                    <div className="flex items-center gap-4 w-full md:w-auto">
+                       <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center text-blue-600 shrink-0">
+                          <ShoppingBag size={24}/>
+                       </div>
+                       <div>
+                          <p className="text-sm font-black uppercase text-gray-900">{order.customerName}</p>
+                          <p className="text-[10px] font-bold text-gray-400 mt-1 uppercase">ID: #{order.id.slice(-8)} • {new Date(order.date).toLocaleDateString()}</p>
+                       </div>
+                    </div>
+                    <div className="flex items-center justify-between md:justify-end gap-x-8 w-full md:w-auto border-t md:border-t-0 pt-4 md:pt-0">
+                       <div className="text-left md:text-right">
+                          <p className="text-sm font-black text-blue-600">{formatPrice(order.amount)}</p>
+                          <span className={`text-[9px] font-black uppercase ${order.status === 'Confirmed' ? 'text-green-500' : 'text-orange-500'}`}>{order.status}</span>
+                       </div>
+                       <button onClick={() => setSelectedOrder(order)} className="bg-gray-900 text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all">Details</button>
                     </div>
                   </div>
-                </div>
-
-                <div className="bg-black text-white p-8 rounded-[2.5rem] shadow-2xl overflow-hidden relative group">
-                  <div className="relative z-10">
-                    <p className="text-blue-500 text-[10px] font-black uppercase tracking-widest mb-2">Shop Performance</p>
-                    <div className="space-y-6 mt-8">
-                       <div className="flex justify-between items-end">
-                         <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total Orders</span>
-                         <span className="text-3xl font-black italic tracking-tighter">{sellerSales.length}</span>
-                       </div>
-                       <div className="flex justify-between items-end">
-                         <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Products Online</span>
-                         <span className="text-3xl font-black italic tracking-tighter">{sellerProducts.length}</span>
-                       </div>
-                    </div>
+                ))
+              )}
+            </div>
+          ) : (
+            <div className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 divide-y">
+               {sellerNotifications.length === 0 ? (
+                  <div className="p-20 text-center text-gray-300">
+                    <Bell className="mx-auto mb-4 opacity-20" size={60}/>
+                    <p className="text-[10px] font-black uppercase tracking-widest">No notifications alerts</p>
                   </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                 <div className="lg:col-span-2 space-y-6">
-                   <div className="flex justify-between items-center">
-                     <h3 className="text-lg font-black uppercase italic tracking-tight">Recent Orders</h3>
-                     <button onClick={() => setActiveTab('orders')} className="text-[10px] font-black uppercase text-blue-600 hover:underline">View All</button>
-                   </div>
-                   <div className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 divide-y">
-                     {sellerSales.length === 0 ? (
-                        <div className="p-12 text-center text-gray-400">
-                          <Package className="mx-auto mb-4 opacity-20" size={48} />
-                          <p className="text-[10px] font-black uppercase tracking-widest">No orders yet</p>
-                        </div>
-                     ) : (
-                       sellerSales.slice(0, 5).map(order => (
-                         <div key={order.id} className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                           <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-blue-600">
-                                <ShoppingBag size={20} />
-                              </div>
-                              <div>
-                                <p className="text-xs font-black uppercase">{order.customerName}</p>
-                                <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">ORDER #{order.id.slice(-6)} • {new Date(order.date).toLocaleDateString()}</p>
-                              </div>
-                           </div>
-                           <div className="flex items-center gap-6">
-                             <div className="text-right">
-                               <p className="text-xs font-black">{formatPrice(order.amount)}</p>
-                               <span className={`text-[8px] font-black uppercase ${order.status === 'Confirmed' ? 'text-green-600' : 'text-orange-500'}`}>{order.status}</span>
-                             </div>
-                             <button onClick={() => setSelectedOrder(order)} className="p-2 hover:bg-gray-100 rounded-lg"><ChevronRight size={16}/></button>
-                           </div>
-                         </div>
-                       ))
-                     )}
-                   </div>
-                 </div>
-
-                 <div className="space-y-6">
-                    <h3 className="text-lg font-black uppercase italic tracking-tight">Quick Actions</h3>
-                    <div className="space-y-3">
-                      <button 
-                        onClick={() => setIsAddingProduct(true)}
-                        className="w-full bg-black text-white p-6 rounded-3xl font-black text-xs uppercase tracking-widest flex items-center justify-between hover:bg-blue-600 transition-all shadow-xl"
-                      >
-                        Add Product <Plus size={18}/>
-                      </button>
-                      <button className="w-full bg-white text-gray-900 border border-gray-100 p-6 rounded-3xl font-black text-xs uppercase tracking-widest flex items-center justify-between hover:bg-gray-50 transition-all shadow-sm">
-                        Request Payout <ArrowUpRight size={18}/>
-                      </button>
-                    </div>
-
-                    <div className="bg-blue-600 rounded-3xl p-6 text-white overflow-hidden relative">
-                       <div className="relative z-10">
-                         <h4 className="text-[10px] font-black uppercase tracking-widest mb-2 opacity-80">Support Status</h4>
-                         <p className="text-lg font-black italic mb-4">Dedicated Account Manager Available</p>
-                         <button className="bg-white text-blue-600 px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest">Contact Now</button>
-                       </div>
-                       <Package className="absolute -bottom-6 -right-6 text-white/10" size={120} />
-                    </div>
-                 </div>
-              </div>
-            </motion.div>
-          )}
-
-          {activeTab === 'orders' && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-8"
-            >
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h2 className="text-3xl font-black italic tracking-tighter uppercase">My <span className="text-blue-600 underline">Orders</span></h2>
-                <div className="flex gap-2 w-full sm:w-auto">
-                  <div className="relative flex-grow sm:flex-grow-0">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14}/>
-                    <input type="text" placeholder="Search orders..." className="bg-white border rounded-xl pl-9 pr-4 py-2 text-xs font-bold w-full sm:w-64 outline-none focus:ring-2 focus:ring-blue-600/10"/>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                    <thead>
-                      <tr className="bg-gray-50 border-b">
-                        <th className="p-6 text-[9px] font-black uppercase tracking-widest text-gray-400">Order ID</th>
-                        <th className="p-6 text-[9px] font-black uppercase tracking-widest text-gray-400">Customer</th>
-                        <th className="p-6 text-[9px] font-black uppercase tracking-widest text-gray-400">Date</th>
-                        <th className="p-6 text-[9px] font-black uppercase tracking-widest text-gray-400 text-center">Amount</th>
-                        <th className="p-6 text-[9px] font-black uppercase tracking-widest text-gray-400">Status</th>
-                        <th className="p-6 text-[9px] font-black uppercase tracking-widest text-gray-400 text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                      {sellerSales.map(order => (
-                        <tr key={order.id} className="hover:bg-gray-50/50">
-                          <td className="p-6 text-xs font-black">#{order.id.slice(-6)}</td>
-                          <td className="p-6">
-                            <p className="text-xs font-black uppercase">{order.customerName}</p>
-                            <p className="text-[9px] text-gray-400 font-bold">{order.customerCity}</p>
-                          </td>
-                          <td className="p-6 text-xs font-bold text-gray-400">{new Date(order.date).toLocaleDateString()}</td>
-                          <td className="p-6 text-center text-xs font-black">{formatPrice(order.amount)}</td>
-                          <td className="p-6">
-                            <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${
-                              order.status === 'Confirmed' ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'
-                            }`}>
-                              {order.status}
-                            </span>
-                          </td>
-                          <td className="p-6 text-right">
-                             <button onClick={() => setSelectedOrder(order)} className="bg-gray-100 text-[9px] font-black uppercase px-4 py-1.5 rounded-lg hover:bg-black hover:text-white transition-all">Details</button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {activeTab === 'products' && (
-             <motion.div 
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               className="space-y-8"
-             >
-                <div className="flex justify-between items-center">
-                  <h2 className="text-3xl font-black italic tracking-tighter uppercase">My <span className="text-blue-600 underline">Inventory</span></h2>
-                  <button 
-                    onClick={() => setIsAddingProduct(true)}
-                    className="bg-blue-600 text-white px-8 py-3 rounded-xl font-black text-xs uppercase shadow-xl flex items-center gap-2"
-                  >
-                    <Plus size={18}/> New Product
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {sellerProducts.length === 0 ? (
-                    <div className="col-span-full py-20 text-center bg-white rounded-[2rem] border border-dashed border-gray-200">
-                      <Box className="mx-auto mb-4 text-gray-300" size={48}/>
-                      <p className="text-sm font-black uppercase text-gray-400 tracking-widest">No products in your shop</p>
-                    </div>
-                  ) : (
-                    sellerProducts.map(product => (
-                      <div key={product.id} className="bg-white rounded-[2rem] p-6 border border-gray-100 shadow-sm group">
-                        <div className="aspect-square bg-gray-50 rounded-2xl overflow-hidden mb-4 relative">
-                          <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
-                        </div>
-                        <div className="flex justify-between items-start mb-2">
-                           <h4 className="text-xs font-black uppercase tracking-tight truncate max-w-[70%]">{product.name}</h4>
-                           <p className="text-sm font-black">{formatPrice(product.price)}</p>
-                        </div>
-                        <p className="text-[9px] font-bold text-gray-400 uppercase mb-4">{product.category}</p>
-                        <div className="flex gap-2">
-                           <button className="flex-grow bg-gray-100 text-[10px] font-black uppercase py-2.5 rounded-xl hover:bg-black hover:text-white transition-all">Edit</button>
-                           <button className="bg-red-50 text-red-500 p-2.5 rounded-xl hover:bg-red-500 hover:text-white transition-all"><Trash2 size={16}/></button>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-             </motion.div>
-          )}
-
-          {activeTab === 'notifications' && (
-             <motion.div 
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               className="space-y-8"
-             >
-                <div className="flex justify-between items-center">
-                  <h2 className="text-3xl font-black italic tracking-tighter uppercase">Activity <span className="text-blue-600 underline">Stream</span></h2>
-                  <button className="text-[10px] font-black uppercase text-gray-400 hover:text-black">Mark All as Read</button>
-                </div>
-
-                <div className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 divide-y">
-                   {sellerNotifications.length === 0 ? (
-                      <div className="p-20 text-center text-gray-300">
-                        <Bell className="mx-auto mb-4 opacity-20" size={60}/>
-                        <p className="text-[10px] font-black uppercase tracking-widest">Everything is up to date</p>
-                      </div>
-                   ) : (
-                     sellerNotifications.map(n => (
-                       <div 
-                         key={n.id}
-                         onClick={() => markNotificationAsRead(n.id)}
-                         className={`p-8 flex gap-6 hover:bg-gray-50 transition-colors cursor-pointer ${!n.isRead ? 'bg-blue-50/20' : ''}`}
-                       >
-                         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
-                            n.type === 'New Order' ? 'bg-green-50 text-green-600' : 'bg-blue-50 text-blue-600'
-                         }`}>
-                           {n.type === 'New Order' ? <ShoppingBag size={20}/> : <AlertCircle size={20}/>}
-                         </div>
-                         <div className="flex-grow">
-                            <div className="flex justify-between mb-1">
-                               <p className="text-xs font-black uppercase">{n.title}</p>
-                               <p className="text-[8px] font-bold text-gray-400 uppercase">{new Date(n.timestamp).toLocaleTimeString()}</p>
-                            </div>
-                            <p className="text-sm text-gray-500 font-medium leading-relaxed">{n.message}</p>
-                         </div>
-                       </div>
-                     ))
-                   )}
-                </div>
-             </motion.div>
-          )}
-
-          {activeTab === 'profile' && (
-             <motion.div 
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               className="space-y-8"
-             >
-                <h2 className="text-3xl font-black italic tracking-tighter uppercase">Shop <span className="text-blue-600 underline">Profile</span></h2>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-8">
-                     <div className="flex items-center gap-6">
-                        <div className="w-20 h-20 bg-blue-600 text-white rounded-[1.5rem] flex items-center justify-center text-3xl font-black italic shadow-xl shadow-blue-600/20">
-                          {seller.shopName?.charAt(0) || 'S'}
-                        </div>
-                        <div>
-                           <h4 className="text-2xl font-black uppercase italic tracking-tighter">{seller.shopName || seller.showName}</h4>
-                           <span className="bg-blue-50 text-blue-600 text-[10px] font-black uppercase px-2 py-1 rounded inline-block mt-2 tracking-widest">{seller.rank} Tier Seller</span>
-                        </div>
+               ) : (
+                 sellerNotifications.map(n => (
+                   <div 
+                     key={n.id}
+                     onClick={() => markNotificationAsRead(n.id)}
+                     className={`p-6 flex gap-6 hover:bg-gray-50 transition-colors cursor-pointer ${!n.isRead ? 'bg-blue-50/20' : ''}`}
+                   >
+                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${n.type === 'New Order' ? 'bg-green-50 text-green-600' : 'bg-blue-50 text-blue-600'}`}>
+                       {n.type === 'New Order' ? <ShoppingBag size={20}/> : <AlertCircle size={20}/>}
                      </div>
-
-                     <div className="space-y-4">
-                        <div className="flex justify-between p-4 bg-gray-50 rounded-2xl">
-                           <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Full Name</span>
-                           <span className="text-[10px] font-black uppercase">{seller.fullName}</span>
-                        </div>
-                        <div className="flex justify-between p-4 bg-gray-50 rounded-2xl">
-                           <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Email</span>
-                           <span className="text-[10px] font-bold">{seller.email}</span>
-                        </div>
-                        <div className="flex justify-between p-4 bg-gray-50 rounded-2xl">
-                           <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">WhatsApp</span>
-                           <span className="text-[10px] font-bold">{seller.whatsapp}</span>
-                        </div>
-                        <div className="flex justify-between p-4 bg-gray-50 rounded-2xl">
-                           <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">City</span>
-                           <span className="text-[10px] font-black uppercase">{seller.city}</span>
-                        </div>
+                     <div>
+                        <p className="text-[10px] font-black uppercase text-gray-400 mb-1">{new Date(n.timestamp).toLocaleString()}</p>
+                        <p className="text-xs font-black uppercase text-gray-900 mb-1">{n.title}</p>
+                        <p className="text-xs text-gray-500 font-medium">{n.message}</p>
                      </div>
-                  </div>
-
-                  <div className="space-y-8">
-                    <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                       <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-6">Verification Documents</h4>
-                       <div className="flex items-center justify-between p-6 bg-green-50 border border-green-100 rounded-2xl">
-                          <div className="flex items-center gap-4">
-                             <CheckCircle2 className="text-green-600" size={24}/>
-                             <div>
-                               <p className="text-xs font-black uppercase text-green-800">Shop Verified</p>
-                               <p className="text-[9px] font-bold text-green-700/70 uppercase">Documents Approved on {seller.joinedDate}</p>
-                             </div>
-                          </div>
-                       </div>
-                    </div>
-
-                    <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                       <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-6">Payout Information</h4>
-                       <div className="p-6 bg-gray-50 rounded-2xl">
-                          <p className="text-[9px] font-black uppercase text-gray-400 mb-2">Banking Methods</p>
-                          <p className="text-xs font-bold leading-relaxed">{seller.paymentDetails}</p>
-                          <button className="mt-6 text-[10px] font-black text-blue-600 hover:underline uppercase tracking-widest">Update Details</button>
-                       </div>
-                    </div>
-                  </div>
-                </div>
-             </motion.div>
+                   </div>
+                 ))
+               )}
+            </div>
           )}
-        </AnimatePresence>
+        </section>
       </main>
 
-      {/* Order Detail Modal */}
+      {/* Modals are kept below (Order Detail & Add Product) - They are already minimal/correct but I'll add the data fix to Order Detail */}
       {selectedOrder && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fadeIn">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-[2rem] shadow-2xl max-w-xl w-full overflow-hidden">
-            <div className="bg-black text-white p-8 mb-6">
+            <div className="bg-black text-white p-8">
                <div className="flex justify-between items-center">
                  <h2 className="text-2xl font-black italic tracking-tighter uppercase">Order <span className="text-blue-500 underline">Summary</span></h2>
                  <button onClick={() => setSelectedOrder(null)} className="p-1 hover:bg-white/10 rounded-full"><X/></button>
                </div>
                <p className="text-[10px] font-black uppercase text-gray-400 mt-2 tracking-widest">Order ID: #{selectedOrder.id}</p>
             </div>
-            
-            <div className="p-8 pb-10 space-y-8 max-h-[60vh] overflow-y-auto">
+            <div className="p-8 space-y-8 max-h-[60vh] overflow-y-auto">
                <div className="grid grid-cols-2 gap-8 text-left">
                   <section>
-                    <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-2">Delivery To</h4>
+                    <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-2">Customer</h4>
                     <p className="text-xs font-black uppercase">{selectedOrder.customerName}</p>
                     <p className="text-[10px] font-bold text-gray-500 mt-1">{selectedOrder.customerPhone}</p>
                     <p className="text-[10px] font-bold text-gray-500 leading-tight mt-2">{selectedOrder.customerAddress}, {selectedOrder.customerCity}</p>
                   </section>
                   <section className="text-right">
-                    <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-2">Order Date</h4>
-                    <p className="text-xs font-black uppercase">{new Date(selectedOrder.date).toLocaleDateString()}</p>
+                    <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-2">Metadata</h4>
+                    <p className="text-[10px] font-black text-blue-600 uppercase">Time: {new Date(selectedOrder.date).toLocaleTimeString()}</p>
+                    <p className="text-[10px] font-black text-gray-400 uppercase mt-1">Date: {new Date(selectedOrder.date).toLocaleDateString()}</p>
                     <div className="mt-4">
-                       <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${
-                          selectedOrder.status === 'Confirmed' ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'
-                        }`}>
+                       <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${selectedOrder.status === 'Confirmed' ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'}`}>
                           {selectedOrder.status}
                         </span>
                     </div>
                   </section>
                </div>
-
                <div>
-                 <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-4">Items Summary</h4>
-                 <div className="space-y-3">
+                 <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-4">Items</h4>
+                 <div className="space-y-2">
                     {selectedOrder.products?.map((item: any, i: number) => (
-                      <div key={i} className="flex justify-between items-center p-4 bg-gray-50 rounded-2xl">
+                      <div key={i} className="flex justify-between items-center p-4 bg-gray-50 rounded-xl border border-gray-100">
                          <div>
                             <p className="text-xs font-black uppercase">{item.name}</p>
-                            <p className="text-[8px] font-bold text-gray-400 uppercase mt-1">Size: {item.size} • Color: {item.color} • Qty: {item.quantity}</p>
+                            <p className="text-[8px] font-bold text-gray-400 uppercase mt-0.5">ID: {item.productId || item.id} • S: {item.size} • C: {item.color}</p>
                          </div>
-                         <p className="text-xs font-black">{formatPrice(item.price * item.quantity)}</p>
+                         <p className="text-xs font-black">x{item.quantity}</p>
                       </div>
                     ))}
                  </div>
                </div>
-
                <div className="border-t border-gray-100 pt-6 flex justify-between items-center">
-                  <p className="text-sm font-black italic uppercase">Total Order Value</p>
+                  <p className="text-xs font-black uppercase">Order Total</p>
                   <p className="text-2xl font-black italic tracking-tighter text-blue-600">{formatPrice(selectedOrder.amount)}</p>
                </div>
             </div>
-
-            <div className="p-8 pt-0 flex gap-4">
-              {selectedOrder.status === 'Pending Payment' && (
-                <button 
-                  onClick={() => {
-                    updateSaleStatus(selectedOrder.id, 'Confirmed');
-                    setSelectedOrder({...selectedOrder, status: 'Confirmed'});
-                  }}
-                  className="flex-grow bg-blue-600 text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl hover:bg-black transition-all"
-                >
-                  Confirm Shipment
-                </button>
-              )}
-              <button 
-                onClick={() => setSelectedOrder(null)}
-                className="flex-grow bg-gray-100 text-black py-4 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg hover:bg-black hover:text-white transition-all"
-              >
-                Close View
-              </button>
+            <div className="p-8 pt-0">
+               <button onClick={() => setSelectedOrder(null)} className="w-full bg-black text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg hover:bg-blue-600 transition-all">Close</button>
             </div>
           </div>
         </div>

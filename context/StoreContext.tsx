@@ -74,6 +74,13 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Real-time synchronization with Firestore
   useEffect(() => {
+    // Request notification permission
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      if (Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+    }
+
     const q = query(collection(db, 'products'), orderBy('datePosted', 'desc'), limit(1000));
     const unsubscribeProducts = onSnapshot(q, (snapshot) => {
       let productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
@@ -138,6 +145,18 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       query(collection(db, 'notifications'), orderBy('timestamp', 'desc'), limit(50)),
       (snapshot) => {
         const notifList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as AppNotification));
+        
+        // Trigger browser notification for new items
+        const newItems = snapshot.docChanges().filter(change => change.type === 'added');
+        if (newItems.length > 0 && !snapshot.metadata.fromCache) {
+          newItems.forEach(change => {
+            const data = change.doc.data();
+            if (Notification.permission === 'granted') {
+              new Notification(data.title, { body: data.message });
+            }
+          });
+        }
+
         setNotifications(notifList);
       },
       (error) => console.warn("Notifications sync error:", error)
@@ -200,14 +219,18 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [products]);
 
   const searchProducts = (term: string, category: string = 'All') => {
-    if (!term && category === 'All') return products;
+    // If no term and searching from global search, return nothing or all?
+    // User says: "Results MUST reset properly. When user deletes previous search -> ONLY new results should show."
+    // If they delete the search query, they usually want to go back to "All" or seeing nothing if on Search page.
     
     let baseProducts = products;
     if (category !== 'All') {
       baseProducts = products.filter(p => p.category === category);
     }
-    
-    if (!term) return baseProducts;
+
+    if (!term) {
+      return category === 'All' ? products : baseProducts;
+    }
 
     // Synonyms for intelligent expansion
     const synonyms: Record<string, string[]> = {
@@ -417,21 +440,23 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       await setDoc(docRef, saleData);
       
       // Create real-time notification
+      const productSummary = saleData.products?.map(p => `${p.name} x${p.quantity}`).join(', ') || saleData.productName || 'Items';
+      const sellerInfo = saleData.sellerShopName ? `[${saleData.sellerShopName}]` : '[Main Admin]';
+
       await addNotification({
         type: 'New Order',
-        title: 'New Order Received',
-        message: `Order for ${saleData.amount.toFixed(2)} from ${saleData.customerName}`,
+        title: `Entry: ${saleData.customerName}`,
+        message: `${sellerInfo} - ${productSummary}`,
         targetId: docRef.id,
         targetRole: 'admin'
       });
 
       // If there's a seller, notify them too
       if (saleData.sellerId && saleData.sellerId !== 'Direct') {
-        const orderSummary = saleData.products.map(p => `${p.name} (x${p.quantity})`).join(', ');
         await addNotification({
           type: 'New Order',
           title: 'You have a new order!',
-          message: `Products: ${orderSummary} from ${saleData.customerCountry}`,
+          message: `Products: ${productSummary} for delivery to ${saleData.customerCity}, ${saleData.customerCountry}`,
           targetId: docRef.id,
           targetRole: 'seller',
           sellerId: saleData.sellerId
