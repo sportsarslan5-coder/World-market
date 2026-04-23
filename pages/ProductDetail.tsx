@@ -54,7 +54,7 @@ const ProductDetail: React.FC = () => {
 
     // Store order in system
     addSale({
-      items: [{
+      products: [{
         productId: product.id,
         name: product.name,
         price: product.price,

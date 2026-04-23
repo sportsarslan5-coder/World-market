@@ -1,6 +1,6 @@
 
 import React, { Suspense, lazy } from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import BrandLogo from './components/BrandLogo';
 
@@ -25,7 +25,7 @@ const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 const SearchPage = lazy(() => import('./pages/Search'));
 const SellerProfile = lazy(() => import('./pages/SellerProfile'));
-const SellerDashboard = lazy(() => import('./pages/SellerDashboard'));
+const SellerLogin = lazy(() => import('./pages/SellerLogin'));
 const SellerRanking = lazy(() => import('./pages/SellerRanking'));
 const SportStore = lazy(() => import('./pages/SportStore'));
 
@@ -72,8 +72,9 @@ const App: React.FC = () => {
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/seller/:sellerId" element={<SellerProfile />} />
+          <Route path="/seller-login" element={<SellerLogin />} />
           <Route path="/seller-panel/:id" element={<SellerPanel />} />
-          <Route path="/seller-dashboard" element={<SellerDashboard />} />
+          <Route path="/seller-dashboard" element={<Navigate to="/seller-login" replace />} />
           <Route path="/seller-ranking" element={<SellerRanking />} />
 
           {/* Clean Dynamic Multi-Show Routing (e.g. /arslan, /arslan/products) */}

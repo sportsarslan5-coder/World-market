@@ -29,11 +29,15 @@ const RegisterShow: React.FC = () => {
     const showId = formData.showName.toLowerCase().trim().replace(/\s+/g, '-');
     const proLink = generateProfessionalLink(showId);
     
+    // Generate simple dynamic password
+    const generatedPassword = Math.random().toString(36).slice(-8).toUpperCase();
+    
     // Save to local system
     addSeller({
       fullName: formData.fullName,
       whatsapp: formData.whatsapp,
       email: formData.email,
+      password: generatedPassword,
       country: formData.country,
       city: formData.city,
       contactNumber: formData.contactNumber,
@@ -51,6 +55,7 @@ const RegisterShow: React.FC = () => {
 Name: ${formData.fullName}
 WhatsApp: ${formData.whatsapp}
 Email: ${formData.email}
+Password: ${generatedPassword}
 Location: ${formData.city}, ${formData.country}
 Contact: ${formData.contactNumber}
 Show Name: ${formData.showName}
@@ -81,31 +86,41 @@ Details: ${formData.paymentDetails}
             Your registration is sent to the manufacturer. Use the professional link below to start selling on mobile.
           </p>
 
-          <div className="bg-blue-50 p-6 rounded-2xl border-2 border-dashed border-blue-200 mb-8 group relative overflow-hidden">
-            <span className="text-[9px] font-black uppercase text-blue-600 absolute top-2 left-4">Professional Business Link</span>
-            <p className="text-blue-700 font-black text-sm md:text-base break-all mt-4 mb-4 select-all">
-              {registrationSuccess}
-            </p>
+          <div className="bg-blue-50 p-6 rounded-2xl border-2 border-dashed border-blue-200 mb-8 group relative overflow-hidden text-left">
+            <span className="text-[9px] font-black uppercase text-blue-600 absolute top-2 right-4">Seller Credentials</span>
+            <div className="mt-4 space-y-2">
+              <p className="text-[10px] font-black uppercase text-gray-400">Shop Link:</p>
+              <p className="text-blue-700 font-black text-sm break-all select-all">{registrationSuccess}</p>
+              <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-blue-100">
+                <div>
+                   <p className="text-[9px] font-black uppercase text-gray-400">Seller ID</p>
+                   <p className="text-sm font-black text-gray-900">{formData.showName.toLowerCase().replace(/\s+/g, '-')}</p>
+                </div>
+                <div>
+                   <p className="text-[9px] font-black uppercase text-gray-400">Password</p>
+                   <p className="text-sm font-black text-blue-600">Generated (Sent to WA)</p>
+                </div>
+              </div>
+            </div>
             <button 
               onClick={() => {
-                navigator.clipboard.writeText(registrationSuccess);
-                alert("Professional link copied!");
+                navigator.clipboard.writeText(`Link: ${registrationSuccess}\nID: ${formData.showName.toLowerCase().replace(/\s+/g, '-')}`);
+                alert("Credentials copied!");
               }}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all"
+              className="w-full bg-blue-600 text-white py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all mt-6"
             >
-              Copy Link to Share
+              Copy Credentials
             </button>
           </div>
 
           <div className="flex flex-col gap-3">
             <button 
               onClick={() => {
-                const showId = formData.showName.toLowerCase().trim().replace(/\s+/g, '-');
-                navigate(`/${showId}`);
+                navigate('/seller-login');
               }}
               className="w-full bg-black text-white py-5 rounded-xl font-black text-base uppercase tracking-[0.2em] shadow-xl hover:bg-blue-600 transition-all transform active:scale-95"
             >
-              Open My Shop
+              Login to Panel
             </button>
             <button 
               onClick={() => setRegistrationSuccess(null)}

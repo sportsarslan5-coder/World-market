@@ -44,11 +44,7 @@ export const SELLERS: SellerInfo[] = [
     isVerified: true,
     verificationStatus: 'Verified',
     businessType: 'Business',
-    joinedDate: '2023-01-15',
-    balance: 4500.50,
-    commissionRate: 0.08,
-    totalEarnings: 15400.00,
-    withdrawnAmount: 10899.50
+    joinedDate: '2023-01-15'
   },
   {
     id: 'seller-2',
@@ -67,11 +63,7 @@ export const SELLERS: SellerInfo[] = [
     isVerified: true,
     verificationStatus: 'Verified',
     businessType: 'Business',
-    joinedDate: '2023-06-20',
-    balance: 1200.00,
-    commissionRate: 0.04,
-    totalEarnings: 5600.00,
-    withdrawnAmount: 4400.00
+    joinedDate: '2023-06-20'
   },
   {
     id: 'seller-3',
@@ -90,11 +82,7 @@ export const SELLERS: SellerInfo[] = [
     isVerified: true,
     verificationStatus: 'Verified',
     businessType: 'Individual',
-    joinedDate: '2024-01-10',
-    balance: 150.00,
-    commissionRate: 0.03,
-    totalEarnings: 450.00,
-    withdrawnAmount: 300.00
+    joinedDate: '2024-01-10'
   }
 ];
 
@@ -1518,7 +1506,7 @@ export const BLOG_POSTS: BlogPost[] = [
 export const MOCK_ORDERS: SaleRecord[] = [
   {
     id: 'ORD-1001',
-    items: [{ productId: 'hoodie-0', name: 'Professional Team Jersey', price: 150.00, quantity: 1 }],
+    products: [{ productId: 'hoodie-0', name: 'Professional Team Jersey', price: 150.00, quantity: 1 }],
     customerName: 'John Smith',
     customerPhone: '+1 234 567 890',
     customerEmail: 'john@example.com',
@@ -1530,12 +1518,11 @@ export const MOCK_ORDERS: SaleRecord[] = [
     date: '2024-03-20',
     status: 'Shipped',
     sellerId: 'seller-1',
-    sellerShopName: 'Elite Gear',
-    commissionEarned: 12.00
+    sellerShopName: 'Elite Gear'
   },
   {
     id: 'ORD-1002',
-    items: [{ productId: 'hoodie-1', name: 'Elite Training Shorts', price: 85.00, quantity: 1 }],
+    products: [{ productId: 'hoodie-1', name: 'Elite Training Shorts', price: 85.00, quantity: 1 }],
     customerName: 'Sarah Wilson',
     customerPhone: '+1 987 654 321',
     customerEmail: 'sarah@example.com',
@@ -1547,12 +1534,11 @@ export const MOCK_ORDERS: SaleRecord[] = [
     date: '2024-03-21',
     status: 'Processing',
     sellerId: 'seller-1',
-    sellerShopName: 'Elite Gear',
-    commissionEarned: 6.80
+    sellerShopName: 'Elite Gear'
   },
   {
     id: 'ORD-1003',
-    items: [{ productId: 'hoodie-2', name: 'Performance Hoodie', price: 120.00, quantity: 1 }],
+    products: [{ productId: 'hoodie-2', name: 'Performance Hoodie', price: 120.00, quantity: 1 }],
     customerName: 'Mike Ross',
     customerPhone: '+1 111 222 333',
     customerEmail: 'mike@example.com',
@@ -1564,8 +1550,7 @@ export const MOCK_ORDERS: SaleRecord[] = [
     date: '2024-03-22',
     status: 'Delivered',
     sellerId: 'seller-1',
-    sellerShopName: 'Elite Gear',
-    commissionEarned: 9.60
+    sellerShopName: 'Elite Gear'
   }
 ];
 

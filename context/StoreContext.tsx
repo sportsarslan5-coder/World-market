@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import { Product, CartItem, SaleRecord, Customer, Currency, Language, CurrencyCode, LanguageCode, SellerInfo } from '../types';
+import { Product, CartItem, SaleRecord, Customer, Currency, Language, CurrencyCode, LanguageCode, SellerInfo, AppNotification } from '../types';
 import { PRODUCTS, MOCK_CUSTOMERS, CURRENCIES, LANGUAGES, SELLERS } from '../constants';
 import { detectShowName } from '../services/routingUtils';
 import { 
@@ -50,7 +50,7 @@ interface StoreContextType {
   removeFromCart: (productId: string, selectedSize?: string, selectedColor?: string) => void;
   clearCart: () => void;
   addSale: (sale: Omit<SaleRecord, 'id' | 'date'>) => Promise<void>;
-  addSeller: (seller: Omit<SellerInfo, 'id' | 'joinedDate' | 'totalSales' | 'balance' | 'totalEarnings' | 'withdrawnAmount' | 'rating' | 'rank' | 'isVerified' | 'verificationStatus' | 'commissionRate'>) => Promise<void>;
+  addSeller: (seller: Omit<SellerInfo, 'id' | 'joinedDate' | 'totalSales' | 'rating' | 'rank' | 'isVerified' | 'verificationStatus'>) => Promise<void>;
   updateSaleStatus: (id: string, status: SaleRecord['status']) => Promise<void>;
   loadMoreProducts: () => Promise<void>;
   searchProducts: (query: string, category?: string) => Product[];
@@ -328,8 +328,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const formatPrice = (amount: number) => {
-    const converted = amount * currency.rate;
-    return `${currency.symbol}${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    const safeAmount = typeof amount === 'number' && !isNaN(amount) ? amount : 0;
+    const converted = safeAmount * (currency?.rate || 1);
+    return `${currency?.symbol || '$'}${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   const addProduct = async (newP: Omit<Product, 'id' | 'datePosted'>) => {
@@ -426,10 +427,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       // If there's a seller, notify them too
       if (saleData.sellerId && saleData.sellerId !== 'Direct') {
+        const orderSummary = saleData.products.map(p => `${p.name} (x${p.quantity})`).join(', ');
         await addNotification({
           type: 'New Order',
           title: 'You have a new order!',
-          message: `Order #${docRef.id.slice(-6)} needs your attention.`,
+          message: `Products: ${orderSummary} from ${saleData.customerCountry}`,
           targetId: docRef.id,
           targetRole: 'seller',
           sellerId: saleData.sellerId
@@ -466,21 +468,17 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const addSeller = async (newS: Omit<SellerInfo, 'id' | 'joinedDate' | 'totalSales' | 'balance' | 'totalEarnings' | 'withdrawnAmount' | 'rating' | 'rank' | 'isVerified' | 'verificationStatus' | 'commissionRate'>) => {
+  const addSeller = async (newS: Omit<SellerInfo, 'id' | 'joinedDate' | 'totalSales' | 'rating' | 'rank' | 'isVerified' | 'verificationStatus'>) => {
     const docRef = doc(collection(db, 'sellers'));
     await setDoc(docRef, {
       ...newS,
       id: docRef.id,
       joinedDate: new Date().toISOString(),
       totalSales: 0,
-      balance: 0,
-      totalEarnings: 0,
-      withdrawnAmount: 0,
       rating: 5.0,
       rank: 'Standard',
       isVerified: false,
       verificationStatus: 'Pending',
-      commissionRate: 10,
       responseTime: "24h"
     });
   };

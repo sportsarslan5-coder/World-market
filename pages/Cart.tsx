@@ -46,7 +46,7 @@ const Cart: React.FC = () => {
  
     try {
       const orderData = {
-        items: cart.map(item => ({
+        products: cart.map(item => ({
           productId: item.id,
           name: item.name,
           price: item.price,

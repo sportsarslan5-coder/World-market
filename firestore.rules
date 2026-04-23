@@ -62,9 +62,17 @@ service cloud.firestore {
     }
 
     // --- Notifications ---
+    function isValidNotification(data) {
+      return data.type in ['New Order', 'New Seller', 'Payment Request', 'Stock Alert']
+          && data.title is string && data.title.size() > 0
+          && data.targetRole in ['admin', 'seller'];
+    }
+
     match /notifications/{notificationId} {
-      allow create: if true; // Any part of the app can trigger a notification
-      allow read: if isAdmin() || (isSignedIn() && existing().sellerId == request.auth.uid);
+      allow create: if isValidNotification(incoming()) && isValidId(notificationId);
+      allow read, list: if isAdmin() 
+                        || (isSignedIn() && resource.data.sellerId == request.auth.uid)
+                        || (isSignedIn() && resource.data.targetRole == 'seller' && resource.data.sellerId == request.auth.uid);
       allow update: if isAdmin() || (isSignedIn() && existing().sellerId == request.auth.uid);
     }
   }

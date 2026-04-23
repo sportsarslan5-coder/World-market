@@ -284,7 +284,7 @@ const Admin: React.FC = () => {
         {activeTab === 'overview' && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
             {[
-              { label: 'Total Revenue', value: formatPrice(sales.reduce((acc, s) => acc + s.amount, 0)), icon: '💰', color: 'bg-green-50 text-green-600' },
+              { label: 'Total Revenue', value: formatPrice(sales.reduce((acc, s) => acc + (Number(s.amount) || 0), 0)), icon: '💰', color: 'bg-green-50 text-green-600' },
               { label: 'Total Orders', value: sales.length, icon: '📦', color: 'bg-blue-50 text-blue-600' },
               { label: 'Active Sellers', value: sellers.length, icon: '👥', color: 'bg-purple-50 text-purple-600' },
               { label: 'Pending Payments', value: sales.filter(s => s.status === 'Pending Payment').length, icon: '⏳', color: 'bg-orange-50 text-orange-600' }
@@ -360,7 +360,7 @@ const Admin: React.FC = () => {
                         <td className="px-6 md:px-10 py-6">
                           <div className="flex flex-col">
                             <span className="text-sm font-black text-gray-900">{formatPrice(s.amount)}</span>
-                            <span className="text-[10px] text-gray-400 font-bold">{s.items?.length || 1} Products</span>
+                            <span className="text-[10px] text-gray-400 font-bold">{s.products?.length || 0} Products</span>
                           </div>
                         </td>
                         <td className="px-6 md:px-10 py-6">
@@ -440,7 +440,7 @@ const Admin: React.FC = () => {
                     <div>
                       <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Ordered Items</h4>
                       <div className="space-y-3">
-                        {selectedOrder.items?.map((item: any, idx: number) => (
+                        {selectedOrder.products?.map((item: any, idx: number) => (
                           <div key={idx} className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100">
                             <div>
                               <p className="text-xs font-black uppercase text-gray-900">{item.name}</p>
@@ -588,20 +588,20 @@ const Admin: React.FC = () => {
                       <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-4">Financial Overview</h4>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-[9px] font-bold text-gray-400 uppercase">Available Balance</p>
-                          <p className="text-xl font-black text-green-600">{formatPrice(selectedSeller.balance)}</p>
+                          <p className="text-[9px] font-bold text-gray-400 uppercase">Sales Volume</p>
+                          <p className="text-xl font-black text-green-600">{selectedSeller.totalSales}</p>
                         </div>
                         <div>
-                          <p className="text-[9px] font-bold text-gray-400 uppercase">Total Sales</p>
-                          <p className="text-xl font-black text-gray-900">{selectedSeller.totalSales}</p>
-                        </div>
-                        <div>
-                          <p className="text-[9px] font-bold text-gray-400 uppercase">Comm. Rate</p>
-                          <p className="text-xl font-black text-blue-600">{(selectedSeller.commissionRate * 100).toFixed(0)}%</p>
+                          <p className="text-[9px] font-bold text-gray-400 uppercase">Ranking</p>
+                          <p className="text-xl font-black text-gray-900">{selectedSeller.rank}</p>
                         </div>
                         <div>
                           <p className="text-[9px] font-bold text-gray-400 uppercase">Response Time</p>
                           <p className="text-xl font-black text-gray-900">{selectedSeller.responseTime}</p>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-bold text-gray-400 uppercase">Joined Date</p>
+                          <p className="text-[10px] font-black text-gray-900 mt-2 uppercase">{new Date(selectedSeller.joinedDate).toLocaleDateString()}</p>
                         </div>
                       </div>
                     </div>
@@ -759,7 +759,10 @@ const Admin: React.FC = () => {
                           type="number"
                           className="w-full bg-gray-50 border p-4 rounded-xl font-bold"
                           value={isNaN(newProduct.price) ? '' : newProduct.price}
-                          onChange={e => setNewProduct({...newProduct, price: parseFloat(e.target.value)})}
+                          onChange={e => {
+                            const val = parseFloat(e.target.value);
+                            setNewProduct({...newProduct, price: isNaN(val) ? 0 : val});
+                          }}
                         />
                       </div>
                       <div className="space-y-1">

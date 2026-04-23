@@ -75,7 +75,7 @@ export interface CartItem extends Product {
 
 export interface SaleRecord {
   id: string;
-  items: {
+  products: {
     productId: string;
     name: string;
     price: number;
@@ -95,7 +95,6 @@ export interface SaleRecord {
   status: 'Delivered' | 'Processing' | 'Shipped' | 'Pending Payment' | 'Confirmed' | 'Cancelled' | 'Completed';
   sellerId?: string;
   sellerShopName?: string;
-  commissionEarned?: number;
 }
 
 export interface Customer {
@@ -113,6 +112,7 @@ export interface SellerInfo {
   fullName: string;
   whatsapp: string;
   email: string;
+  password?: string;
   country: string;
   city: string;
   location?: string;
@@ -127,12 +127,7 @@ export interface SellerInfo {
   isVerified: boolean;
   verificationStatus: VerificationStatus;
   businessType: BusinessType;
-  kycDocuments?: string[];
   joinedDate: string;
-  balance: number;
-  commissionRate: number;
-  totalEarnings: number;
-  withdrawnAmount: number;
 }
 
 export interface AppNotification {

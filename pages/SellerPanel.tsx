@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   BarChart3, Box, ShoppingBag, Bell, Plus, Settings, 
   ChevronRight, ArrowUpRight, ArrowDownRight, Package,
-  Clock, CheckCircle2, AlertCircle, X, Search, User as UserIcon
+  Clock, CheckCircle2, AlertCircle, X, Search, User as UserIcon,
+  LogOut, Trash2
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES } from '../constants';
@@ -12,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const SellerPanel: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { 
     sales, products, sellers, notifications, unreadNotificationsCount,
     formatPrice, addProduct, updateSaleStatus, markNotificationAsRead 
@@ -62,7 +64,7 @@ const SellerPanel: React.FC = () => {
             <AlertCircle size={40} />
           </div>
           <h2 className="text-3xl font-black italic tracking-tighter uppercase mb-4">Access <span className="text-red-500">Denied</span></h2>
-          <p className="text-gray-500 font-medium mb-8">We couldn't find a seller profile matching this ID. Please contact support or check your link.</p>
+          <p className="text-gray-500 font-medium mb-8">We couldn't find a seller profile matching this ID. Seller IDs are case-sensitive and match your Shop Name (e.g. 'arsalan-sports').</p>
           <Link to="/" className="inline-block bg-black text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-all">Back to Market</Link>
         </div>
       </div>
@@ -94,7 +96,7 @@ const SellerPanel: React.FC = () => {
     }
   };
 
-  const sellerNotifications = notifications.filter(n => n.sellerId === seller.id || (n.targetRole === 'seller' && !n.sellerId));
+  const sellerNotifications = notifications.filter(n => n.sellerId === seller.id || n.targetRole === 'seller');
   const unreadCount = sellerNotifications.filter(n => !n.isRead).length;
 
   return (
@@ -136,7 +138,15 @@ const SellerPanel: React.FC = () => {
           ))}
         </nav>
 
-        <div className="mt-auto pt-8 border-t border-gray-50">
+        <div className="mt-auto pt-8 border-t border-gray-50 space-y-4">
+          <button 
+            onClick={() => navigate('/seller-login')}
+            className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest text-red-500 hover:bg-red-50 transition-all"
+          >
+            <LogOut size={18} />
+            Logout
+          </button>
+          
           <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
             <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center font-black">
               {seller.shopName?.charAt(0) || 'S'}
@@ -171,32 +181,45 @@ const SellerPanel: React.FC = () => {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-8"
             >
-              <header className="flex justify-between items-end">
-                <div>
-                  <h2 className="text-4xl font-black italic tracking-tighter uppercase leading-tight">Welcome, <br/><span className="text-blue-600 underline">{seller.fullName.split(' ')[0]}</span></h2>
-                  <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mt-2">Performance Breakdown for your shop</p>
-                </div>
-                <div className="text-right hidden sm:block">
-                  <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Total Balance</p>
-                  <p className="text-3xl font-black italic tracking-tighter">{formatPrice(seller.balance)}</p>
-                </div>
+              <header>
+                <h2 className="text-4xl font-black italic tracking-tighter uppercase leading-tight">Welcome, <br/><span className="text-blue-600 underline">{seller.fullName.split(' ')[0]}</span></h2>
+                <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mt-2">Seller Control Panel | Shop: {seller.shopName || seller.showName}</p>
               </header>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                {[
-                  { label: 'Total Earnings', value: formatPrice(seller.totalEarnings), icon: ArrowUpRight, color: 'text-green-600 bg-green-50' },
-                  { label: 'Sales Count', value: sellerSales.length, icon: ShoppingBag, color: 'text-blue-600 bg-blue-50' },
-                  { label: 'Products', value: sellerProducts.length, icon: Box, color: 'text-purple-600 bg-purple-50' },
-                  { label: 'Avg Rating', value: seller.rating, icon: AlertCircle, color: 'text-yellow-600 bg-yellow-50' }
-                ].map((stat, i) => (
-                  <div key={i} className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${stat.color}`}>
-                      <stat.icon size={20} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-xl font-black uppercase italic tracking-tighter mb-4 text-blue-600">Quick Actions</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <button onClick={() => setActiveTab('orders')} className="bg-gray-50 p-6 rounded-2xl border hover:border-blue-600 transition-all text-left group">
+                        <ShoppingBag className="text-blue-600 mb-4 group-hover:scale-110 transition-transform" />
+                        <p className="text-[10px] font-black uppercase text-gray-400">View</p>
+                        <p className="text-sm font-black uppercase">Orders</p>
+                      </button>
+                      <button onClick={() => setIsAddingProduct(true)} className="bg-gray-50 p-6 rounded-2xl border hover:border-blue-600 transition-all text-left group">
+                        <Plus className="text-blue-600 mb-4 group-hover:scale-110 transition-transform" />
+                        <p className="text-[10px] font-black uppercase text-gray-400">New</p>
+                        <p className="text-sm font-black uppercase">Product</p>
+                      </button>
                     </div>
-                    <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest leading-tight">{stat.label}</p>
-                    <p className="text-xl font-black mt-1">{stat.value}</p>
                   </div>
-                ))}
+                </div>
+
+                <div className="bg-black text-white p-8 rounded-[2.5rem] shadow-2xl overflow-hidden relative group">
+                  <div className="relative z-10">
+                    <p className="text-blue-500 text-[10px] font-black uppercase tracking-widest mb-2">Shop Performance</p>
+                    <div className="space-y-6 mt-8">
+                       <div className="flex justify-between items-end">
+                         <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total Orders</span>
+                         <span className="text-3xl font-black italic tracking-tighter">{sellerSales.length}</span>
+                       </div>
+                       <div className="flex justify-between items-end">
+                         <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Products Online</span>
+                         <span className="text-3xl font-black italic tracking-tighter">{sellerProducts.length}</span>
+                       </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -513,7 +536,7 @@ const SellerPanel: React.FC = () => {
                <div>
                  <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-4">Items Summary</h4>
                  <div className="space-y-3">
-                    {selectedOrder.items?.map((item: any, i: number) => (
+                    {selectedOrder.products?.map((item: any, i: number) => (
                       <div key={i} className="flex justify-between items-center p-4 bg-gray-50 rounded-2xl">
                          <div>
                             <p className="text-xs font-black uppercase">{item.name}</p>
@@ -583,8 +606,11 @@ const SellerPanel: React.FC = () => {
                     required
                     type="number"
                     className="w-full bg-gray-50 border p-4 rounded-xl font-bold"
-                    value={isNaN(newProduct.price) ? '' : newProduct.price}
-                    onChange={e => setNewProduct({...newProduct, price: parseFloat(e.target.value)})}
+                    value={isNaN(newProduct.price) || newProduct.price === 0 ? '' : newProduct.price}
+                    onChange={e => {
+                      const val = parseFloat(e.target.value);
+                      setNewProduct({...newProduct, price: isNaN(val) ? 0 : val});
+                    }}
                   />
                 </div>
                 <div className="space-y-1">
