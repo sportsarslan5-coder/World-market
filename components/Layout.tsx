@@ -5,8 +5,9 @@ import BrandLogo from './BrandLogo';
 import SEO from './SEO';
 import { useStore } from '../context/StoreContext';
 import { detectShowName } from '../services/routingUtils';
-import { CURRENCIES, LANGUAGES, PRODUCTS } from '../constants';
+import { CATEGORIES, CURRENCIES, LANGUAGES, PRODUCTS } from '../constants';
 import Fuse from 'fuse.js';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Search, 
   ShoppingCart, 
@@ -86,20 +87,37 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }), [products]);
 
   const suggestions = useMemo(() => {
-    if (!searchQuery.trim()) return [];
-    const results = fuse.search(searchQuery);
-    return results.slice(0, 10).map(r => r.item);
-  }, [searchQuery, fuse]);
+    if (!searchQuery.trim()) {
+      // Trending products as default suggestions
+      return {
+        products: products.sort((a, b) => (b.sales || 0) - (a.sales || 0)).slice(0, 5),
+        categories: CATEGORIES.slice(0, 4),
+        isTrending: true
+      };
+    }
+    
+    // Fuzzy search for products
+    const productResults = fuse.search(searchQuery).slice(0, 6).map(r => r.item);
+    
+    // Simple category match
+    const categoryMatches = CATEGORIES.filter(c => 
+      c.toLowerCase().includes(searchQuery.toLowerCase())
+    ).slice(0, 3);
+
+    return {
+      products: productResults,
+      categories: categoryMatches,
+      isTrending: false
+    };
+  }, [searchQuery, fuse, products]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       const path = currentShow ? `/${currentShow}/search` : '/search';
       const encodedQuery = encodeURIComponent(searchQuery);
-      // Support for global search reset
       navigate(`${path}?q=${encodedQuery}`);
       setShowSuggestions(false);
-      setSearchQuery(''); // Reset search input after nav if desired, or keep for context
     }
   };
 
@@ -113,47 +131,94 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   };
 
   const renderSuggestions = () => {
-    if (!showSuggestions || suggestions.length === 0) return null;
+    if (!showSuggestions) return null;
+    
+    const hasResults = suggestions.products.length > 0 || suggestions.categories.length > 0;
+    if (!hasResults) return null;
+
     return (
-      <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[70] animate-fadeIn">
-        <div className="p-2">
-          {suggestions.map(p => (
-            <Link 
-              key={p.id}
-              to={getLink(`/products/${p.id}`)}
-              onClick={() => setShowSuggestions(false)}
-              className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl transition-colors group"
-            >
-              <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                <img 
-                  src={p.image} 
-                  alt={p.name} 
-                  className="w-full h-full object-cover" 
-                  loading="lazy"
-                />
+      <AnimatePresence>
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[70]"
+        >
+          <div className="p-4 max-h-[70vh] overflow-y-auto">
+            {suggestions.isTrending && (
+              <div className="px-3 py-2 mb-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 flex items-center gap-2">
+                  <span className="flex h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse" />
+                  Trending Search
+                </span>
               </div>
-              <div className="flex-grow">
-                <h4 className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors uppercase truncate max-w-[150px] md:max-w-none">{p.name}</h4>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs font-black text-blue-600">{formatPrice(p.price)}</span>
-                  <span className="text-[10px] text-gray-400 uppercase font-bold">{p.category}</span>
+            )}
+
+            {/* Categories Suggestions */}
+            {suggestions.categories.length > 0 && (
+              <div className="mb-6">
+                <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest px-3 mb-2">Categories</p>
+                <div className="flex flex-wrap gap-2 px-3">
+                  {suggestions.categories.map(cat => (
+                    <Link
+                      key={cat}
+                      to={getLink(`/search?cat=${cat}`)}
+                      onClick={() => setShowSuggestions(false)}
+                      className="bg-gray-50 hover:bg-blue-50 text-gray-900 hover:text-blue-600 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all border border-gray-100"
+                    >
+                      {cat}
+                    </Link>
+                  ))}
                 </div>
               </div>
-              <ArrowRight size={14} className="text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
-            </Link>
-          ))}
-        </div>
-        {searchQuery.length > 2 && (
-          <div className="bg-gray-50 p-3 border-t border-gray-100 text-center">
-            <button 
-              onClick={handleSearch}
-              className="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:underline"
-            >
-              See all results for "{searchQuery}"
-            </button>
+            )}
+
+            {/* Products Suggestions */}
+            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest px-3 mb-2">
+              {suggestions.isTrending ? 'Popular Products' : 'Products'}
+            </p>
+            <div className="space-y-1">
+              {suggestions.products.map(p => (
+                <Link 
+                  key={p.id}
+                  to={getLink(`/products/${p.id}`)}
+                  onClick={() => setShowSuggestions(false)}
+                  className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl transition-colors group"
+                >
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                    <img 
+                      src={p.image} 
+                      alt={p.name} 
+                      className="w-full h-full object-cover" 
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="flex-grow min-w-0">
+                    <h4 className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors uppercase truncate">{p.name}</h4>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[10px] font-black text-blue-600">{formatPrice(p.price)}</span>
+                      <span className="text-[9px] text-gray-400 uppercase font-bold truncate">• {p.category}</span>
+                    </div>
+                  </div>
+                  <ArrowRight size={14} className="text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                </Link>
+              ))}
+            </div>
           </div>
-        )}
-      </div>
+          
+          {!suggestions.isTrending && searchQuery.length > 1 && (
+            <div className="bg-gray-50 p-3 border-t border-gray-100 text-center">
+              <button 
+                onClick={handleSearch}
+                className="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:underline flex items-center justify-center gap-2 mx-auto"
+              >
+                See all results for "{searchQuery}"
+                <ArrowRight size={12} />
+              </button>
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
     );
   };
 

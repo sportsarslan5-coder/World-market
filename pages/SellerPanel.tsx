@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES } from '../constants';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 const SellerPanel: React.FC = () => {
   const { id } = useParams<{ id: string }>();

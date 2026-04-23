@@ -1,9 +1,10 @@
 
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
-import Fuse from 'fuse.js';
-import { Search as SearchIcon, Filter, Grid, List as ListIcon, Star, ArrowRight, ShoppingBag } from 'lucide-react';
+import { CATEGORIES } from '../constants';
+import { Search as SearchIcon, Filter, Grid, List as ListIcon, Star, ArrowRight, ShoppingBag, TrendingUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 const Search: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -11,29 +12,91 @@ const Search: React.FC = () => {
   const category = searchParams.get('cat') || 'All';
   const { formatPrice, setQuickViewProduct, products, searchProducts } = useStore();
 
-  const results = useMemo(() => {
-    return searchProducts(query, category);
-  }, [query, category, searchProducts]);
+  const [sortBy, setSortBy] = useState('best-selling');
+  const [filters, setFilters] = useState({
+    priceRange: [0, 10000],
+    selectedCategory: category,
+    selectedSize: 'All',
+    selectedColor: 'All'
+  });
+  const [showFilters, setShowFilters] = useState(false);
+
+  const rawResults = useMemo(() => {
+    return searchProducts(query, filters.selectedCategory);
+  }, [query, filters.selectedCategory, searchProducts]);
+
+  const filteredAndSortedResults = useMemo(() => {
+    let items = [...rawResults];
+
+    // Category Filter (already handled by searchProducts partially, but extra check)
+    if (filters.selectedCategory !== 'All') {
+      items = items.filter(p => p.category === filters.selectedCategory);
+    }
+
+    // Price Filter
+    items = items.filter(p => p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]);
+
+    // Size Filter
+    if (filters.selectedSize !== 'All') {
+      items = items.filter(p => p.sizes?.includes(filters.selectedSize));
+    }
+
+    // Color Filter
+    if (filters.selectedColor !== 'All') {
+      items = items.filter(p => p.colors?.includes(filters.selectedColor));
+    }
+
+    // Sorting
+    switch (sortBy) {
+      case 'newest':
+        items.sort((a, b) => new Date(b.datePosted).getTime() - new Date(a.datePosted).getTime());
+        break;
+      case 'price-low':
+        items.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        items.sort((a, b) => b.price - a.price);
+        break;
+      case 'best-selling':
+      default:
+        items.sort((a, b) => (b.sales || 0) - (a.sales || 0));
+        break;
+    }
+
+    return items;
+  }, [rawResults, filters, sortBy]);
 
   const handleInlineSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const newQuery = (formData.get('inline-search') as string) || '';
-    setSearchParams({ q: newQuery, cat: category });
+    setSearchParams({ q: newQuery, cat: filters.selectedCategory });
   };
+
+  const allSizes = useMemo(() => {
+    const sizes = new Set<string>();
+    products.forEach(p => p.sizes?.forEach(s => sizes.add(s)));
+    return ['All', ...Array.from(sizes).sort()];
+  }, [products]);
+
+  const allColors = useMemo(() => {
+    const colors = new Set<string>();
+    products.forEach(p => p.colors?.forEach(c => colors.add(c)));
+    return ['All', ...Array.from(colors).sort()];
+  }, [products]);
 
   return (
     <div className="min-h-screen bg-white">
       {/* Search Header */}
       <div className="bg-gray-50 border-b border-gray-100 py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-            <div>
+          <div className="flex flex-col md:flex-row justify-between md:items-end gap-6">
+            <div className="flex-grow">
               <div className="flex items-center gap-2 text-blue-600 mb-2">
                 <SearchIcon size={16} />
                 <span className="text-[10px] font-black uppercase tracking-widest">Search Results</span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase">
+              <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">
                 {query ? (
                   <>Results for <span className="text-blue-600 underline">"{query}"</span></>
                 ) : (
@@ -53,29 +116,144 @@ const Search: React.FC = () => {
                  </form>
               </div>
               <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-6">
-                Found {results.length} professional sportswear items matching your query
+                Found {filteredAndSortedResults.length} items matching your criteria
               </p>
             </div>
             
-            <div className="flex items-center gap-3">
-              <button className="flex items-center gap-2 bg-white border border-gray-200 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-black transition-all">
-                <Filter size={14} />
-                Filter
-              </button>
-              <div className="flex p-1 bg-gray-100 rounded-2xl">
-                <button className="p-2 bg-white rounded-xl shadow-sm"><Grid size={16} /></button>
-                <button className="p-2 text-gray-400 hover:text-black"><ListIcon size={16} /></button>
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-col gap-1.5 min-w-[160px]">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Sort By</label>
+                <select 
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest outline-none focus:border-blue-600 transition-all cursor-pointer"
+                >
+                  <option value="best-selling">Best Selling</option>
+                  <option value="newest">Newest Arrival</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                </select>
               </div>
+              
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">View</label>
+                <div className="flex p-1 bg-gray-100 rounded-2xl">
+                  <button className="p-2 bg-white rounded-xl shadow-sm"><Grid size={16} /></button>
+                  <button className="p-2 text-gray-400 hover:text-black"><ListIcon size={16} /></button>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all mt-auto h-[46px] ${showFilters ? 'bg-blue-600 text-white' : 'bg-white border border-gray-200 text-gray-900 hover:border-black'}`}
+              >
+                <Filter size={14} />
+                Filters {showFilters ? 'Active' : ''}
+              </button>
             </div>
           </div>
+
+          {/* Expanded Filters Section */}
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div 
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12 mt-12 border-t border-gray-100">
+                  <div className="space-y-4">
+                    <h4 className="text-xs font-black uppercase tracking-widest text-gray-900 pb-2 border-b border-gray-100">Category</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {['All', ...CATEGORIES].map(cat => (
+                        <button 
+                          key={cat}
+                          onClick={() => setFilters({...filters, selectedCategory: cat})}
+                          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${filters.selectedCategory === cat ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="text-xs font-black uppercase tracking-widest text-gray-900 pb-2 border-b border-gray-100">Size</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {allSizes.map(size => (
+                        <button 
+                          key={size}
+                          onClick={() => setFilters({...filters, selectedSize: size})}
+                          className={`min-w-[40px] px-2 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${filters.selectedSize === size ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="text-xs font-black uppercase tracking-widest text-gray-900 pb-2 border-b border-gray-100">Color</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {allColors.map(color => (
+                        <button 
+                          key={color}
+                          onClick={() => setFilters({...filters, selectedColor: color})}
+                          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${filters.selectedColor === color ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                        >
+                          {color}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="text-xs font-black uppercase tracking-widest text-gray-900 pb-2 border-b border-gray-100">Price Range</h4>
+                    <div className="space-y-4">
+                      <div className="flex justify-between text-[10px] font-black font-mono">
+                        <span>{formatPrice(filters.priceRange[0])}</span>
+                        <span>{formatPrice(filters.priceRange[1])}</span>
+                      </div>
+                      <input 
+                        type="range" 
+                        min="0" 
+                        max="10000" 
+                        step="100"
+                        className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                        value={filters.priceRange[1]}
+                        onChange={(e) => setFilters({...filters, priceRange: [0, parseInt(e.target.value)]})}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-end mt-8">
+                  <button 
+                    onClick={() => {
+                      setFilters({
+                        priceRange: [0, 10000],
+                        selectedCategory: 'All',
+                        selectedSize: 'All',
+                        selectedColor: 'All'
+                      });
+                      setSortBy('best-selling');
+                    }}
+                    className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-red-500 transition-colors"
+                  >
+                    Clear All Filters
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
       {/* Results Grid */}
       <div className="max-w-7xl mx-auto px-4 py-16">
-        {results.length > 0 ? (
+        {filteredAndSortedResults.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
-            {results.map(product => (
+            {filteredAndSortedResults.map(product => (
               <div key={product.id} className="group relative flex flex-col">
                 {/* Product Image Stage */}
                 <div className="relative aspect-[3/4] bg-gray-50 rounded-[2.5rem] overflow-hidden mb-6 border border-gray-100/50 group-hover:border-blue-600/20 transition-all duration-500">
@@ -144,21 +322,64 @@ const Search: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="py-32 flex flex-col items-center justify-center text-center">
-            <div className="w-32 h-32 bg-gray-50 rounded-full flex items-center justify-center text-6xl mb-8 animate-bounce">
-              🔍
+          <div className="py-20 flex flex-col items-center">
+            <div className="text-center mb-16">
+              <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center text-4xl mb-6 mx-auto">
+                🔍
+              </div>
+              <h2 className="text-3xl font-black italic uppercase tracking-tighter mb-4">No exact matches for "{query}"</h2>
+              <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest max-w-md mx-auto leading-loose mb-8">
+                We couldn't find matches for your current filters. Try adjusting them or explore our curated trending gear below.
+              </p>
+              <button 
+                onClick={() => {
+                  setFilters({
+                    priceRange: [0, 10000],
+                    selectedCategory: 'All',
+                    selectedSize: 'All',
+                    selectedColor: 'All'
+                  });
+                  setSortBy('best-selling');
+                  setSearchParams({ q: '', cat: 'All' });
+                }}
+                className="bg-black text-white px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl hover:bg-blue-600 transition-all"
+              >
+                Clear All Filters & Reset
+              </button>
             </div>
-            <h2 className="text-3xl font-black italic uppercase tracking-tighter mb-4">No results for "{query}"</h2>
-            <p className="text-gray-400 font-bold uppercase text-xs tracking-widest max-w-md mx-auto leading-loose mb-12">
-              We couldn't find any professional gear matching your search. Try different keywords or browse our top categories.
-            </p>
-            <div className="flex gap-4">
-              <Link to="/products" className="bg-black text-white px-10 py-5 rounded-3xl font-black text-xs uppercase tracking-widest shadow-2xl hover:bg-blue-600 transition-all">
-                Browse All Gear
-              </Link>
-              <Link to="/" className="bg-gray-100 text-gray-900 px-10 py-5 rounded-3xl font-black text-xs uppercase tracking-widest hover:bg-gray-200 transition-all">
-                Go to Home
-              </Link>
+
+            {/* Recommendations / Trending */}
+            <div className="w-full">
+              <div className="flex items-center gap-4 mb-10">
+                <div className="bg-blue-600 p-2 rounded-lg text-white">
+                  <TrendingUp size={20} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black italic uppercase tracking-tighter leading-none">Trending Collections</h3>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-1">Highly requested global gear</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {products.sort((a,b) => (b.sales||0) - (a.sales||0)).slice(0, 4).map(product => (
+                  <div key={product.id} className="group relative flex flex-col">
+                    <div className="relative aspect-square bg-gray-50 rounded-3xl overflow-hidden mb-4 border border-gray-100">
+                      <Link to={`/products/${product.id}`} className="block w-full h-full">
+                        <img 
+                          src={product.image} 
+                          alt={product.name} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      </Link>
+                    </div>
+                    <div className="px-2">
+                       <span className="text-[9px] font-black uppercase tracking-widest text-blue-600 mb-1 block">{product.category}</span>
+                       <h4 className="text-sm font-black uppercase truncate mb-1">{product.name}</h4>
+                       <span className="text-sm font-black text-gray-950">{formatPrice(product.price)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}

@@ -208,77 +208,59 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  // Initialize Fuse for search
+  // Initialize Fuse for search - Optimized for 800+ products
   const fuse = useMemo(() => {
     return new Fuse(products, {
-      keys: ['name', 'category', 'description', 'tags'],
-      threshold: 0.35,
+      keys: [
+        { name: 'name', weight: 4 },
+        { name: 'category', weight: 2 },
+        { name: 'tags', weight: 2 },
+        { name: 'description', weight: 1 }
+      ],
+      threshold: 0.35, // Balanced typo tolerance
       distance: 100,
-      includeScore: true
+      minMatchCharLength: 2,
+      shouldSort: true,
+      includeScore: true,
+      useExtendedSearch: true
     });
   }, [products]);
 
   const searchProducts = (term: string, category: string = 'All') => {
-    // If no term and searching from global search, return nothing or all?
-    // User says: "Results MUST reset properly. When user deletes previous search -> ONLY new results should show."
-    // If they delete the search query, they usually want to go back to "All" or seeing nothing if on Search page.
+    // If no term, return items in category (or all if category is 'All')
+    if (!term.trim()) {
+      return category === 'All' ? products : products.filter(p => p.category === category);
+    }
+
+    // Process term for better matching
+    const processedTerm = term.toLowerCase().trim();
     
-    let baseProducts = products;
+    // Perform Search
+    let results = fuse.search(processedTerm);
+
+    // Category optimization: If we are in a category, prioritize its items
     if (category !== 'All') {
-      baseProducts = products.filter(p => p.category === category);
+      const categoryMatches = results.filter(r => r.item.category === category);
+      const otherMatches = results.filter(r => r.item.category !== category);
+      
+      // Sort: Exact category matches first, then others
+      results = [...categoryMatches, ...otherMatches];
     }
 
-    if (!term) {
-      return category === 'All' ? products : baseProducts;
-    }
+    // Map to items
+    let finalItems = results.map(r => r.item);
 
-    // Synonyms for intelligent expansion
-    const synonyms: Record<string, string[]> = {
-      'shirt': ['t-shirt', 'polo', 'top', 'jersey', 'clothing'],
-      't-shirt': ['shirt', 'polo', 'top', 'jersey', 'clothing'],
-      'hoodi': ['hoodie', 'sweatshirt', 'pullover', 'jacket', 'fleece'], // Typo tolerance
-      'hoodie': ['sweatshirt', 'pullover', 'jacket', 'fleece', 'clothing'],
-      'shoes': ['sneaker', 'boot', 'footwear', 'jogger', 'trainer'],
-      'sneaker': ['shoes', 'footwear', 'jogger', 'trainer'],
-      'jacket': ['coat', 'windbreaker', 'hoodie', 'outerwear'],
-      'pants': ['jogger', 'trouser', 'legging', 'sweatpants', 'shorts'],
-      'gym': ['fitness', 'workout', 'sportswear', 'activewear'],
-      'sport': ['sportswear', 'activewear', 'exercise']
-    };
-
-    let processedTerm = term.toLowerCase();
-    const searchTerms = [processedTerm];
-    
-    // Add synonyms to search array
-    Object.keys(synonyms).forEach(key => {
-      if (processedTerm.includes(key) || key.includes(processedTerm)) {
-        searchTerms.push(...synonyms[key]);
+    // Fallback: If no match found, show items from same category or general trending
+    if (finalItems.length === 0) {
+      if (category !== 'All') {
+        finalItems = products.filter(p => p.category === category).slice(0, 12);
+      } else {
+        // Trending/Bestsellers as general fallback
+        finalItems = products.sort((a, b) => (b.sales || 0) - (a.sales || 0)).slice(0, 12);
       }
-    });
-    
-    const finalSearchQuery = Array.from(new Set(searchTerms)).join(' ');
-
-    const fuseInstance = new Fuse(baseProducts, {
-      keys: [
-        { name: 'name', weight: 4 },
-        { name: 'category', weight: 1 },
-        { name: 'tags', weight: 2 },
-        { name: 'description', weight: 0.5 }
-      ],
-      threshold: 0.38, // Strict but allowing small typos
-      distance: 100,
-      minMatchCharLength: 2,
-      shouldSort: true
-    });
-    
-    const results = fuseInstance.search(finalSearchQuery);
-    
-    // Fallback: If no match, return items in same category or general trending
-    if (results.length === 0) {
-       return baseProducts.length > 0 ? baseProducts.slice(0, 8) : products.slice(0, 8);
     }
 
-    return results.map(r => r.item);
+    return finalItems;
   };
 
   const [activeShowName, setActiveShowName] = useState<string | null>(detectShowName());
