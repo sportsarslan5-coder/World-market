@@ -60,5 +60,12 @@ service cloud.firestore {
       allow update: if isAdmin() || (isSignedIn() && request.auth.uid == sellerId);
       allow delete: if isAdmin();
     }
+
+    // --- Notifications ---
+    match /notifications/{notificationId} {
+      allow create: if true; // Any part of the app can trigger a notification
+      allow read: if isAdmin() || (isSignedIn() && existing().sellerId == request.auth.uid);
+      allow update: if isAdmin() || (isSignedIn() && existing().sellerId == request.auth.uid);
+    }
   }
 }

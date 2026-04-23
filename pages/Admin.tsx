@@ -758,7 +758,7 @@ const Admin: React.FC = () => {
                           required
                           type="number"
                           className="w-full bg-gray-50 border p-4 rounded-xl font-bold"
-                          value={newProduct.price}
+                          value={isNaN(newProduct.price) ? '' : newProduct.price}
                           onChange={e => setNewProduct({...newProduct, price: parseFloat(e.target.value)})}
                         />
                       </div>
