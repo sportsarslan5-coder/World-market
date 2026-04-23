@@ -44,6 +44,8 @@ interface StoreContextType {
   setQuickViewProduct: (product: Product | null) => void;
   formatPrice: (amount: number) => string;
   addProduct: (product: Omit<Product, 'id' | 'datePosted'>) => Promise<void>;
+  updateProduct: (id: string, product: Partial<Product>) => Promise<void>;
+  deleteProduct: (id: string) => Promise<void>;
   addToCart: (product: Product, quantity?: number, selectedSize?: string, selectedColor?: string) => void;
   removeFromCart: (productId: string, selectedSize?: string, selectedColor?: string) => void;
   clearCart: () => void;
@@ -72,85 +74,29 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Real-time synchronization with Firestore
   useEffect(() => {
-    // Initial Load of Products
-    const fetchInitialProducts = async () => {
-      setIsProductsLoading(true);
-      console.log("Fetching initial products from Firestore...");
-      try {
-        // Increase limit significantly for initial fetch
-        const q = query(collection(db, 'products'), orderBy('datePosted', 'desc'), limit(1000));
-        const snapshot = await getDocs(q);
-        
-        console.log(`Firestore Response: Found ${snapshot.size} products.`);
-        
-        let productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
-        
-        // CRITICAL FIX: If Firestore is empty or nearly empty, use the constant PRODUCTS as immediate fallback
-        // to prevent the "Only 2 products showing" issue while migration happens in background.
-        if (productList.length < 5) {
-          console.warn("Firestore inventory low. Using local constant PRODUCTS as temporary source.");
-          productList = PRODUCTS;
-          setHasMoreProducts(false);
-        } else {
-          setHasMoreProducts(snapshot.size === 1000);
-        }
-        
+    const q = query(collection(db, 'products'), orderBy('datePosted', 'desc'), limit(1000));
+    const unsubscribeProducts = onSnapshot(q, (snapshot) => {
+      let productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+      
+      if (productList.length < 5) {
+        setProducts(PRODUCTS);
+        setHasMoreProducts(false);
+      } else {
         setProducts(productList);
+        setHasMoreProducts(snapshot.size === 1000);
         if (snapshot.docs.length > 0) {
           setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
         }
-        
-        // MIGRATION / BOOTSTRAP LOGIC
-        const triggerMigration = async () => {
-          // Allow migration if inventory is significantly lower than PRODUCTS constant
-          // We check total count first
-          const totalSnapshot = await getDocs(collection(db, 'products'));
-          
-          if (totalSnapshot.size < PRODUCTS.length - 5) {
-            console.log(`Migration required. Inventory: ${totalSnapshot.size} vs Expected: ${PRODUCTS.length}`);
-            
-            // Logic: Chunk upload all products
-            const chunks = [];
-            for (let i = 0; i < PRODUCTS.length; i += 450) {
-              chunks.push(PRODUCTS.slice(i, i + 450));
-            }
-            
-            for (const chunk of chunks) {
-              const batch = writeBatch(db);
-              chunk.forEach(p => {
-                const docRef = doc(db, 'products', p.id);
-                batch.set(docRef, { 
-                  ...p, 
-                  datePosted: p.datePosted || new Date().toISOString() 
-                }, { merge: true });
-              });
-              await batch.commit();
-            }
-            console.log("Migration complete.");
-            
-            // Refresh products if we were showing the fallback
-            const finalQ = query(collection(db, 'products'), orderBy('datePosted', 'desc'), limit(1000));
-            const finalSnapshot = await getDocs(finalQ);
-            const finalProducts = finalSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
-            setProducts(finalProducts);
-          }
-        };
-
-        // We still restrict migration to the admin or if current count is extremely low
-        const user = auth.currentUser;
-        if (user?.email === 'sportsarslan199@gmail.com' || snapshot.size < 5) {
-          triggerMigration();
-        }
-      } catch (error) {
-        console.error("CRITICAL: Products fetch/migration error:", error);
-        // Disaster fallback: always show local products if Firestore fails
-        if (products.length === 0) setProducts(PRODUCTS);
-      } finally {
-        setIsProductsLoading(false);
       }
-    };
+      setIsProductsLoading(false);
+    }, (error) => {
+      console.error("Products sync error:", error);
+      if (products.length === 0) setProducts(PRODUCTS);
+      setIsProductsLoading(false);
+    });
 
-    fetchInitialProducts();
+    // Initial load state
+    setIsProductsLoading(true);
 
     // Sync Sales (Real-time for Admin)
     const unsubscribeSales = onSnapshot(
@@ -198,6 +144,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     );
     
     return () => {
+      unsubscribeProducts();
       unsubscribeSales();
       unsubscribeSellers();
       unsubscribeNotifications();
@@ -253,10 +200,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [products]);
 
   const searchProducts = (term: string, category: string = 'All') => {
-    // Clear results by returning empty early only if specifically requested or to prevent mixing
-    // However, Fuse.js handles term changes well. 
-    // The "mixing results" bug usually happens when local state is not cleared properly.
-    
     if (!term && category === 'All') return products;
     
     let baseProducts = products;
@@ -266,42 +209,50 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     if (!term) return baseProducts;
 
-    // Advanced Amazon-like search with higher typo tolerance and field weighting
+    // Synonyms for intelligent expansion
+    const synonyms: Record<string, string[]> = {
+      'shirt': ['t-shirt', 'polo', 'top', 'jersey', 'clothing'],
+      't-shirt': ['shirt', 'polo', 'top', 'jersey', 'clothing'],
+      'hoodi': ['hoodie', 'sweatshirt', 'pullover', 'jacket', 'fleece'], // Typo tolerance
+      'hoodie': ['sweatshirt', 'pullover', 'jacket', 'fleece', 'clothing'],
+      'shoes': ['sneaker', 'boot', 'footwear', 'jogger', 'trainer'],
+      'sneaker': ['shoes', 'footwear', 'jogger', 'trainer'],
+      'jacket': ['coat', 'windbreaker', 'hoodie', 'outerwear'],
+      'pants': ['jogger', 'trouser', 'legging', 'sweatpants', 'shorts'],
+      'gym': ['fitness', 'workout', 'sportswear', 'activewear'],
+      'sport': ['sportswear', 'activewear', 'exercise']
+    };
+
+    let processedTerm = term.toLowerCase();
+    const searchTerms = [processedTerm];
+    
+    // Add synonyms to search array
+    Object.keys(synonyms).forEach(key => {
+      if (processedTerm.includes(key) || key.includes(processedTerm)) {
+        searchTerms.push(...synonyms[key]);
+      }
+    });
+    
+    const finalSearchQuery = Array.from(new Set(searchTerms)).join(' ');
+
     const fuseInstance = new Fuse(baseProducts, {
       keys: [
-        { name: 'name', weight: 2 },
+        { name: 'name', weight: 3 },
         { name: 'category', weight: 1 },
-        { name: 'tags', weight: 1.5 },
+        { name: 'tags', weight: 2 },
         { name: 'description', weight: 0.5 }
       ],
-      threshold: 0.4, // Increased typo tolerance
+      threshold: 0.45, // Balanced for typo tolerance vs precision
       distance: 100,
       minMatchCharLength: 2,
       shouldSort: true
     });
     
-    // Handle "related results" like shirt -> t-shirt
-    const synonyms: Record<string, string[]> = {
-      'shirt': ['t-shirt', 'polo', 'top', 'jersey'],
-      'shoes': ['sneaker', 'boot', 'footwear', 'jogger'],
-      'hoodie': ['sweatshirt', 'pullover', 'jacket'],
-      'pants': ['jogger', 'trouser', 'legging', 'sweatpants']
-    };
-
-    let processedTerm = term.toLowerCase();
-    // Simple expansion for related terms
-    Object.keys(synonyms).forEach(key => {
-      if (processedTerm.includes(key)) {
-        processedTerm += " " + synonyms[key].join(" ");
-      }
-    });
+    const results = fuseInstance.search(finalSearchQuery);
     
-    const results = fuseInstance.search(processedTerm);
-    
-    // If no results, try items that are "similar" in category
     if (results.length === 0 && term.length > 2) {
-       // Just return top products from same category or random top products
-       return baseProducts.slice(0, 8);
+       // if no match, return popular items in the same category or general trending items
+       return baseProducts.length > 0 ? baseProducts.slice(0, 8) : products.slice(0, 8);
     }
 
     return results.map(r => r.item);
@@ -382,12 +333,40 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const addProduct = async (newP: Omit<Product, 'id' | 'datePosted'>) => {
-    const docRef = doc(collection(db, 'products'));
-    await setDoc(docRef, {
-      ...newP,
-      id: docRef.id,
-      datePosted: new Date().toISOString()
-    });
+    try {
+      const docRef = doc(collection(db, 'products'));
+      const productData = {
+        ...newP,
+        id: docRef.id,
+        datePosted: new Date().toISOString()
+      };
+      await setDoc(docRef, productData);
+      console.log("Product added successfully:", docRef.id);
+    } catch (e) {
+      console.error("Error adding product:", e);
+      throw e;
+    }
+  };
+
+  const updateProduct = async (id: string, updatedP: Partial<Product>) => {
+    try {
+      const docRef = doc(db, 'products', id);
+      await updateDoc(docRef, updatedP);
+    } catch (e) {
+      console.error("Error updating product:", e);
+      throw e;
+    }
+  };
+
+  const deleteProduct = async (id: string) => {
+    try {
+      const batch = writeBatch(db);
+      batch.delete(doc(db, 'products', id));
+      await batch.commit();
+    } catch (e) {
+      console.error("Error deleting product:", e);
+      throw e;
+    }
   };
 
   const addToCart = (product: Product, quantity: number = 1, selectedSize?: string, selectedColor?: string) => {
@@ -517,7 +496,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       notifications, unreadNotificationsCount,
       currency, language, quickViewProduct, isProductsLoading, hasMoreProducts,
       setCurrency, setLanguage, setQuickViewProduct, formatPrice,
-      addProduct, addToCart, removeFromCart, clearCart,
+      addProduct, updateProduct, deleteProduct, addToCart, removeFromCart, clearCart,
       addSale, addSeller, updateSaleStatus, loadMoreProducts, searchProducts,
       addNotification, markNotificationAsRead
     }}>

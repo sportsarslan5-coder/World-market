@@ -18,7 +18,7 @@ const hashPassword = async (password: string) => {
 const Admin: React.FC = () => {
   const { 
     products, sales, customers, sellers, notifications, unreadNotificationsCount,
-    addProduct, updateSaleStatus, formatPrice, markNotificationAsRead 
+    addProduct, deleteProduct, updateSaleStatus, formatPrice, markNotificationAsRead 
   } = useStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'inventory' | 'sales' | 'customers' | 'settings' | 'withdrawals'>('overview');
   const [user, setUser] = useState<User | null>(null);
@@ -88,6 +88,16 @@ const Admin: React.FC = () => {
     s.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (s.sellerShopName && s.sellerShopName.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  const handleDeleteProduct = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      try {
+        await deleteProduct(id);
+      } catch (err: any) {
+        alert(`Error deleting product: ${err.message}`);
+      }
+    }
+  };
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -335,7 +345,10 @@ const Admin: React.FC = () => {
                           <div className="flex flex-col">
                             <span className="text-sm font-black uppercase tracking-tighter text-gray-900">{s.customerName}</span>
                             <span className="text-[10px] text-blue-600 font-bold uppercase tracking-widest">{s.customerPhone}</span>
-                            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest truncate max-w-[150px]">{s.customerEmail}</span>
+                            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">{s.customerEmail}</span>
+                            <span className="text-[8px] text-gray-500 font-bold uppercase mt-1 truncate max-w-[150px]">
+                              {s.customerAddress}, {s.customerCity}, {s.customerCountry}
+                            </span>
                           </div>
                         </td>
                         <td className="px-6 md:px-10 py-6">
@@ -408,13 +421,13 @@ const Admin: React.FC = () => {
                       <div>
                         <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Customer Information</h4>
                         <p className="text-sm font-black uppercase text-gray-900">{selectedOrder.customerName}</p>
-                        <p className="text-xs font-bold text-gray-500 mt-1">{selectedOrder.customerPhone}</p>
-                        <p className="text-xs font-bold text-gray-500">{selectedOrder.customerEmail}</p>
+                        <p className="text-xs font-bold text-gray-500 mt-1">Phone: {selectedOrder.customerPhone}</p>
+                        <p className="text-xs font-bold text-gray-500">Email: {selectedOrder.customerEmail}</p>
                         <p className="text-[10px] font-bold text-gray-400 mt-4 uppercase">Shipping Address:</p>
-                        <p className="text-xs font-bold text-gray-500 leading-relaxed">
+                        <p className="text-xs font-bold text-gray-500 leading-relaxed bg-gray-50 p-3 rounded-xl border border-gray-100 mt-2">
                           {selectedOrder.customerAddress || 'No Address'}<br/>
                           {selectedOrder.customerCity && `${selectedOrder.customerCity}, `}{selectedOrder.customerCountry || 'No Country'}<br/>
-                          {selectedOrder.customerZip && `Zip: ${selectedOrder.customerZip}`}
+                          {selectedOrder.customerZip && `Zip Code: ${selectedOrder.customerZip}`}
                         </p>
                       </div>
                       <div>
@@ -691,7 +704,12 @@ const Admin: React.FC = () => {
                     <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                     <div className="absolute top-4 right-4 flex gap-2">
                        <button className="bg-white text-gray-900 p-2 rounded-lg shadow-lg hover:bg-blue-600 hover:text-white transition-all"><Edit2 size={14}/></button>
-                       <button className="bg-white text-red-600 p-2 rounded-lg shadow-lg hover:bg-red-600 hover:text-white transition-all"><Trash2 size={14}/></button>
+                       <button 
+                         onClick={() => handleDeleteProduct(product.id)}
+                         className="bg-white text-red-600 p-2 rounded-lg shadow-lg hover:bg-red-600 hover:text-white transition-all"
+                       >
+                         <Trash2 size={14}/>
+                       </button>
                     </div>
                   </div>
                   <div className="p-8">
