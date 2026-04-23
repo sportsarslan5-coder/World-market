@@ -440,7 +440,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       await setDoc(docRef, saleData);
       
       // Create real-time notification
-      const productSummary = saleData.products?.map(p => `${p.name} x${p.quantity}`).join(', ') || saleData.productName || 'Items';
+      const productSummary = saleData.products?.map(p => `${p.name} x${p.quantity}`).join(', ') || 'Items';
       const sellerInfo = saleData.sellerShopName ? `[${saleData.sellerShopName}]` : '[Main Admin]';
 
       await addNotification({
