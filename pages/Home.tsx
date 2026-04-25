@@ -179,7 +179,7 @@ const Home: React.FC = () => {
             { title: 'Shorts', cat: 'shorts', kw: 'shorts' },
             { title: 'Caps', cat: 'cap', kw: 'cap' },
             { title: 'Tracksuits', cat: 'jersey', kw: 'tracksuit' },
-            { title: 'New Arrival Jerseys', cat: 'jersey', kw: '' }
+            { title: 'Performance Jerseys', cat: 'jersey', kw: 'jersey' }
           ].map((block) => {
             // Apply strict normalization for block filtering
             const blockCat = block.cat.toLowerCase().trim();
@@ -187,9 +187,10 @@ const Home: React.FC = () => {
 
             const images = products
               .filter(p => {
-                const pCat = (p.category || '').toLowerCase().trim();
-                const pName = (p.name || '').toLowerCase().trim();
-                return pCat === blockCat && (blockKw === '' || pName.includes(blockKw));
+                const pCat = (p.category || '').toLowerCase();
+                const pName = (p.name || '').toLowerCase();
+                // Match if normalized category matches OR if name contains the keyword
+                return pCat.includes(blockCat) && (blockKw === '' || pName.includes(blockKw));
               })
               .map(p => p.image)
               .slice(0, 4);
@@ -198,8 +199,8 @@ const Home: React.FC = () => {
             if (images.length < 4) {
               const fallback = products
                 .filter(p => {
-                  const pCat = (p.category || '').toLowerCase().trim();
-                  return pCat === blockCat && !images.includes(p.image);
+                  const pCat = (p.category || '').toLowerCase();
+                  return pCat.includes(blockCat) && !images.includes(p.image);
                 })
                 .map(p => p.image)
                 .slice(0, 4 - images.length);

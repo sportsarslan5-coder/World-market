@@ -33,11 +33,6 @@ const Search: React.FC = () => {
   const filteredAndSortedResults = useMemo(() => {
     let items = [...rawResults];
 
-    // Category Filter (already handled by searchProducts partially, but extra check)
-    if (filters.selectedCategory !== 'All') {
-      items = items.filter(p => p.category === filters.selectedCategory);
-    }
-
     // Price Filter
     items = items.filter(p => p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]);
 
@@ -315,29 +310,6 @@ const Search: React.FC = () => {
                 >
                   Clear Results
                 </button>
-              </div>
-
-              {/* Suggestions */}
-              <div className="w-full">
-                <h3 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">More items to consider</h3>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                  {products.sort((a,b) => (b.sales||0) - (a.sales||0)).slice(0, 8).map(product => (
-                    <div key={product.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden group hover:shadow-md transition-shadow">
-                       <Link to={`/products/${product.id}`} className="block aspect-square p-2 bg-gray-50">
-                          <img src={product.image} alt={product.name} className="w-full h-full object-contain mix-blend-multiply" />
-                       </Link>
-                       <div className="p-3">
-                          <h4 className="text-xs font-bold text-gray-900 line-clamp-2 italic uppercase mb-1 hover:text-[#c45500] cursor-pointer leading-tight">{product.name}</h4>
-                          <div className="flex text-yellow-500 scale-75 origin-left mb-1">
-                            {[...Array(5)].map((_, i) => (
-                               <Star key={i} size={14} fill={i < Math.floor(product.rating) ? "currentColor" : "none"} className={i < Math.floor(product.rating) ? "text-yellow-500" : "text-gray-300"} />
-                            ))}
-                          </div>
-                          <span className="text-sm font-bold text-gray-950">{formatPrice(product.price)}</span>
-                       </div>
-                    </div>
-                  ))}
-                </div>
               </div>
             </div>
           )}

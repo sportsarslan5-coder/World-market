@@ -81,7 +81,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     }
 
-    const q = query(collection(db, 'products'), orderBy('datePosted', 'desc'), limit(1000));
+    const q = query(collection(db, 'products'), orderBy('datePosted', 'desc')); // Removed limit to show all products
     const unsubscribeProducts = onSnapshot(q, (snapshot) => {
       let productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
       
@@ -90,7 +90,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setHasMoreProducts(false);
       } else {
         setProducts(productList);
-        setHasMoreProducts(snapshot.size === 1000);
+        setHasMoreProducts(false); // No more pagination if we load all at once
         if (snapshot.docs.length > 0) {
           setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
         }
@@ -226,53 +226,44 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
   }, [products]);
 
+  const normalizeCategory = (cat: string): string => {
+    const c = cat.toLowerCase().trim();
+    if (c.includes('hoodie')) return 'hoodie';
+    if (c.includes('t-shirt') || c.includes('tshirt')) return 'tshirt';
+    if (c.includes('jacket')) return 'jacket';
+    if (c.includes('shoe')) return 'shoes';
+    if (c.includes('cap')) return 'cap';
+    if (c.includes('short')) return 'shorts';
+    if (c.includes('jersey') || c.includes('tracksuit')) return 'jersey';
+    return c;
+  };
+
   const searchProducts = (term: string, category: string = 'All') => {
-    const normCategory = (category || 'All').toLowerCase().trim();
-    
-    // If no term, return all products if category is 'All', or filter by category
-    if (!term.trim()) {
-      const filtered = normCategory === 'all' 
-        ? products 
-        : products.filter(p => (p.category || '').toLowerCase().trim() === normCategory);
-      
-      // Debug logging if no results found for a specific category
-      if (filtered.length === 0 && normCategory !== 'all' && products.length > 0) {
-        const uniqueCats = Array.from(new Set(products.map(p => (p.category || '').toLowerCase().trim())));
-        console.warn(`[StoreContext] No products found for category: "${normCategory}". Available normalized categories in data:`, uniqueCats);
-        
-        // Fallback: search by name substring if category name matches partially
-        const partialMatch = products.filter(p => 
-          p.name.toLowerCase().includes(normCategory) || 
-          (p.tags || []).some(t => t.toLowerCase() === normCategory)
-        );
-        if (partialMatch.length > 0) return partialMatch;
-
-        // Ultimate fallback: Just show some products so screen isn't empty
-        return products.slice(0, 24);
-      }
-      
-      return filtered;
-    }
-
+    const normSelectedCategory = category.toLowerCase().trim() === 'all' ? 'all' : normalizeCategory(category);
     const processedTerm = term.toLowerCase().trim();
     
-    // Perform Search using Fuse.js
-    let results = fuse.search(processedTerm);
-
-    // Map to items and apply STRICT category filter if specified
-    let finalItems = results.map(r => r.item);
-
-    if (normCategory !== 'all') {
-      finalItems = finalItems.filter(p => (p.category || '').toLowerCase().trim() === normCategory);
+    // 1. If no search term, handle pure category filter
+    if (!processedTerm) {
+      if (normSelectedCategory === 'all') return products;
+      
+      return products.filter(p => {
+        const pCatNormalized = normalizeCategory(p.category || '');
+        return pCatNormalized === normSelectedCategory;
+      });
     }
 
-    // If search + category results are empty, fallback to just category items
-    if (finalItems.length === 0 && normCategory !== 'all') {
-      const catOnly = products.filter(p => (p.category || '').toLowerCase().trim() === normCategory);
-      if (catOnly.length > 0) return catOnly;
-    }
+    // 2. If there is a search term, match name OR category
+    const results = products.filter(p => {
+      const name = (p.name || '').toLowerCase();
+      const pCatNormalized = normalizeCategory(p.category || '');
+      
+      const matchesKeyword = name.includes(processedTerm) || pCatNormalized.includes(processedTerm);
+      const matchesCategory = normSelectedCategory === 'all' || pCatNormalized === normSelectedCategory;
+      
+      return matchesKeyword && matchesCategory;
+    });
 
-    return finalItems;
+    return results;
   };
 
   const [activeShowName, setActiveShowName] = useState<string | null>(detectShowName());
