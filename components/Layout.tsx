@@ -39,7 +39,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   } = useStore();
   
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchCategory, setSearchCategory] = useState('All');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [currentShow, setCurrentShow] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
@@ -48,10 +50,21 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to top on route change
+  // Load search history from localStorage
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
+    const history = localStorage.getItem('search_history');
+    if (history) {
+      setSearchHistory(JSON.parse(history).slice(0, 5));
+    }
+  }, []);
+
+  const addToHistory = (query: string) => {
+    const cleanQuery = query.trim().toLowerCase();
+    if (!cleanQuery) return;
+    const newHistory = [cleanQuery, ...searchHistory.filter(q => q !== cleanQuery)].slice(0, 5);
+    setSearchHistory(newHistory);
+    localStorage.setItem('search_history', JSON.stringify(newHistory));
+  };
 
   // Sync current show based on the URL
   useEffect(() => {
@@ -82,27 +95,27 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const fuse = useMemo(() => new Fuse(products, {
     keys: [
       { name: 'name', weight: 10 },
-      { name: 'category', weight: 5 },
-      { name: 'tags', weight: 5 },
+      { name: 'category', weight: 8 },
+      { name: 'tags', weight: 6 },
       { name: 'description', weight: 1 }
     ],
-    threshold: 0.3,
+    threshold: 0.35,
     distance: 100,
     includeScore: true
   }), [products]);
 
   const suggestions = useMemo(() => {
     if (!searchQuery.trim()) {
-      // Trending products as default suggestions
       return {
         products: products.sort((a, b) => (b.sales || 0) - (a.sales || 0)).slice(0, 5),
         categories: CATEGORIES.slice(0, 4),
+        history: searchHistory,
         isTrending: true
       };
     }
     
     // Fuzzy search for products
-    const productResults = fuse.search(searchQuery).slice(0, 6).map(r => r.item);
+    const productResults = fuse.search(searchQuery).slice(0, 8).map(r => r.item);
     
     // Simple category match
     const categoryMatches = CATEGORIES.filter(c => 
@@ -112,18 +125,26 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return {
       products: productResults,
       categories: categoryMatches,
+      history: [],
       isTrending: false
     };
-  }, [searchQuery, fuse, products]);
+  }, [searchQuery, fuse, products, searchHistory]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      addToHistory(searchQuery);
       const path = currentShow ? `/${currentShow}/search` : '/search';
       const encodedQuery = encodeURIComponent(searchQuery);
-      navigate(`${path}?q=${encodedQuery}`);
+      const encodedCat = searchCategory !== 'All' ? `&category=${searchCategory}` : '';
+      navigate(`${path}?q=${encodedQuery}${encodedCat}`);
       setShowSuggestions(false);
     }
+  };
+
+  const clearHistory = () => {
+    setSearchHistory([]);
+    localStorage.removeItem('search_history');
   };
 
   const getLink = (to: string) => {
@@ -138,90 +159,105 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const renderSuggestions = () => {
     if (!showSuggestions) return null;
     
-    const hasResults = suggestions.products.length > 0 || suggestions.categories.length > 0;
-    if (!hasResults) return null;
-
     return (
       <AnimatePresence>
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
-          className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[70]"
+          className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-[100]"
         >
-          <div className="p-4 max-h-[70vh] overflow-y-auto">
-            {suggestions.isTrending && (
-              <div className="px-3 py-2 mb-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 flex items-center gap-2">
-                  <span className="flex h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse" />
-                  Trending Search
-                </span>
-              </div>
-            )}
-
-            {/* Categories Suggestions */}
-            {suggestions.categories.length > 0 && (
-              <div className="mb-6">
-                <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest px-3 mb-2">Categories</p>
-                <div className="flex flex-wrap gap-2 px-3">
-                  {suggestions.categories.map(cat => (
-                    <Link
-                      key={cat}
-                      to={getLink(`/search?category=${cat}`)}
-                      onClick={() => setShowSuggestions(false)}
-                      className="bg-gray-50 hover:bg-blue-50 text-gray-900 hover:text-blue-600 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all border border-gray-100"
-                    >
-                      {cat}
-                    </Link>
-                  ))}
+          <div className="max-h-[60vh] overflow-y-auto">
+            {/* Search History */}
+            {suggestions.isTrending && searchHistory.length > 0 && (
+              <div className="p-2 border-b border-gray-50">
+                <div className="flex justify-between items-center px-4 py-2">
+                   <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Recent Searches</p>
+                   <button onClick={clearHistory} className="text-[9px] font-bold text-blue-600 hover:underline">Clear</button>
                 </div>
+                {searchHistory.map(q => (
+                  <button
+                    key={q}
+                    onClick={() => {
+                        setSearchQuery(q);
+                        navigate(getLink(`/search?q=${encodeURIComponent(q)}`));
+                        setShowSuggestions(false);
+                    }}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-3 group transition-colors"
+                  >
+                    <Clock size={14} className="text-gray-300 group-hover:text-blue-500" />
+                    <span className="text-sm font-bold text-gray-700 capitalize">{q}</span>
+                  </button>
+                ))}
               </div>
             )}
 
-            {/* Products Suggestions */}
-            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest px-3 mb-2">
-              {suggestions.isTrending ? 'Popular Products' : 'Products'}
-            </p>
-            <div className="space-y-1">
+            {/* Departments Matching */}
+            {suggestions.categories.length > 0 && (
+              <div className="p-2 border-b border-gray-50 bg-blue-50/10">
+                <p className="px-4 py-2 text-[10px] font-black uppercase text-gray-400 tracking-widest">Departments</p>
+                {suggestions.categories.map(cat => (
+                  <Link
+                    key={cat}
+                    to={getLink(`/search?category=${cat}`)}
+                    onClick={() => setShowSuggestions(false)}
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-white hover:shadow-sm rounded-lg transition-all group"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                       <Search size={14} />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-black text-gray-900 group-hover:text-blue-600 transition-colors uppercase italic">{cat}</span>
+                      <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">Shop this collection</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* Product Matches */}
+            <div className="p-2">
+              <p className="px-4 py-2 text-[10px] font-black uppercase text-gray-400 tracking-widest">
+                {suggestions.isTrending ? "Amazon's Trending Selection" : "Store Results"}
+              </p>
               {suggestions.products.map(p => (
                 <Link 
                   key={p.id}
                   to={getLink(`/products/${p.id}`)}
-                  onClick={() => setShowSuggestions(false)}
-                  className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl transition-colors group"
+                  onClick={() => {
+                      addToHistory(p.name);
+                      setShowSuggestions(false);
+                  }}
+                  className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all group border-b border-gray-50 last:border-none"
                 >
-                  <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                    <img 
-                      src={p.image} 
-                      alt={p.name} 
-                      className="w-full h-full object-cover" 
-                      loading="lazy"
-                    />
+                  <div className="w-14 h-14 bg-gray-50 rounded-lg overflow-hidden border border-gray-100 p-1">
+                    <img src={p.image} alt={p.name} className="w-full h-full object-contain mix-blend-multiply" />
                   </div>
                   <div className="flex-grow min-w-0">
-                    <h4 className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors uppercase truncate">{p.name}</h4>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[10px] font-black text-blue-600">{formatPrice(p.price)}</span>
-                      <span className="text-[9px] text-gray-400 uppercase font-bold truncate">• {p.category}</span>
+                    <h4 className="text-sm font-black text-gray-900 group-hover:text-blue-600 transition-colors uppercase truncate italic">{p.name}</h4>
+                    <div className="flex items-center gap-3 mt-1">
+                      <span className="text-[12px] font-black text-blue-600">{formatPrice(p.price)}</span>
+                      <div className="flex items-center gap-1">
+                         <Star size={10} fill="currentColor" className="text-yellow-400" />
+                         <span className="text-[10px] font-black text-gray-900">{p.rating}</span>
+                      </div>
                     </div>
                   </div>
-                  <ArrowRight size={14} className="text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                  <ArrowRight size={14} className="text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
                 </Link>
               ))}
             </div>
-          </div>
-          
-          {!suggestions.isTrending && searchQuery.length > 1 && (
-            <div className="bg-gray-50 p-3 border-t border-gray-100 text-center">
+
+            {searchQuery.length > 0 && (
               <button 
                 onClick={handleSearch}
-                className="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:underline flex items-center justify-center gap-2 mx-auto"
+                className="w-full py-4 bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all flex items-center justify-center gap-3 group"
               >
-                See all results for "{searchQuery}"
-                <ArrowRight size={12} />
+                Search all items matching "{searchQuery}"
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-all" />
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </motion.div>
       </AnimatePresence>
     );
@@ -377,15 +413,24 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
             {/* Advanced Search - Expanded for Desktop & Prominent for Mobile */}
             <div className="hidden md:block flex-grow relative max-w-4xl" ref={searchRef}>
-              <form onSubmit={handleSearch} className="flex h-11 rounded-full overflow-hidden shadow-2xl">
-                <div className="bg-gray-100 px-4 flex items-center gap-1 border-r border-gray-300 text-gray-600 text-xs font-bold hover:bg-gray-200 cursor-pointer transition-colors max-w-[120px]">
-                   <span>All</span>
-                   <ChevronDown size={14} />
+              <form onSubmit={handleSearch} className="flex h-11 rounded-lg overflow-hidden shadow-sm group focus-within:ring-4 focus-within:ring-[#febd69]/40 transition-all border-2 border-transparent focus-within:border-[#febd69]">
+                <div className="relative group/cat">
+                  <select 
+                    value={searchCategory}
+                    onChange={(e) => setSearchCategory(e.target.value)}
+                    className="h-full bg-gray-100 px-3 pr-8 flex items-center border-r border-gray-300 text-gray-600 text-[11px] font-black uppercase hover:bg-gray-200 cursor-pointer transition-colors appearance-none outline-none min-w-[60px]"
+                  >
+                    <option value="All">All</option>
+                    {CATEGORIES.map(cat => (
+                      <option key={cat} value={cat}>{cat.toUpperCase()}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                 </div>
                 <input 
                   type="text" 
                   placeholder={t('search_placeholder')}
-                  className="flex-grow bg-white px-6 py-2 pb-2.5 focus:ring-4 focus:ring-yellow-400/50 transition-all outline-none text-base font-semibold text-gray-900 placeholder:text-gray-400"
+                  className="flex-grow bg-white px-5 py-2 focus:bg-white transition-all outline-none text-base font-semibold text-gray-900 placeholder:text-gray-400"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
