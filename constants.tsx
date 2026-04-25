@@ -21,19 +21,11 @@ export const LANGUAGES: Language[] = [
 export const CATEGORIES = [
   "hoodie", 
   "tshirt", 
-  "polo", 
-  "tracksuit", 
-  "shoes", 
-  "bag", 
   "jacket", 
-  "sweater", 
-  "blazer", 
+  "shoes", 
   "cap", 
-  "jogger", 
-  "yoga pant", 
-  "short", 
-  "tank top",
-  "accessory"
+  "shorts", 
+  "jersey"
 ];
 
 export const SHIPPING_COUNTRIES = [
@@ -863,7 +855,7 @@ const NEW_HOODIES: Product[] = HOODIE_IMAGES.map((img, idx) => ({
 const NEW_TRACKSUITS: Product[] = TRACKSUIT_IMAGES.map((img, idx) => ({
   id: `tracksuit-${idx}`,
   name: `tracksuit #${idx + 201}`,
-  category: "tracksuit",
+  category: "jersey",
   price: 45 + (idx % 8) * 1.5 - 3 + 0.95,
   oldPrice: 65.99 + (idx % 4),
   discount: 30,
@@ -900,7 +892,7 @@ const NEW_TRACKSUITS: Product[] = TRACKSUIT_IMAGES.map((img, idx) => ({
 const NEW_POLOS: Product[] = POLO_IMAGES.map((img, idx) => ({
   id: `polo-${idx}`,
   name: `polo #${idx + 301}`,
-  category: "polo",
+  category: "tshirt",
   price: 30 + (idx % 12) - 5 + 0.99,
   oldPrice: 42.99 + (idx % 6),
   discount: 28,
@@ -1053,7 +1045,7 @@ const NEW_BOOTS: Product[] = BOOT_IMAGES.map((img, idx) => ({
 const NEW_SPORTS_BRAS: Product[] = SPORTS_BRA_IMAGES.map((img, idx) => ({
   id: `sports-bra-${idx}`,
   name: `sports-bra #${idx + 701}`,
-  category: "accessory",
+  category: "jersey",
   price: 32 + (idx % 10) - 4 + 0.99,
   oldPrice: 45.99 + (idx % 5),
   discount: 25,
@@ -1131,7 +1123,7 @@ const NEW_OVERSIZED_HOODIES: Product[] = OVERSIZED_HOODIE_IMAGES.map((img, idx) 
 const NEW_YOGA_PANTS: Product[] = YOGA_PANTS_IMAGES.map((img, idx) => ({
   id: `yoga-pants-${idx}`,
   name: `yoga-pants #${idx + 901}`,
-  category: "yoga pant",
+  category: "shorts",
   price: 38 + (idx % 10) - 4 + 0.99,
   oldPrice: 55.99 + (idx % 5),
   discount: 28,
@@ -1207,7 +1199,7 @@ const NEW_WINTER_JACKETS: Product[] = WINTER_JACKET_IMAGES.map((img, idx) => ({
 const NEW_SHORTS: Product[] = SHORTS_IMAGES.map((img, idx) => ({
   id: `shorts-${idx}`,
   name: `shorts #${idx + 1101}`,
-  category: "short",
+  category: "shorts",
   price: 30 + (idx % 10) - 5 + 0.99,
   oldPrice: 45.99 + (idx % 5),
   discount: 32,
@@ -1245,7 +1237,7 @@ const NEW_SHORTS: Product[] = SHORTS_IMAGES.map((img, idx) => ({
 const NEW_GYM_TANK_TOPS: Product[] = GYM_TANK_IMAGES.map((img, idx) => ({
   id: `gym-tank-${idx}`,
   name: `gym-tank #${idx + 1201}`,
-  category: "tank top",
+  category: "tshirt",
   price: 25 + (idx % 10) - 3 + 0.99,
   oldPrice: 35.99 + (idx % 5),
   discount: 25,
@@ -1284,7 +1276,7 @@ const NEW_GYM_TANK_TOPS: Product[] = GYM_TANK_IMAGES.map((img, idx) => ({
 const NEW_JOGGERS: Product[] = JOGGERS_IMAGES.map((img, idx) => ({
   id: `joggers-${idx}`,
   name: `joggers #${idx + 1301}`,
-  category: "jogger",
+  category: "shorts",
   price: 40 + (idx % 10) - 5 + 0.99,
   oldPrice: 59.99 + (idx % 5),
   discount: 30,
@@ -1322,7 +1314,7 @@ const NEW_JOGGERS: Product[] = JOGGERS_IMAGES.map((img, idx) => ({
 const NEW_BACKPACKS: Product[] = BACKPACK_IMAGES.map((img, idx) => ({
   id: `backpack-${idx}`,
   name: `backpack #${idx + 1401}`,
-  category: "bag",
+  category: "jersey",
   price: 55 + (idx % 10) * 1.5 - 4 + 0.99,
   oldPrice: 79.99 + (idx % 5),
   discount: 28,
@@ -1360,7 +1352,7 @@ const NEW_BACKPACKS: Product[] = BACKPACK_IMAGES.map((img, idx) => ({
 const NEW_WOOL_SWEATERS: Product[] = WOOL_SWEATER_IMAGES.map((img, idx) => ({
   id: `wool-sweater-${idx}`,
   name: `wool-sweater #${idx + 1501}`,
-  category: "sweater",
+  category: "jacket",
   price: 55 + (idx % 10) - 5 + 0.99,
   oldPrice: 85.99 + (idx % 5),
   discount: 35,
@@ -1398,7 +1390,7 @@ const NEW_WOOL_SWEATERS: Product[] = WOOL_SWEATER_IMAGES.map((img, idx) => ({
 const NEW_BLAZERS: Product[] = BLAZER_IMAGES.map((img, idx) => ({
   id: `blazer-${idx}`,
   name: `blazer #${idx + 1601}`,
-  category: "blazer",
+  category: "jacket",
   price: 90 + (idx % 10) * 2 - 5 + 0.99,
   oldPrice: 129.99 + (idx % 5),
   discount: 30,

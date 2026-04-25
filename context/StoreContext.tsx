@@ -227,26 +227,51 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [products]);
 
   const searchProducts = (term: string, category: string = 'All') => {
-    // If no term, return items strictly in category 
-    // If category is 'All' and term is empty, return empty (results disappear)
+    const normCategory = (category || 'All').toLowerCase().trim();
+    
+    // If no term, return all products if category is 'All', or filter by category
     if (!term.trim()) {
-      return category === 'All' ? [] : products.filter(p => p.category === category);
+      const filtered = normCategory === 'all' 
+        ? products 
+        : products.filter(p => (p.category || '').toLowerCase().trim() === normCategory);
+      
+      // Debug logging if no results found for a specific category
+      if (filtered.length === 0 && normCategory !== 'all' && products.length > 0) {
+        const uniqueCats = Array.from(new Set(products.map(p => (p.category || '').toLowerCase().trim())));
+        console.warn(`[StoreContext] No products found for category: "${normCategory}". Available normalized categories in data:`, uniqueCats);
+        
+        // Fallback: search by name substring if category name matches partially
+        const partialMatch = products.filter(p => 
+          p.name.toLowerCase().includes(normCategory) || 
+          (p.tags || []).some(t => t.toLowerCase() === normCategory)
+        );
+        if (partialMatch.length > 0) return partialMatch;
+
+        // Ultimate fallback: Just show some products so screen isn't empty
+        return products.slice(0, 24);
+      }
+      
+      return filtered;
     }
 
     const processedTerm = term.toLowerCase().trim();
     
-    // Perform Search
+    // Perform Search using Fuse.js
     let results = fuse.search(processedTerm);
 
     // Map to items and apply STRICT category filter if specified
     let finalItems = results.map(r => r.item);
 
-    if (category !== 'All') {
-      finalItems = finalItems.filter(p => p.category === category);
+    if (normCategory !== 'all') {
+      finalItems = finalItems.filter(p => (p.category || '').toLowerCase().trim() === normCategory);
     }
 
-    // REMOVED: Fallback random/trending logic from core search function
-    // The UI (Search.tsx) will handle the "No exact match" fallback display
+    // If search + category results are empty, fallback to just category items
+    if (finalItems.length === 0 && normCategory !== 'all') {
+      const catOnly = products.filter(p => (p.category || '').toLowerCase().trim() === normCategory);
+      if (catOnly.length > 0) return catOnly;
+    }
+
     return finalItems;
   };
 

@@ -172,23 +172,37 @@ const Home: React.FC = () => {
       <section className="relative -mt-32 z-20 max-w-7xl mx-auto px-4 pb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { title: 'Polo Shirts', cat: 'polo', kw: 'polo' },
             { title: 'T-Shirts', cat: 'tshirt', kw: 'tshirt' },
-            { title: 'Graphic T-Shirts', cat: 'tshirt', kw: 'graphic' },
             { title: 'Hoodies', cat: 'hoodie', kw: 'hoodie' },
-            { title: 'Shoes', cat: 'shoes', kw: 'sneaker' },
-            { title: 'Tracksuits', cat: 'tracksuit', kw: 'tracksuit' },
             { title: 'Jackets', cat: 'jacket', kw: 'jacket' },
-            { title: 'Backpacks', cat: 'bag', kw: 'backpack' }
+            { title: 'Shoes', cat: 'shoes', kw: 'shoes' },
+            { title: 'Shorts', cat: 'shorts', kw: 'shorts' },
+            { title: 'Caps', cat: 'cap', kw: 'cap' },
+            { title: 'Tracksuits', cat: 'jersey', kw: 'tracksuit' },
+            { title: 'New Arrival Jerseys', cat: 'jersey', kw: '' }
           ].map((block) => {
+            // Apply strict normalization for block filtering
+            const blockCat = block.cat.toLowerCase().trim();
+            const blockKw = block.kw.toLowerCase().trim();
+
             const images = products
-              .filter(p => p.category === block.cat && p.name.toLowerCase().includes(block.kw))
+              .filter(p => {
+                const pCat = (p.category || '').toLowerCase().trim();
+                const pName = (p.name || '').toLowerCase().trim();
+                return pCat === blockCat && (blockKw === '' || pName.includes(blockKw));
+              })
               .map(p => p.image)
               .slice(0, 4);
             
-            // Fallback if not enough images
+            // Fallback if not enough images or no matches for keyword
             if (images.length < 4) {
-              const fallback = products.filter(p => p.category === block.cat).map(p => p.image).slice(0, 4 - images.length);
+              const fallback = products
+                .filter(p => {
+                  const pCat = (p.category || '').toLowerCase().trim();
+                  return pCat === blockCat && !images.includes(p.image);
+                })
+                .map(p => p.image)
+                .slice(0, 4 - images.length);
               images.push(...fallback);
             }
 
@@ -268,8 +282,8 @@ const Home: React.FC = () => {
             <h2 className="text-5xl font-black italic tracking-tighter uppercase mb-4">Top <span className="text-blue-600">Categories</span></h2>
             <p className="text-gray-400 font-bold uppercase text-xs tracking-widest">Explore our global marketplace inventory</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {CATEGORIES.slice(0, 6).map((cat, idx) => (
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 md:gap-6">
+            {CATEGORIES.map((cat, idx) => (
               <Link 
                 to={getLink(`/search?category=${cat}`)} 
                 key={cat}
@@ -277,13 +291,14 @@ const Home: React.FC = () => {
               >
                 <img 
                   src={`https://images.unsplash.com/photo-${[
-                    '1523381210434-271e8be1f52b', // Clothing
-                    '1542291026-7eec264c27ff', // Shoes
-                    '1517836357463-d25dfeac3438', // Sportswear
-                    '1544816155-12df9643f363', // Bags
-                    '1501555088652-021faa106b9b', // Outdoor
-                    '1617137968427-85924c800a22'  // Accessories
-                  ][idx]}?auto=format&fit=crop&q=80&w=800`} 
+                    '1523381210434-271e8be1f52b', // tshirt -> hoodie
+                    '1542291026-7eec264c27ff', // shoes
+                    '1517836357463-d25dfeac3438', // jersey
+                    '1544816155-12df9643f363', // jacket?
+                    '1501555088652-021faa106b9b', // jacket?
+                    '1617137968427-85924c800a22',  // accessories
+                    '1552664688-cf412ec27db2'   // shorts?
+                  ][idx % 7]}?auto=format&fit=crop&q=80&w=800`} 
                   className="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700"
                   alt={cat}
                   loading="lazy"
@@ -299,19 +314,19 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Trending Products */}
+      {/* Global Product Catalog (Previously Trending) */}
       <section className="py-24 max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-end mb-12">
           <div>
-            <h2 className="text-5xl font-black italic tracking-tighter uppercase">Trending <span className="text-blue-600">Now</span></h2>
-            <p className="text-gray-400 font-bold uppercase text-xs tracking-widest mt-2">Most popular items globally</p>
+            <h2 className="text-5xl font-black italic tracking-tighter uppercase">Full <span className="text-blue-600">Inventory</span></h2>
+            <p className="text-gray-400 font-bold uppercase text-xs tracking-widest mt-2">Browse our entire global catalog (800+ items)</p>
           </div>
           <Link to={getLink('/products')} className="text-blue-600 font-black uppercase text-xs tracking-widest hover:underline flex items-center gap-2">
-            View All <ArrowRight size={14} />
+            Professional Search <ArrowRight size={14} />
           </Link>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6">
-          {products.slice(0, 12).map(p => (
+          {products.map(p => (
             <div key={p.id} className="group flex flex-col gap-3 bg-white p-2 md:p-3 rounded-[1.5rem] md:rounded-[2rem] border border-gray-100 hover:shadow-2xl hover:shadow-blue-500/10 transition-all">
               <Link to={getProductLink(p.id)} className="aspect-square bg-gray-50 rounded-xl md:rounded-2xl overflow-hidden relative">
                 <img 
