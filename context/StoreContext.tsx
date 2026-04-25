@@ -212,12 +212,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const fuse = useMemo(() => {
     return new Fuse(products, {
       keys: [
-        { name: 'name', weight: 4 },
-        { name: 'category', weight: 2 },
-        { name: 'tags', weight: 2 },
+        { name: 'name', weight: 10 },
+        { name: 'category', weight: 5 },
+        { name: 'tags', weight: 5 },
         { name: 'description', weight: 1 }
       ],
-      threshold: 0.35, // Balanced typo tolerance
+      threshold: 0.3, // Stricter threshold for better accuracy
       distance: 100,
       minMatchCharLength: 2,
       shouldSort: true,
@@ -227,39 +227,26 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [products]);
 
   const searchProducts = (term: string, category: string = 'All') => {
-    // If no term, return items in category (or all if category is 'All')
+    // If no term, return items strictly in category 
+    // If category is 'All' and term is empty, return empty (results disappear)
     if (!term.trim()) {
-      return category === 'All' ? products : products.filter(p => p.category === category);
+      return category === 'All' ? [] : products.filter(p => p.category === category);
     }
 
-    // Process term for better matching
     const processedTerm = term.toLowerCase().trim();
     
     // Perform Search
     let results = fuse.search(processedTerm);
 
-    // Category optimization: If we are in a category, prioritize its items
-    if (category !== 'All') {
-      const categoryMatches = results.filter(r => r.item.category === category);
-      const otherMatches = results.filter(r => r.item.category !== category);
-      
-      // Sort: Exact category matches first, then others
-      results = [...categoryMatches, ...otherMatches];
-    }
-
-    // Map to items
+    // Map to items and apply STRICT category filter if specified
     let finalItems = results.map(r => r.item);
 
-    // Fallback: If no match found, show items from same category or general trending
-    if (finalItems.length === 0) {
-      if (category !== 'All') {
-        finalItems = products.filter(p => p.category === category).slice(0, 12);
-      } else {
-        // Trending/Bestsellers as general fallback
-        finalItems = products.sort((a, b) => (b.sales || 0) - (a.sales || 0)).slice(0, 12);
-      }
+    if (category !== 'All') {
+      finalItems = finalItems.filter(p => p.category === category);
     }
 
+    // REMOVED: Fallback random/trending logic from core search function
+    // The UI (Search.tsx) will handle the "No exact match" fallback display
     return finalItems;
   };
 

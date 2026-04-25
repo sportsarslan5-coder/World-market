@@ -9,21 +9,26 @@ import { motion, AnimatePresence } from 'motion/react';
 const Search: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
-  const category = searchParams.get('cat') || 'All';
+  const categoryParam = searchParams.get('category') || searchParams.get('cat') || 'All';
   const { formatPrice, setQuickViewProduct, products, searchProducts } = useStore();
 
   const [sortBy, setSortBy] = useState('best-selling');
   const [filters, setFilters] = useState({
     priceRange: [0, 10000],
-    selectedCategory: category,
+    selectedCategory: categoryParam,
     selectedSize: 'All',
     selectedColor: 'All'
   });
   const [showFilters, setShowFilters] = useState(false);
 
+  // Sync category from URL
+  React.useEffect(() => {
+    setFilters(prev => ({ ...prev, selectedCategory: categoryParam }));
+  }, [categoryParam]);
+
   const rawResults = useMemo(() => {
     return searchProducts(query, filters.selectedCategory);
-  }, [query, filters.selectedCategory, searchProducts]);
+  }, [query, filters.selectedCategory, products]); // Added products to deps just in case
 
   const filteredAndSortedResults = useMemo(() => {
     let items = [...rawResults];
@@ -70,7 +75,7 @@ const Search: React.FC = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const newQuery = (formData.get('inline-search') as string) || '';
-    setSearchParams({ q: newQuery, cat: filters.selectedCategory });
+    setSearchParams({ q: newQuery, category: filters.selectedCategory });
   };
 
   const allSizes = useMemo(() => {
@@ -169,7 +174,10 @@ const Search: React.FC = () => {
                       {['All', ...CATEGORIES].map(cat => (
                         <button 
                           key={cat}
-                          onClick={() => setFilters({...filters, selectedCategory: cat})}
+                          onClick={() => {
+                             setFilters({...filters, selectedCategory: cat});
+                             setSearchParams({ q: query, category: cat });
+                          }}
                           className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${filters.selectedCategory === cat ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
                         >
                           {cat}
@@ -327,9 +335,11 @@ const Search: React.FC = () => {
               <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center text-4xl mb-6 mx-auto">
                 🔍
               </div>
-              <h2 className="text-3xl font-black italic uppercase tracking-tighter mb-4">No exact matches for "{query}"</h2>
+              <h2 className="text-3xl font-black italic uppercase tracking-tighter mb-4">No exact matches found</h2>
               <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest max-w-md mx-auto leading-loose mb-8">
-                We couldn't find matches for your current filters. Try adjusting them or explore our curated trending gear below.
+                {filters.selectedCategory !== 'All' 
+                  ? `No items matching your search in "${filters.selectedCategory}". Showing all items from this category instead.`
+                  : "We couldn't find any matches. Try adjusting your search term or explore our catalog by category."}
               </p>
               <button 
                 onClick={() => {
@@ -340,28 +350,35 @@ const Search: React.FC = () => {
                     selectedColor: 'All'
                   });
                   setSortBy('best-selling');
-                  setSearchParams({ q: '', cat: 'All' });
+                  setSearchParams({ q: '', category: 'All' });
                 }}
                 className="bg-black text-white px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl hover:bg-blue-600 transition-all"
               >
-                Clear All Filters & Reset
+                Clear All & Reset Search
               </button>
             </div>
 
-            {/* Recommendations / Trending */}
+            {/* Recommendations - Strictly SAME CATEGORY or Selected Category */}
             <div className="w-full">
               <div className="flex items-center gap-4 mb-10">
                 <div className="bg-blue-600 p-2 rounded-lg text-white">
-                  <TrendingUp size={20} />
+                  <ShoppingBag size={20} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black italic uppercase tracking-tighter leading-none">Trending Collections</h3>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-1">Highly requested global gear</p>
+                  <h3 className="text-xl font-black italic uppercase tracking-tighter leading-none">
+                    {filters.selectedCategory !== 'All' ? `More from ${filters.selectedCategory}` : 'Featured items'}
+                  </h3>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-1">
+                    {filters.selectedCategory !== 'All' ? `Discover gear in this collection` : 'Popular global selections'}
+                  </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                {products.sort((a,b) => (b.sales||0) - (a.sales||0)).slice(0, 4).map(product => (
+                {(filters.selectedCategory !== 'All' 
+                  ? products.filter(p => p.category === filters.selectedCategory)
+                  : products.sort((a,b) => (b.sales||0) - (a.sales||0))
+                ).slice(0, 8).map(product => (
                   <div key={product.id} className="group relative flex flex-col">
                     <div className="relative aspect-square bg-gray-50 rounded-3xl overflow-hidden mb-4 border border-gray-100">
                       <Link to={`/products/${product.id}`} className="block w-full h-full">

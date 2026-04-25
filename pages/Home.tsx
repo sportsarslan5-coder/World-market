@@ -172,14 +172,14 @@ const Home: React.FC = () => {
       <section className="relative -mt-32 z-20 max-w-7xl mx-auto px-4 pb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { title: 'Polo Shirts', cat: 'Clothing', kw: 'polo' },
-            { title: 'T-Shirts', cat: 'Clothing', kw: 'tshirt' },
-            { title: 'Graphic T-Shirts', cat: 'Clothing', kw: 'graphic' },
-            { title: 'Hoodies', cat: 'Clothing', kw: 'hoodie' },
-            { title: 'Sneakers', cat: 'Shoes', kw: 'sneaker' },
-            { title: 'Gym Wear', cat: 'Sportswear', kw: 'gym' },
-            { title: 'Jackets', cat: 'Clothing', kw: 'jacket' },
-            { title: 'Backpacks', cat: 'Bags', kw: 'backpack' }
+            { title: 'Polo Shirts', cat: 'polo', kw: 'polo' },
+            { title: 'T-Shirts', cat: 'tshirt', kw: 'tshirt' },
+            { title: 'Graphic T-Shirts', cat: 'tshirt', kw: 'graphic' },
+            { title: 'Hoodies', cat: 'hoodie', kw: 'hoodie' },
+            { title: 'Shoes', cat: 'shoes', kw: 'sneaker' },
+            { title: 'Tracksuits', cat: 'tracksuit', kw: 'tracksuit' },
+            { title: 'Jackets', cat: 'jacket', kw: 'jacket' },
+            { title: 'Backpacks', cat: 'bag', kw: 'backpack' }
           ].map((block) => {
             const images = products
               .filter(p => p.category === block.cat && p.name.toLowerCase().includes(block.kw))
@@ -195,7 +195,7 @@ const Home: React.FC = () => {
             return (
               <Link 
                 key={block.title}
-                to={getLink(`/products?cat=${block.cat}&q=${block.kw}`)}
+                to={getLink(`/search?category=${encodeURIComponent(block.cat)}`)}
                 className="bg-white p-5 shadow-lg hover:shadow-xl transition-all flex flex-col group"
               >
                 <h3 className="text-xl font-black uppercase italic tracking-tighter mb-4 text-gray-900 group-hover:text-blue-600 transition-colors">
@@ -271,7 +271,7 @@ const Home: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {CATEGORIES.slice(0, 6).map((cat, idx) => (
               <Link 
-                to={getLink(`/products?cat=${cat}`)} 
+                to={getLink(`/search?category=${cat}`)} 
                 key={cat}
                 className="group relative aspect-[4/5] rounded-3xl overflow-hidden bg-black shadow-xl"
               >

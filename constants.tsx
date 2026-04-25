@@ -19,7 +19,21 @@ export const LANGUAGES: Language[] = [
 ];
 
 export const CATEGORIES = [
-  "Clothing", "Shoes", "Sportswear", "Bags", "Outdoor", "Accessories", "Electronics Accessories"
+  "hoodie", 
+  "tshirt", 
+  "polo", 
+  "tracksuit", 
+  "shoes", 
+  "bag", 
+  "jacket", 
+  "sweater", 
+  "blazer", 
+  "cap", 
+  "jogger", 
+  "yoga pant", 
+  "short", 
+  "tank top",
+  "accessory"
 ];
 
 export const SHIPPING_COUNTRIES = [
@@ -810,7 +824,7 @@ const BOOT_IMAGES = [
 const NEW_HOODIES: Product[] = HOODIE_IMAGES.map((img, idx) => ({
   id: `hoodie-${idx}`,
   name: `hoodie #${idx + 101}`,
-  category: "Clothing",
+  category: "hoodie",
   price: 35 + (idx % 10) - 4 + 0.99,
   oldPrice: 49.99 + (idx % 5),
   discount: 25,
@@ -849,7 +863,7 @@ const NEW_HOODIES: Product[] = HOODIE_IMAGES.map((img, idx) => ({
 const NEW_TRACKSUITS: Product[] = TRACKSUIT_IMAGES.map((img, idx) => ({
   id: `tracksuit-${idx}`,
   name: `tracksuit #${idx + 201}`,
-  category: "Sportswear",
+  category: "tracksuit",
   price: 45 + (idx % 8) * 1.5 - 3 + 0.95,
   oldPrice: 65.99 + (idx % 4),
   discount: 30,
@@ -886,7 +900,7 @@ const NEW_TRACKSUITS: Product[] = TRACKSUIT_IMAGES.map((img, idx) => ({
 const NEW_POLOS: Product[] = POLO_IMAGES.map((img, idx) => ({
   id: `polo-${idx}`,
   name: `polo #${idx + 301}`,
-  category: "Clothing",
+  category: "polo",
   price: 30 + (idx % 12) - 5 + 0.99,
   oldPrice: 42.99 + (idx % 6),
   discount: 28,
@@ -925,7 +939,7 @@ const NEW_POLOS: Product[] = POLO_IMAGES.map((img, idx) => ({
 const NEW_GRAPHIC_TSHIRTS: Product[] = GRAPHIC_TSHIRT_IMAGES.map((img, idx) => ({
   id: `graphic-tshirt-${idx}`,
   name: `graphic-tshirt #${idx + 601}`,
-  category: "Clothing",
+  category: "tshirt",
   price: 25 + (idx % 15) * 0.5 - 2 + 0.99,
   oldPrice: 35.99 + (idx % 5),
   discount: 20,
@@ -964,7 +978,7 @@ const NEW_GRAPHIC_TSHIRTS: Product[] = GRAPHIC_TSHIRT_IMAGES.map((img, idx) => (
 const NEW_SNEAKERS: Product[] = SNEAKER_IMAGES.map((img, idx) => ({
   id: `sneaker-${idx}`,
   name: `sneaker #${idx + 401}`,
-  category: "Shoes",
+  category: "shoes",
   price: 120 + (idx % 10) * 2 - 8 + 0.99,
   oldPrice: 159.99 + (idx % 5),
   discount: 22,
@@ -1003,7 +1017,7 @@ const NEW_SNEAKERS: Product[] = SNEAKER_IMAGES.map((img, idx) => ({
 const NEW_BOOTS: Product[] = BOOT_IMAGES.map((img, idx) => ({
   id: `boot-${idx}`,
   name: `boot #${idx + 501}`,
-  category: "Shoes",
+  category: "shoes",
   price: 85 + (idx % 5) * 3 - 5 + 0.99,
   oldPrice: 110.99 + (idx % 3),
   discount: 15,
@@ -1039,7 +1053,7 @@ const NEW_BOOTS: Product[] = BOOT_IMAGES.map((img, idx) => ({
 const NEW_SPORTS_BRAS: Product[] = SPORTS_BRA_IMAGES.map((img, idx) => ({
   id: `sports-bra-${idx}`,
   name: `sports-bra #${idx + 701}`,
-  category: "Sportswear",
+  category: "accessory",
   price: 32 + (idx % 10) - 4 + 0.99,
   oldPrice: 45.99 + (idx % 5),
   discount: 25,
@@ -1078,7 +1092,7 @@ const NEW_SPORTS_BRAS: Product[] = SPORTS_BRA_IMAGES.map((img, idx) => ({
 const NEW_OVERSIZED_HOODIES: Product[] = OVERSIZED_HOODIE_IMAGES.map((img, idx) => ({
   id: `oversized-hoodie-${idx}`,
   name: `oversized-hoodie #${idx + 801}`,
-  category: "Clothing",
+  category: "hoodie",
   price: 50 + (idx % 10) * 1.5 - 6 + 0.99,
   oldPrice: 75.99 + (idx % 5),
   discount: 30,
@@ -1117,7 +1131,7 @@ const NEW_OVERSIZED_HOODIES: Product[] = OVERSIZED_HOODIE_IMAGES.map((img, idx) 
 const NEW_YOGA_PANTS: Product[] = YOGA_PANTS_IMAGES.map((img, idx) => ({
   id: `yoga-pants-${idx}`,
   name: `yoga-pants #${idx + 901}`,
-  category: "Sportswear",
+  category: "yoga pant",
   price: 38 + (idx % 10) - 4 + 0.99,
   oldPrice: 55.99 + (idx % 5),
   discount: 28,
@@ -1155,7 +1169,7 @@ const NEW_YOGA_PANTS: Product[] = YOGA_PANTS_IMAGES.map((img, idx) => ({
 const NEW_WINTER_JACKETS: Product[] = WINTER_JACKET_IMAGES.map((img, idx) => ({
   id: `winter-jacket-${idx}`,
   name: `winter-jacket #${idx + 1001}`,
-  category: "Outdoor",
+  category: "jacket",
   price: 50 + (idx % 10) * 2 - 8 + 0.99,
   oldPrice: 85.99 + (idx % 5),
   discount: 35,
@@ -1193,7 +1207,7 @@ const NEW_WINTER_JACKETS: Product[] = WINTER_JACKET_IMAGES.map((img, idx) => ({
 const NEW_SHORTS: Product[] = SHORTS_IMAGES.map((img, idx) => ({
   id: `shorts-${idx}`,
   name: `shorts #${idx + 1101}`,
-  category: "Sportswear",
+  category: "short",
   price: 30 + (idx % 10) - 5 + 0.99,
   oldPrice: 45.99 + (idx % 5),
   discount: 32,
@@ -1231,7 +1245,7 @@ const NEW_SHORTS: Product[] = SHORTS_IMAGES.map((img, idx) => ({
 const NEW_GYM_TANK_TOPS: Product[] = GYM_TANK_IMAGES.map((img, idx) => ({
   id: `gym-tank-${idx}`,
   name: `gym-tank #${idx + 1201}`,
-  category: "Sportswear",
+  category: "tank top",
   price: 25 + (idx % 10) - 3 + 0.99,
   oldPrice: 35.99 + (idx % 5),
   discount: 25,
@@ -1270,7 +1284,7 @@ const NEW_GYM_TANK_TOPS: Product[] = GYM_TANK_IMAGES.map((img, idx) => ({
 const NEW_JOGGERS: Product[] = JOGGERS_IMAGES.map((img, idx) => ({
   id: `joggers-${idx}`,
   name: `joggers #${idx + 1301}`,
-  category: "Clothing",
+  category: "jogger",
   price: 40 + (idx % 10) - 5 + 0.99,
   oldPrice: 59.99 + (idx % 5),
   discount: 30,
@@ -1308,7 +1322,7 @@ const NEW_JOGGERS: Product[] = JOGGERS_IMAGES.map((img, idx) => ({
 const NEW_BACKPACKS: Product[] = BACKPACK_IMAGES.map((img, idx) => ({
   id: `backpack-${idx}`,
   name: `backpack #${idx + 1401}`,
-  category: "Bags",
+  category: "bag",
   price: 55 + (idx % 10) * 1.5 - 4 + 0.99,
   oldPrice: 79.99 + (idx % 5),
   discount: 28,
@@ -1346,7 +1360,7 @@ const NEW_BACKPACKS: Product[] = BACKPACK_IMAGES.map((img, idx) => ({
 const NEW_WOOL_SWEATERS: Product[] = WOOL_SWEATER_IMAGES.map((img, idx) => ({
   id: `wool-sweater-${idx}`,
   name: `wool-sweater #${idx + 1501}`,
-  category: "Clothing",
+  category: "sweater",
   price: 55 + (idx % 10) - 5 + 0.99,
   oldPrice: 85.99 + (idx % 5),
   discount: 35,
@@ -1384,7 +1398,7 @@ const NEW_WOOL_SWEATERS: Product[] = WOOL_SWEATER_IMAGES.map((img, idx) => ({
 const NEW_BLAZERS: Product[] = BLAZER_IMAGES.map((img, idx) => ({
   id: `blazer-${idx}`,
   name: `blazer #${idx + 1601}`,
-  category: "Clothing",
+  category: "blazer",
   price: 90 + (idx % 10) * 2 - 5 + 0.99,
   oldPrice: 129.99 + (idx % 5),
   discount: 30,
@@ -1422,7 +1436,7 @@ const NEW_BLAZERS: Product[] = BLAZER_IMAGES.map((img, idx) => ({
 const NEW_CAPS: Product[] = CAP_IMAGES.map((img, idx) => ({
   id: `cap-${idx}`,
   name: `Cap`,
-  category: "Accessories",
+  category: "cap",
   price: 30.00,
   oldPrice: 45.00,
   discount: 33,

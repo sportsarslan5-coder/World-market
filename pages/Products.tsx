@@ -29,7 +29,7 @@ const Products: React.FC = () => {
   const [sortBy, setSortBy] = useState('newest');
 
   const query = searchParams.get('q') || '';
-  const category = searchParams.get('cat') || 'All';
+  const category = searchParams.get('category') || searchParams.get('cat') || 'All';
 
   const filteredProducts = useMemo(() => {
     // 1. First apply search if query exists, pass current category context
@@ -82,13 +82,13 @@ const Products: React.FC = () => {
                   type="text" 
                   placeholder={`Search in ${category}...`}
                   value={query}
-                  onChange={(e) => setSearchParams({ q: e.target.value, cat: category })}
+                  onChange={(e) => setSearchParams({ q: e.target.value, category: category })}
                   className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl py-3 pl-10 pr-4 focus:border-blue-600 focus:bg-white transition-all outline-none text-sm font-bold"
                 />
                 <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
                 {query && (
                   <button 
-                    onClick={() => setSearchParams({ cat: category })}
+                    onClick={() => setSearchParams({ category: category })}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500"
                   >
                     <X size={16} />
@@ -156,7 +156,7 @@ const Products: React.FC = () => {
                 {['All', ...CATEGORIES].map(cat => (
                   <button 
                     key={cat}
-                    onClick={() => setSearchParams({ q: query, cat: cat })}
+                    onClick={() => setSearchParams({ q: query, category: cat })}
                     className={`block w-full text-left text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors ${category === cat ? 'text-blue-600' : 'text-gray-400'}`}
                   >
                     {cat}
@@ -387,7 +387,7 @@ const Products: React.FC = () => {
                   {['All', ...CATEGORIES].map(cat => (
                     <button 
                       key={cat}
-                      onClick={() => setSearchParams({ q: query, cat: cat })}
+                      onClick={() => setSearchParams({ q: query, category: cat })}
                       className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${category === cat ? 'bg-blue-600 border-blue-600 text-white' : 'border-white/10 text-gray-400'}`}
                     >
                       {cat}

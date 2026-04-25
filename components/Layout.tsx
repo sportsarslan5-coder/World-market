@@ -80,8 +80,13 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   const fuse = useMemo(() => new Fuse(products, {
-    keys: ['name', 'category', 'description', 'tags'],
-    threshold: 0.4,
+    keys: [
+      { name: 'name', weight: 10 },
+      { name: 'category', weight: 5 },
+      { name: 'tags', weight: 5 },
+      { name: 'description', weight: 1 }
+    ],
+    threshold: 0.3,
     distance: 100,
     includeScore: true
   }), [products]);
@@ -162,7 +167,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   {suggestions.categories.map(cat => (
                     <Link
                       key={cat}
-                      to={getLink(`/search?cat=${cat}`)}
+                      to={getLink(`/search?category=${cat}`)}
                       onClick={() => setShowSuggestions(false)}
                       className="bg-gray-50 hover:bg-blue-50 text-gray-900 hover:text-blue-600 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all border border-gray-100"
                     >
@@ -445,10 +450,10 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <span className="uppercase font-black text-[11px] tracking-tight">All</span>
             </button>
             <div className="flex items-center gap-4 md:gap-6 border-l border-white/10 pl-4 md:pl-6">
-              <Link to="/sport-store" className="text-yellow-400 font-black hover:outline outline-white outline-1 p-1">Sports Store</Link>
-              <Link to={getLink('/products')} className="hover:outline outline-white outline-1 p-1">Professional Gear</Link>
-              <Link to={getLink('/products?cat=Sportswear')} className="hover:outline outline-white outline-1 p-1">Export Items</Link>
-              <Link to={getLink('/products?cat=Accessories')} className="hover:outline outline-white outline-1 p-1">Bulk Buy</Link>
+              <Link to={getLink('/search?category=polo')} className="text-yellow-400 font-black hover:outline outline-white outline-1 p-1">Sports Store</Link>
+              <Link to={getLink('/search?category=tracksuit')} className="hover:outline outline-white outline-1 p-1">Professional Gear</Link>
+              <Link to={getLink('/search?category=shoes')} className="hover:outline outline-white outline-1 p-1">Export Items</Link>
+              <Link to={getLink('/search?category=accessory')} className="hover:outline outline-white outline-1 p-1">Bulk Buy</Link>
               <Link to={getLink('/blog')} className="hover:outline outline-white outline-1 p-1">Blog</Link>
             </div>
             
@@ -498,14 +503,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                       Sports Store (Direct Factory)
                       <ArrowRight size={16} />
                     </Link>
-                    {['Clothing', 'Shoes', 'Sportswear', 'Bags', 'Accessories'].map(cat => (
+                    {['hoodie', 'tshirt', 'shoes', 'bag', 'cap'].map(cat => (
                       <Link 
                         key={cat} 
-                        to={getLink(`/products?cat=${cat}`)}
+                        to={getLink(`/search?category=${cat}`)}
                         className="px-6 py-4 flex items-center justify-between text-sm font-bold text-gray-700 hover:bg-gray-50 active:bg-gray-100"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
-                        {cat}
+                        {cat.toUpperCase()}
                         <ArrowRight size={16} className="text-gray-300" />
                       </Link>
                     ))}
