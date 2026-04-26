@@ -257,8 +257,8 @@ const Products: React.FC = () => {
                     <div key={p.id} className="group flex flex-col gap-4 bg-white p-3 md:p-4 rounded-[1.5rem] md:rounded-[2rem] border border-transparent hover:border-gray-100 hover:shadow-2xl transition-all h-full">
                     <Link to={getProductLink(p.id)} className="aspect-square bg-gray-50 rounded-2xl md:rounded-3xl overflow-hidden relative">
                       <img 
-                        src={p.image} 
-                        alt={p.name} 
+                        src={p.image || 'https://picsum.photos/seed/placeholder/400/400'} 
+                        alt={p.name || 'Product'} 
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                         loading="lazy"
                         onError={(e) => {
@@ -312,7 +312,7 @@ const Products: React.FC = () => {
                       </Link>
                       <div className="mt-auto pt-4">
                         <div className="flex justify-between items-center mb-3">
-                          <span className="text-base md:text-xl font-black tracking-tighter text-gray-900">{formatPrice(p.price)}</span>
+                          <span className="text-base md:text-xl font-black tracking-tighter text-gray-900">{formatPrice(p.price || 0)}</span>
                           {p.oldPrice && (
                             <span className="text-[10px] font-bold text-gray-400 line-through">{formatPrice(p.oldPrice)}</span>
                           )}

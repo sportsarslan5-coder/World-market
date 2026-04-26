@@ -148,15 +148,15 @@ Secure manual payment confirmation via WhatsApp.`;
           {/* Left: Image Gallery (5 cols) */}
           <div className="lg:col-span-5 flex flex-col-reverse lg:flex-row gap-4">
             <div className="flex lg:flex-col gap-2 w-full lg:w-20">
-              {[product.image, ...(product.images || [])].slice(0, 7).map((img, i) => (
-                <button 
-                  key={i}
-                  onMouseEnter={() => setSelectedImage(img)}
-                  className={`aspect-square w-12 lg:w-full rounded border-2 transition-all p-1 ${selectedImage === img ? 'border-[#e77600] shadow-[0_0_3px_2px_rgba(228,121,17,0.5)]' : 'border-gray-200 hover:border-[#e77600]'}`}
-                >
-                  <img src={img} alt="" className="w-full h-full object-contain mix-blend-multiply" />
-                </button>
-              ))}
+                  {[product.image, ...(product.images || [])].slice(0, 7).map((img, i) => (
+                    <button 
+                      key={i}
+                      onMouseEnter={() => setSelectedImage(img)}
+                      className={`aspect-square w-12 lg:w-full rounded border-2 transition-all p-1 ${selectedImage === img ? 'border-[#e77600] shadow-[0_0_3px_2px_rgba(228,121,17,0.5)]' : 'border-gray-200 hover:border-[#e77600]'}`}
+                    >
+                      <img src={img} alt="" className="w-full h-full object-contain mix-blend-multiply" />
+                    </button>
+                  ))}
             </div>
             <div className="flex-grow aspect-square bg-white flex items-center justify-center p-4">
                <img 
@@ -314,30 +314,30 @@ Secure manual payment confirmation via WhatsApp.`;
                   </div>
                 </div>
                 
-                <div className="space-y-2 pt-6">
-                  {[5, 4, 3, 2, 1].map(star => (
-                    <div key={star} className="flex items-center gap-4">
-                      <span className="text-[10px] font-black text-gray-400 w-4">{star}</span>
-                      <div className="flex-grow h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-yellow-400 rounded-full" 
-                          style={{ width: `${star === 5 ? 85 : (star === 4 ? 10 : 5)}%` }}
-                        ></div>
+                  <div className="space-y-2 pt-6">
+                    {[5, 4, 3, 2, 1].map(star => (
+                      <div key={star} className="flex items-center gap-4">
+                        <span className="text-[10px] font-black text-gray-400 w-4">{star}</span>
+                        <div className="flex-grow h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-yellow-400 rounded-full" 
+                            style={{ width: `${star === 5 ? 85 : (star === 4 ? 10 : 5)}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-[10px] font-black text-gray-400 w-8">{star === 5 ? '85%' : (star === 4 ? '10%' : '5%')}</span>
                       </div>
-                      <span className="text-[10px] font-black text-gray-400 w-8">{star === 5 ? '85%' : (star === 4 ? '10%' : '5%')}</span>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
               </div>
             </div>
 
             <div className="lg:col-span-8 space-y-12">
-              {product.reviews?.map(review => (
+              {product.reviews && product.reviews.length > 0 ? product.reviews.map(review => (
                 <div key={review.id} className="space-y-4 animate-fadeIn">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center font-black text-xs text-gray-400">
-                        {review.user[0]}
+                        {review.user?.[0] || 'U'}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
@@ -364,7 +364,9 @@ Secure manual payment confirmation via WhatsApp.`;
                     <button className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-black">Report</button>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">No reviews yet for this product.</p>
+              )}
               <button className="w-full py-4 border-2 border-dashed border-gray-200 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 hover:border-blue-600 hover:text-blue-600 transition-all">
                 Load More Reviews
               </button>

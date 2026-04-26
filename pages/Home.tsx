@@ -183,6 +183,8 @@ const Home: React.FC = () => {
             { title: 'Tracksuits', cat: 'jersey', kw: 'tracksuit' },
             { title: 'Performance Jerseys', cat: 'jersey', kw: 'jersey' }
           ].map((block) => {
+            if (!products || products.length === 0) return null;
+            
             // Apply strict normalization for block filtering
             const blockCat = block.cat.toLowerCase().trim();
             const blockKw = block.kw.toLowerCase().trim();
@@ -328,9 +330,14 @@ const Home: React.FC = () => {
             Professional Search <ArrowRight size={14} />
           </Link>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6">
-          {products.map(p => (
-            <div key={p.id} className="group flex flex-col gap-3 bg-white p-2 md:p-3 rounded-[1.5rem] md:rounded-[2rem] border border-gray-100 hover:shadow-2xl hover:shadow-blue-500/10 transition-all">
+          <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6">
+            {!products || products.length === 0 ? (
+              <div className="col-span-full py-20 text-center">
+                <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+                <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Loading Catalog...</p>
+              </div>
+            ) : products.map(p => (
+              <div key={p.id} className="group flex flex-col gap-3 bg-white p-2 md:p-3 rounded-[1.5rem] md:rounded-[2rem] border border-gray-100 hover:shadow-2xl hover:shadow-blue-500/10 transition-all">
               <Link to={getProductLink(p.id)} className="aspect-square bg-gray-50 rounded-xl md:rounded-2xl overflow-hidden relative">
                 <img 
                   src={p.image} 

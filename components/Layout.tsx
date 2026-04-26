@@ -132,14 +132,23 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      addToHistory(searchQuery);
-      const path = currentShow ? `/${currentShow}/search` : '/search';
-      const encodedQuery = encodeURIComponent(searchQuery);
-      const encodedCat = searchCategory !== 'All' ? `&category=${searchCategory}` : '';
-      navigate(`${path}?q=${encodedQuery}${encodedCat}`);
-      setShowSuggestions(false);
+    const cleanQuery = searchQuery.trim();
+    const encodedQuery = encodeURIComponent(cleanQuery);
+    const encodedCat = searchCategory !== 'All' ? `category=${encodeURIComponent(searchCategory)}` : '';
+    
+    let path = currentShow ? `/${currentShow}/search` : '/search';
+    
+    if (cleanQuery) {
+      addToHistory(cleanQuery);
+      const separator = encodedCat ? '&' : '';
+      navigate(`${path}?q=${encodedQuery}${separator}${encodedCat}`);
+    } else if (encodedCat) {
+      navigate(`${path}?${encodedCat}`);
+    } else {
+      navigate(path);
     }
+    
+    setShowSuggestions(false);
   };
 
   const clearHistory = () => {

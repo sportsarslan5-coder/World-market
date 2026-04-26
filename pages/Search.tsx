@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useParams } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES } from '../constants';
 import { Search as SearchIcon, Filter, Grid, List as ListIcon, Star, ArrowRight, ShoppingBag, TrendingUp } from 'lucide-react';
@@ -8,8 +8,9 @@ import { motion, AnimatePresence } from 'motion/react';
 
 const Search: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { categoryName } = useParams();
   const query = searchParams.get('q') || '';
-  const categoryParam = searchParams.get('category') || searchParams.get('cat') || 'All';
+  const categoryParam = categoryName || searchParams.get('category') || searchParams.get('cat') || 'All';
   const { formatPrice, setQuickViewProduct, products, searchProducts } = useStore();
 
   const [sortBy, setSortBy] = useState('best-selling');
@@ -211,9 +212,12 @@ const Search: React.FC = () => {
                         {/* Image area */}
                         <Link to={`/products/${product.id}`} className="block relative aspect-square bg-gray-50 p-4">
                            <img 
-                             src={product.image} 
+                             src={product.image || 'https://picsum.photos/seed/product/400/400'} 
                              alt={product.name} 
                              className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500" 
+                             onError={(e) => {
+                               (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/product/400/400';
+                             }}
                            />
                         </Link>
 
@@ -256,8 +260,8 @@ const Search: React.FC = () => {
                            {/* Price */}
                            <div className="flex items-start gap-0.5 text-gray-900 mb-1">
                              <span className="text-xs font-medium mt-1">$</span>
-                             <span className="text-2xl font-bold">{Math.floor(product.price)}</span>
-                             <span className="text-xs font-medium mt-1">{(product.price % 1).toFixed(2).split('.')[1]}</span>
+                             <span className="text-2xl font-bold">{Math.floor(product.price || 0)}</span>
+                             <span className="text-xs font-medium mt-1">{((product.price || 0) % 1).toFixed(2).split('.')[1]}</span>
                            </div>
 
                            {product.oldPrice && (

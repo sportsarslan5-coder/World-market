@@ -81,24 +81,21 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     }
 
-    const q = query(collection(db, 'products'), orderBy('datePosted', 'desc')); // Removed limit to show all products
+    const q = query(collection(db, 'products'), orderBy('datePosted', 'desc')); 
     const unsubscribeProducts = onSnapshot(q, (snapshot) => {
-      let productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
-      
-      if (productList.length < 5) {
+      if (snapshot.empty) {
         setProducts(PRODUCTS);
         setHasMoreProducts(false);
       } else {
+        const productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
         setProducts(productList);
-        setHasMoreProducts(false); // No more pagination if we load all at once
-        if (snapshot.docs.length > 0) {
-          setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
-        }
+        setHasMoreProducts(false);
       }
       setIsProductsLoading(false);
     }, (error) => {
       console.error("Products sync error:", error);
-      if (products.length === 0) setProducts(PRODUCTS);
+      // Critical fallback: if firestore fails, use local data immediately
+      setProducts(PRODUCTS);
       setIsProductsLoading(false);
     });
 
@@ -231,13 +228,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (c.includes('hoodie')) return 'hoodie';
     if (c.includes('t-shirt') || c.includes('tshirt')) return 'tshirt';
     if (c.includes('jacket')) return 'jacket';
-    if (c.includes('shoe') || c.includes('footwear')) return 'shoes'; // combined for simplicity or footwear
+    if (c.includes('shoe') || c.includes('footwear')) return 'shoes'; 
     if (c.includes('cap')) return 'cap';
     if (c.includes('short')) return 'shorts';
     if (c.includes('jersey') || c.includes('tracksuit')) return 'jersey';
     if (c.includes('electronic')) return 'electronics';
     if (c.includes('book')) return 'books';
-    if (c.includes('footwear')) return 'footwear';
     return c;
   };
 
