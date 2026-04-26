@@ -12,7 +12,9 @@ import {
   Eye, 
   ArrowUpDown,
   Check,
-  Search
+  Search,
+  Truck,
+  Globe
 } from 'lucide-react';
 
 const Products: React.FC = () => {

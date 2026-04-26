@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { useSearchParams, Link, useParams } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES } from '../constants';
-import { Search as SearchIcon, Filter, Grid, List as ListIcon, Star, ArrowRight, ShoppingBag, TrendingUp } from 'lucide-react';
+import { Search as SearchIcon, Filter, Grid, List as ListIcon, Star, ArrowRight, ShoppingBag, TrendingUp, Truck, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 const Search: React.FC = () => {
