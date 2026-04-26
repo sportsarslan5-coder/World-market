@@ -25,7 +25,10 @@ export const CATEGORIES = [
   "shoes", 
   "cap", 
   "shorts", 
-  "jersey"
+  "jersey",
+  "electronics",
+  "books",
+  "footwear"
 ];
 
 export const SHIPPING_COUNTRIES = [
@@ -1462,6 +1465,72 @@ const NEW_CAPS: Product[] = CAP_IMAGES.map((img, idx) => ({
   imageAlt: `Premium Athletic Cap`
 }));
 
+const ELECTRONICS_IMAGES = [
+  "https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1526733158173-e1b2317199a1?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&q=80&w=800"
+];
+
+const BOOKS_IMAGES = [
+  "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&q=80&w=800"
+];
+
+const NEW_ELECTRONICS: Product[] = ELECTRONICS_IMAGES.map((img, idx) => ({
+  id: `electronics-${idx}`,
+  name: `Smart Electronic Device #${idx + 1}`,
+  category: "electronics",
+  price: 199.99 + (idx * 50),
+  rating: 4.5,
+  stock: 20,
+  description: "High-quality electronic device for your modern lifestyle.",
+  image: img,
+  images: [img],
+  datePosted: new Date().toISOString(),
+  sellerId: 'seller-1',
+  sales: 50,
+  tags: ['electronics', 'gadget', 'tech']
+}));
+
+const NEW_BOOKS: Product[] = BOOKS_IMAGES.map((img, idx) => ({
+  id: `books-${idx}`,
+  name: `Best Selling Book #${idx + 1}`,
+  category: "books",
+  price: 24.99 + (idx * 5),
+  rating: 4.8,
+  stock: 100,
+  description: "A must-read book that spans several genres.",
+  image: img,
+  images: [img],
+  datePosted: new Date().toISOString(),
+  sellerId: 'seller-1',
+  sales: 120,
+  tags: ['books', 'education', 'literature']
+}));
+
+const SPORT_UNIFORM_IMAGES = [
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1775314404/IMG-20260403-WA0005_apw7wk.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1775314470/IMG_20260404_122022_478_pvfm5r.jpg",
+  "https://res.cloudinary.com/dc0ytviey/image/upload/v1775314473/IMG_20260404_130207_508_gxclti.jpg"
+];
+
+const NEW_SPORT_UNIFORMS: Product[] = SPORT_UNIFORM_IMAGES.map((img, idx) => ({
+  id: `sport-uniform-${idx}`,
+  name: `Professional Team Uniform #${idx + 1}`,
+  category: "jersey",
+  price: 45.00,
+  rating: 4.9,
+  stock: 100,
+  description: "Elite performance team uniform. Full sublimation.",
+  image: img,
+  images: [img],
+  datePosted: new Date().toISOString(),
+  sellerId: 'seller-1',
+  sales: 300,
+  tags: ['jersey', 'sports', 'teamwear']
+}));
+
 export const PRODUCTS: Product[] = [
   ...NEW_HOODIES,
   ...NEW_TRACKSUITS,
@@ -1479,7 +1548,10 @@ export const PRODUCTS: Product[] = [
   ...NEW_BACKPACKS,
   ...NEW_WOOL_SWEATERS,
   ...NEW_BLAZERS,
-  ...NEW_CAPS
+  ...NEW_CAPS,
+  ...NEW_ELECTRONICS,
+  ...NEW_BOOKS,
+  ...NEW_SPORT_UNIFORMS
 ];
 
 export const BLOG_POSTS: BlogPost[] = [

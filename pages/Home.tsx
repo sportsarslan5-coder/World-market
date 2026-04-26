@@ -176,6 +176,8 @@ const Home: React.FC = () => {
             { title: 'Hoodies', cat: 'hoodie', kw: 'hoodie' },
             { title: 'Jackets', cat: 'jacket', kw: 'jacket' },
             { title: 'Shoes', cat: 'shoes', kw: 'shoes' },
+            { title: 'Electronics', cat: 'electronics', kw: 'electronics' },
+            { title: 'Books', cat: 'books', kw: 'books' },
             { title: 'Shorts', cat: 'shorts', kw: 'shorts' },
             { title: 'Caps', cat: 'cap', kw: 'cap' },
             { title: 'Tracksuits', cat: 'jersey', kw: 'tracksuit' },
@@ -397,6 +399,24 @@ const Home: React.FC = () => {
                     <span className="text-gray-400 text-[10px] line-through font-bold">{formatPrice(p.oldPrice)}</span>
                   )}
                 </div>
+                
+                {/* Shipping & Offers */}
+                <div className="mt-2 flex flex-col gap-1">
+                  <div className="flex items-center gap-1 text-[9px] font-black uppercase text-green-600 tracking-tighter">
+                    <Truck size={10} />
+                    {p.price > 100 ? "Free Shipping" : "Standard Shipping"}
+                  </div>
+                  <div className="flex items-center gap-1 text-[8px] font-bold text-gray-500 uppercase tracking-tighter">
+                    <Globe size={10} />
+                    Worldwide Delivery
+                  </div>
+                  {p.price > 100 && (
+                    <div className="text-[7px] font-black text-gray-400 uppercase tracking-widest mt-0.5">
+                      on orders over $100
+                    </div>
+                  )}
+                </div>
+
                 {p.stock && p.stock < 10 && (
                   <p className="text-[8px] font-black text-red-600 uppercase tracking-widest mt-1">Only {p.stock} left in stock</p>
                 )}

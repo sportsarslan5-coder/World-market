@@ -266,9 +266,21 @@ const Search: React.FC = () => {
                              </div>
                            )}
 
-                           <div className="text-xs font-bold text-gray-700 mb-4 flex items-center gap-2">
-                             <span className="bg-blue-100 text-blue-800 px-1 rounded text-[10px]">v-prime</span>
-                             <span>FREE delivery <span className="font-black">Sun, Apr 28</span></span>
+                           {/* Shipping & Offers */}
+                           <div className="mt-2 flex flex-col gap-1 mb-4">
+                             <div className="flex items-center gap-1 text-[10px] font-bold text-green-700">
+                               <Truck size={12} />
+                               {product.price > 100 ? "FREE Shipping" : "Standard Shipping"}
+                             </div>
+                             <div className="flex items-center gap-1 text-[10px] text-gray-500">
+                               <Globe size={12} />
+                               Worldwide Delivery Available
+                             </div>
+                             {product.price > 100 && (
+                               <div className="text-[9px] text-gray-400 font-medium">
+                                 on orders over $100
+                               </div>
+                             )}
                            </div>
 
                            <div className="mt-auto">

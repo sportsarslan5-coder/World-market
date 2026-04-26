@@ -317,6 +317,21 @@ const Products: React.FC = () => {
                             <span className="text-[10px] font-bold text-gray-400 line-through">{formatPrice(p.oldPrice)}</span>
                           )}
                         </div>
+
+                        {/* Shipping & Offers */}
+                        <div className="mb-4 flex flex-col gap-1">
+                          <div className="flex items-center gap-1 text-[10px] font-black text-green-600 uppercase tracking-tighter">
+                            <Truck size={12} />
+                            {p.price > 100 ? "Free Shipping" : "Standard Shipping"}
+                          </div>
+                          <div className="flex items-center gap-1 text-[9px] font-bold text-gray-500 uppercase tracking-tighter">
+                            <Globe size={12} />
+                            Worldwide Delivery Available
+                          </div>
+                          {p.price > 100 && (
+                            <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mt-0.5">on orders over $100</p>
+                          )}
+                        </div>
                         <button 
                           onClick={() => addToCart(p)}
                           className="w-full bg-black text-white py-3 rounded-xl md:rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all active:scale-95 flex items-center justify-center gap-2"

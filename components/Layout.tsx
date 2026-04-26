@@ -495,10 +495,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <span className="uppercase font-black text-[11px] tracking-tight">All</span>
             </button>
             <div className="flex items-center gap-4 md:gap-6 border-l border-white/10 pl-4 md:pl-6">
-              <Link to={getLink('/search?category=polo')} className="text-yellow-400 font-black hover:outline outline-white outline-1 p-1">Sports Store</Link>
-              <Link to={getLink('/search?category=tracksuit')} className="hover:outline outline-white outline-1 p-1">Professional Gear</Link>
-              <Link to={getLink('/search?category=shoes')} className="hover:outline outline-white outline-1 p-1">Export Items</Link>
-              <Link to={getLink('/search?category=accessory')} className="hover:outline outline-white outline-1 p-1">Bulk Buy</Link>
+              <Link to="/sport-store" className="text-yellow-400 font-black hover:outline outline-white outline-1 p-1 animate-pulse">Sports Store</Link>
+              <Link to={getLink('/search?category=jersey')} className="hover:outline outline-white outline-1 p-1">Uniforms</Link>
+              <Link to={getLink('/search?category=electronics')} className="hover:outline outline-white outline-1 p-1">Electronics</Link>
+              <Link to={getLink('/search?category=books')} className="hover:outline outline-white outline-1 p-1">Books</Link>
+              <Link to={getLink('/search?category=shoes')} className="hover:outline outline-white outline-1 p-1">Footwear</Link>
               <Link to={getLink('/blog')} className="hover:outline outline-white outline-1 p-1">Blog</Link>
             </div>
             

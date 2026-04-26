@@ -231,10 +231,13 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (c.includes('hoodie')) return 'hoodie';
     if (c.includes('t-shirt') || c.includes('tshirt')) return 'tshirt';
     if (c.includes('jacket')) return 'jacket';
-    if (c.includes('shoe')) return 'shoes';
+    if (c.includes('shoe') || c.includes('footwear')) return 'shoes'; // combined for simplicity or footwear
     if (c.includes('cap')) return 'cap';
     if (c.includes('short')) return 'shorts';
     if (c.includes('jersey') || c.includes('tracksuit')) return 'jersey';
+    if (c.includes('electronic')) return 'electronics';
+    if (c.includes('book')) return 'books';
+    if (c.includes('footwear')) return 'footwear';
     return c;
   };
 
@@ -242,28 +245,29 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const normSelectedCategory = category.toLowerCase().trim() === 'all' ? 'all' : normalizeCategory(category);
     const processedTerm = term.toLowerCase().trim();
     
-    // 1. If no search term, handle pure category filter
-    if (!processedTerm) {
-      if (normSelectedCategory === 'all') return products;
-      
-      return products.filter(p => {
-        const pCatNormalized = normalizeCategory(p.category || '');
-        return pCatNormalized === normSelectedCategory;
+    let filtered = products;
+
+    // 1. Match by keyword if present
+    if (processedTerm) {
+      filtered = filtered.filter(p => {
+        const name = (p.name || '').toLowerCase();
+        const cat = (p.category || '').toLowerCase();
+        const pCatNormalized = normalizeCategory(cat);
+        
+        return name.includes(processedTerm) || pCatNormalized.includes(processedTerm) || cat.includes(processedTerm);
       });
     }
 
-    // 2. If there is a search term, match name OR category
-    const results = products.filter(p => {
-      const name = (p.name || '').toLowerCase();
-      const pCatNormalized = normalizeCategory(p.category || '');
-      
-      const matchesKeyword = name.includes(processedTerm) || pCatNormalized.includes(processedTerm);
-      const matchesCategory = normSelectedCategory === 'all' || pCatNormalized === normSelectedCategory;
-      
-      return matchesKeyword && matchesCategory;
-    });
+    // 2. Match by category if specifically selected
+    if (normSelectedCategory !== 'all') {
+      filtered = filtered.filter(p => {
+        const cat = (p.category || '').toLowerCase();
+        const pCatNormalized = normalizeCategory(cat);
+        return pCatNormalized === normSelectedCategory || cat.includes(normSelectedCategory);
+      });
+    }
 
-    return results;
+    return filtered;
   };
 
   const [activeShowName, setActiveShowName] = useState<string | null>(detectShowName());
