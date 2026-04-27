@@ -74,8 +74,10 @@ const SellerPanel: React.FC = () => {
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const normalizedCategory = (newProduct.category || '').toLowerCase().trim();
       await addProduct({
         ...newProduct,
+        category: normalizedCategory,
         sellerId: seller.id,
         rating: 5.0,
         reviews: [],

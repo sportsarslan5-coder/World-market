@@ -105,8 +105,10 @@ const Admin: React.FC = () => {
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const normalizedCategory = (newProduct.category || '').toLowerCase().trim();
       await addProduct({
         ...newProduct,
+        category: normalizedCategory,
         rating: 5.0,
         reviews: [],
         badges: ['New'],
@@ -827,7 +829,11 @@ const Admin: React.FC = () => {
                     onSubmit={async (e) => {
                       e.preventDefault();
                       try {
-                        await updateProduct(editProductData.id, editProductData);
+                        const normalizedCategory = (editProductData.category || '').toLowerCase().trim();
+                        await updateProduct(editProductData.id, {
+                          ...editProductData,
+                          category: normalizedCategory
+                        });
                         setIsEditingProduct(false);
                         alert("Product updated successfully!");
                       } catch (err: any) {

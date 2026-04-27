@@ -238,28 +238,32 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const searchProducts = (term: string, category: string = 'All') => {
-    const normSelectedCategory = category.toLowerCase().trim() === 'all' ? 'all' : normalizeCategory(category);
+    const rawCategory = category || 'All';
+    const normSelectedCategory = rawCategory.toLowerCase().trim();
     const processedTerm = term.toLowerCase().trim();
     
     let filtered = products;
 
-    // 1. Match by keyword if present
+    // 1. Match by keyword if present (Case-insensitive)
     if (processedTerm) {
       filtered = filtered.filter(p => {
         const name = (p.name || '').toLowerCase();
         const cat = (p.category || '').toLowerCase();
         const pCatNormalized = normalizeCategory(cat);
         
-        return name.includes(processedTerm) || pCatNormalized.includes(processedTerm) || cat.includes(processedTerm);
+        // Includes name OR original category OR normalized category
+        return name.includes(processedTerm) || cat.includes(processedTerm) || pCatNormalized.includes(processedTerm);
       });
     }
 
-    // 2. Match by category if specifically selected
+    // 2. Match by category if specifically selected (Fuzzy match)
     if (normSelectedCategory !== 'all') {
       filtered = filtered.filter(p => {
         const cat = (p.category || '').toLowerCase();
-        const pCatNormalized = normalizeCategory(cat);
-        return pCatNormalized === normSelectedCategory || cat.includes(normSelectedCategory);
+        const pCatNormalized = normalizeCategory(cat).toLowerCase();
+        
+        // Match if product category contains search category OR normalized matches
+        return cat.includes(normSelectedCategory) || pCatNormalized.includes(normSelectedCategory);
       });
     }
 

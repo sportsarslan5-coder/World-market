@@ -112,7 +112,11 @@ Secure manual payment confirmation via WhatsApp.`;
   };
 
   const relatedProducts = useMemo(() => {
-    return products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+    const currentCat = (product.category || '').toLowerCase().trim();
+    return products.filter(p => {
+      const pCat = (p.category || '').toLowerCase().trim();
+      return pCat === currentCat && p.id !== product.id;
+    }).slice(0, 4);
   }, [products, product.category, product.id]);
 
   const getLink = (to: string) => {
