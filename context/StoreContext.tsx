@@ -21,7 +21,6 @@ import {
   DocumentData
 } from 'firebase/firestore';
 import { db, auth } from '../services/firebase';
-import Fuse from 'fuse.js';
 
 interface StoreContextType {
   products: Product[];
@@ -39,6 +38,7 @@ interface StoreContextType {
   hasMoreProducts: boolean;
   notifications: AppNotification[];
   unreadNotificationsCount: number;
+  normalizeCategory: (cat: string) => string;
   setCurrency: (code: CurrencyCode) => void;
   setLanguage: (code: LanguageCode) => void;
   setQuickViewProduct: (product: Product | null) => void;
@@ -94,28 +94,21 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setIsProductsLoading(false);
     }, (error) => {
       console.error("Products sync error:", error);
-      // Critical fallback: if firestore fails, use local data immediately
       setProducts(PRODUCTS);
       setIsProductsLoading(false);
     });
 
-    // Initial load state
     setIsProductsLoading(true);
 
-    // Sync Sales (Real-time for Admin)
     const unsubscribeSales = onSnapshot(
       query(collection(db, 'sales'), orderBy('date', 'desc')), 
       (snapshot) => {
-        console.log(`Sales update received: ${snapshot.size} records`);
         const salesList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SaleRecord));
         setSales(salesList);
       },
-      (error) => {
-        console.warn("Sales access restricted or permission denied:", error.message);
-      }
+      (error) => console.warn("Sales access restricted:", error.message)
     );
 
-    // Sync Sellers
     const unsubscribeSellers = onSnapshot(
       collection(db, 'sellers'), 
       (snapshot) => {
@@ -137,13 +130,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       (error) => console.error("Sellers sync error:", error)
     );
 
-    // Sync Notifications
     const unsubscribeNotifications = onSnapshot(
       query(collection(db, 'notifications'), orderBy('timestamp', 'desc'), limit(50)),
       (snapshot) => {
         const notifList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as AppNotification));
         
-        // Trigger browser notification for new items
         const newItems = snapshot.docChanges().filter(change => change.type === 'added');
         if (newItems.length > 0 && !snapshot.metadata.fromCache) {
           newItems.forEach(change => {
@@ -153,7 +144,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             }
           });
         }
-
         setNotifications(notifList);
       },
       (error) => console.warn("Notifications sync error:", error)
@@ -173,7 +163,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const loadMoreProducts = async () => {
     if (!lastVisible || !hasMoreProducts || isProductsLoading) return;
-    
     setIsProductsLoading(true);
     try {
       const q = query(
@@ -183,12 +172,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         limit(24)
       );
       const snapshot = await getDocs(q);
-      
       const newProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
-      
       if (newProducts.length > 0) {
         setProducts(prev => {
-          // Prevent duplicates
           const existingIds = new Set(prev.map(p => p.id));
           const uniqueNew = newProducts.filter(p => !existingIds.has(p.id));
           return [...prev, ...uniqueNew];
@@ -205,25 +191,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  // Initialize Fuse for search - Optimized for 800+ products
-  const fuse = useMemo(() => {
-    return new Fuse(products, {
-      keys: [
-        { name: 'name', weight: 10 },
-        { name: 'category', weight: 5 },
-        { name: 'tags', weight: 5 },
-        { name: 'description', weight: 1 }
-      ],
-      threshold: 0.3, // Stricter threshold for better accuracy
-      distance: 100,
-      minMatchCharLength: 2,
-      shouldSort: true,
-      includeScore: true,
-      useExtendedSearch: true
-    });
-  }, [products]);
-
   const normalizeCategory = (cat: string): string => {
+    if (!cat) return '';
     const c = cat.toLowerCase().trim();
     if (c.includes('hoodie')) return 'hoodie';
     if (c.includes('t-shirt') || c.includes('tshirt')) return 'tshirt';
@@ -234,39 +203,49 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (c.includes('jersey') || c.includes('tracksuit')) return 'jersey';
     if (c.includes('electronic')) return 'electronics';
     if (c.includes('book')) return 'books';
+    if (c.includes('jean')) return 'jeans';
+    if (c.includes('pant')) return 'pants';
+    if (c.includes('accessory') || c.includes('accessories')) return 'accessories';
     return c;
   };
 
   const searchProducts = (term: string, category: string = 'All') => {
     const rawCategory = category || 'All';
     const normSelectedCategory = rawCategory.toLowerCase().trim();
-    const processedTerm = term.toLowerCase().trim();
+    const processedTerm = term.toLowerCase().trim().replace(/^[^\w\s]+/, '');
+    
+    console.log(`[Search Debug] Term: "${processedTerm}", Category: "${normSelectedCategory}"`);
     
     let filtered = products;
 
-    // 1. Match by keyword if present (Case-insensitive)
+    if (normSelectedCategory !== 'all') {
+      filtered = filtered.filter(p => {
+        const cat = (p.category || '').toLowerCase().trim();
+        const pCatNormalized = normalizeCategory(cat);
+        const searchCatNormalized = normalizeCategory(normSelectedCategory);
+        return pCatNormalized === searchCatNormalized || 
+               cat.includes(normSelectedCategory) || 
+               pCatNormalized.includes(searchCatNormalized);
+      });
+    }
+
     if (processedTerm) {
       filtered = filtered.filter(p => {
         const name = (p.name || '').toLowerCase();
         const cat = (p.category || '').toLowerCase();
+        const tags = (p.tags || []).map(t => t.toLowerCase());
+        const desc = (p.description || '').toLowerCase();
         const pCatNormalized = normalizeCategory(cat);
         
-        // Includes name OR original category OR normalized category
-        return name.includes(processedTerm) || cat.includes(processedTerm) || pCatNormalized.includes(processedTerm);
+        return name.includes(processedTerm) || 
+               cat.includes(processedTerm) || 
+               pCatNormalized.includes(processedTerm) ||
+               tags.some(t => t.includes(processedTerm)) ||
+               desc.includes(processedTerm);
       });
     }
 
-    // 2. Match by category if specifically selected (Fuzzy match)
-    if (normSelectedCategory !== 'all') {
-      filtered = filtered.filter(p => {
-        const cat = (p.category || '').toLowerCase();
-        const pCatNormalized = normalizeCategory(cat).toLowerCase();
-        
-        // Match if product category contains search category OR normalized matches
-        return cat.includes(normSelectedCategory) || pCatNormalized.includes(normSelectedCategory);
-      });
-    }
-
+    console.log(`[Search Debug] Result Count: ${filtered.length}`);
     return filtered;
   };
 
@@ -282,7 +261,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const detected = detectShowName();
     if (detected) setActiveShowName(detected);
     
-    // Capture referral code or seller from URL
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get('ref');
     const sellerParam = urlParams.get('seller');
@@ -298,7 +276,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (storedRef) setReferralCode(storedRef);
     }
     
-    // Auto-detect currency/language
     const browserLang = navigator.language.split('-')[0];
     const foundLang = LANGUAGES.find(l => l.code === browserLang);
     if (foundLang) setLanguageState(foundLang);
@@ -348,13 +325,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const addProduct = async (newP: Omit<Product, 'id' | 'datePosted'>) => {
     try {
       const docRef = doc(collection(db, 'products'));
+      const normalizedCategory = (newP.category || '').toLowerCase().trim();
       const productData = {
         ...newP,
+        category: normalizedCategory,
         id: docRef.id,
         datePosted: new Date().toISOString()
       };
       await setDoc(docRef, productData);
-      console.log("Product added successfully:", docRef.id);
     } catch (e) {
       console.error("Error adding product:", e);
       throw e;
@@ -364,7 +342,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const updateProduct = async (id: string, updatedP: Partial<Product>) => {
     try {
       const docRef = doc(db, 'products', id);
-      await updateDoc(docRef, updatedP);
+      const finalUpdate = { ...updatedP };
+      if (finalUpdate.category) {
+        finalUpdate.category = finalUpdate.category.toLowerCase().trim();
+      }
+      await updateDoc(docRef, finalUpdate);
     } catch (e) {
       console.error("Error updating product:", e);
       throw e;
@@ -385,12 +367,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const addToCart = (product: Product, quantity: number = 1, selectedSize?: string, selectedColor?: string) => {
     const size = selectedSize || product.sizes?.[0];
     const color = selectedColor || product.colors?.[0];
-
     setCart(prev => {
       const exists = prev.find(item => 
-        item.id === product.id && 
-        item.selectedSize === size && 
-        item.selectedColor === color
+        item.id === product.id && item.selectedSize === size && item.selectedColor === color
       );
       if (exists) {
         return prev.map(item => 
@@ -420,15 +399,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         date: new Date().toISOString(),
         status: newSale.status || 'Pending Payment'
       };
-      
-      // Ensure specific fields are present for Admin visibility
       if (!saleData.customerCity) saleData.customerCity = 'N/A';
       if (!saleData.customerCountry) saleData.customerCountry = 'N/A';
       if (!saleData.customerZip) saleData.customerZip = 'N/A';
-      
       await setDoc(docRef, saleData);
       
-      // Create real-time notification
       const productSummary = saleData.products?.map(p => `${p.name} x${p.quantity}`).join(', ') || 'Items';
       const sellerInfo = saleData.sellerShopName ? `[${saleData.sellerShopName}]` : '[Main Admin]';
 
@@ -440,7 +415,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         targetRole: 'admin'
       });
 
-      // If there's a seller, notify them too
       if (saleData.sellerId && saleData.sellerId !== 'Direct') {
         await addNotification({
           type: 'New Order',
@@ -451,8 +425,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           sellerId: saleData.sellerId
         });
       }
-
-      console.log(`Order created successfully: ${docRef.id}`);
     } catch (error) {
       console.error("Error creating sale:", error);
       throw error;
@@ -505,7 +477,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <StoreContext.Provider value={{ 
       products, cart, sales, customers, activeShowName, referralCode, activeSeller, sellers,
-      notifications, unreadNotificationsCount,
+      notifications, unreadNotificationsCount, normalizeCategory,
       currency, language, quickViewProduct, isProductsLoading, hasMoreProducts,
       setCurrency, setLanguage, setQuickViewProduct, formatPrice,
       addProduct, updateProduct, deleteProduct, addToCart, removeFromCart, clearCart,

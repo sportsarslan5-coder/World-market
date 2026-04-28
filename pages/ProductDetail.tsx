@@ -8,7 +8,7 @@ import { Star, Truck, ShieldCheck, RotateCcw, MessageCircle, ShoppingCart, Chevr
 
 const ProductDetail: React.FC = () => {
   const { productId, showName: pathShowName } = useParams();
-  const { products, addToCart, activeShowName: subdomainShowName, formatPrice, activeSeller, addSale, referralCode } = useStore();
+  const { products, addToCart, activeShowName: subdomainShowName, formatPrice, activeSeller, addSale, referralCode, normalizeCategory } = useStore();
   const showName = pathShowName || subdomainShowName;
   const navigate = useNavigate();
 
@@ -112,12 +112,12 @@ Secure manual payment confirmation via WhatsApp.`;
   };
 
   const relatedProducts = useMemo(() => {
-    const currentCat = (product.category || '').toLowerCase().trim();
+    const currentCatNorm = normalizeCategory(product.category || '');
     return products.filter(p => {
-      const pCat = (p.category || '').toLowerCase().trim();
-      return pCat === currentCat && p.id !== product.id;
+      const pCatNorm = normalizeCategory(p.category || '');
+      return pCatNorm === currentCatNorm && p.id !== product.id;
     }).slice(0, 4);
-  }, [products, product.category, product.id]);
+  }, [products, product.category, product.id, normalizeCategory]);
 
   const getLink = (to: string) => {
     if (showName) {

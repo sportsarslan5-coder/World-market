@@ -27,7 +27,7 @@ import {
 
 const Home: React.FC = () => {
   const { showName: pathShowName } = useParams();
-  const { activeShowName: subdomainShowName, activeSeller, addToCart, formatPrice, setQuickViewProduct, products, language } = useStore();
+  const { activeShowName: subdomainShowName, activeSeller, addToCart, formatPrice, setQuickViewProduct, products, language, normalizeCategory } = useStore();
   const showName = pathShowName || subdomainShowName;
 
   useEffect(() => {
@@ -135,7 +135,7 @@ const Home: React.FC = () => {
                   <span className="text-white">Marketplace</span>
                 </h1>
                 <p className="text-xl md:text-2xl font-medium text-gray-300 max-w-2xl leading-relaxed">
-                  Your unique marketplace link is now active! Start sharing your store name 
+                   Your unique marketplace link is now active! Start sharing your store name 
                   to earn commissions on every global sale.
                 </p>
               </div>
@@ -185,31 +185,21 @@ const Home: React.FC = () => {
           ].map((block) => {
             if (!products || products.length === 0) return null;
             
-            // Apply strict normalization for block filtering
-            const blockCat = block.cat.toLowerCase().trim();
+            // Normalize for matching
+            const blockCatNormalized = normalizeCategory(block.cat);
             const blockKw = block.kw.toLowerCase().trim();
 
-            const images = products
-              .filter(p => {
-                const pCat = (p.category || '').toLowerCase();
-                const pName = (p.name || '').toLowerCase();
-                // Match if normalized category matches OR if name contains the keyword
-                return pCat.includes(blockCat) && (blockKw === '' || pName.includes(blockKw));
-              })
-              .map(p => p.image)
-              .slice(0, 4);
+            // Unified filter for block images using shared normalization
+            const matchingProducts = products.filter(p => {
+              const pCatNormalized = normalizeCategory(p.category || '');
+              const pName = (p.name || '').toLowerCase();
+              return pCatNormalized === blockCatNormalized || pName.includes(blockKw);
+            });
+
+            const images = matchingProducts.map(p => p.image).slice(0, 4);
             
-            // Fallback if not enough images or no matches for keyword
-            if (images.length < 4) {
-              const fallback = products
-                .filter(p => {
-                  const pCat = (p.category || '').toLowerCase();
-                  return pCat.includes(blockCat) && !images.includes(p.image);
-                })
-                .map(p => p.image)
-                .slice(0, 4 - images.length);
-              images.push(...fallback);
-            }
+            // If No matches for this specific block, hide it or use placeholders if it's a core block
+            if (images.length === 0) return null;
 
             return (
               <Link 
@@ -221,15 +211,21 @@ const Home: React.FC = () => {
                   {block.title}
                 </h3>
                 <div className="grid grid-cols-2 gap-2 flex-grow">
-                  {images.map((img, i) => (
-                    <div key={i} className="aspect-square bg-gray-100 overflow-hidden rounded-sm">
-                      <img 
-                        src={img} 
-                        alt="" 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                        referrerPolicy="no-referrer"
-                        loading="lazy"
-                      />
+                  {[0, 1, 2, 3].map((i) => (
+                    <div key={i} className="aspect-square bg-gray-50 overflow-hidden rounded-sm relative">
+                      {images[i] ? (
+                        <img 
+                          src={images[i]} 
+                          alt="" 
+                          className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500" 
+                          referrerPolicy="no-referrer"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-200">
+                           <BrandLogo className="opacity-10 scale-50" />
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
