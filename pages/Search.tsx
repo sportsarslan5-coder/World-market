@@ -131,19 +131,22 @@ const Search: React.FC = () => {
                      Any Department
                    </button>
                  </li>
-                 {CATEGORIES.map(cat => (
-                   <li key={cat}>
-                     <button 
-                       onClick={() => {
-                          setFilters({...filters, selectedCategory: cat});
-                          setSearchParams({ q: query, category: cat });
-                       }}
-                       className={`text-xs capitalize ${filters.selectedCategory === cat ? 'font-black text-gray-900' : 'text-gray-700 hover:text-[#c45500]'}`}
-                     >
-                       {cat}
-                     </button>
-                   </li>
-                 ))}
+                 {CATEGORIES.map(cat => {
+                   const isSelected = filters.selectedCategory.toLowerCase().trim() === cat.toLowerCase().trim();
+                   return (
+                     <li key={cat}>
+                       <button 
+                         onClick={() => {
+                            setFilters({...filters, selectedCategory: cat});
+                            setSearchParams({ q: query, category: cat });
+                         }}
+                         className={`text-xs capitalize ${isSelected ? 'font-black text-gray-900' : 'text-gray-700 hover:text-[#c45500]'}`}
+                       >
+                         {cat}
+                       </button>
+                     </li>
+                   );
+                 })}
                </ul>
              </div>
 

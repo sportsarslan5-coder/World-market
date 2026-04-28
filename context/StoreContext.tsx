@@ -20,7 +20,7 @@ import {
   QueryDocumentSnapshot,
   DocumentData
 } from 'firebase/firestore';
-import { db, auth } from '../services/firebase';
+import { db, auth, validateConnection } from '../services/firebase';
 
 interface StoreContextType {
   products: Product[];
@@ -74,6 +74,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Real-time synchronization with Firestore
   useEffect(() => {
+    validateConnection();
+    
     // Request notification permission
     if (typeof window !== 'undefined' && 'Notification' in window) {
       if (Notification.permission === 'default') {
@@ -212,7 +214,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const searchProducts = (term: string, category: string = 'All') => {
     const rawCategory = category || 'All';
     const normSelectedCategory = rawCategory.toLowerCase().trim();
-    const processedTerm = term.toLowerCase().trim().replace(/^[^\w\s]+/, '');
+    
+    // Clean search term: remove URL patterns like /search?q= or tshirt/search?q=
+    let processedTerm = term.toLowerCase().trim();
+    if (processedTerm.includes('?q=')) {
+      processedTerm = processedTerm.split('?q=').pop() || '';
+    }
+    // Remove any leading path markers or special characters
+    processedTerm = processedTerm.replace(/^[^\w\s]+/, '').trim();
     
     console.log(`[Search Debug] Term: "${processedTerm}", Category: "${normSelectedCategory}"`);
     
@@ -220,11 +229,17 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     if (normSelectedCategory !== 'all') {
       filtered = filtered.filter(p => {
-        const cat = (p.category || '').toLowerCase().trim();
-        const pCatNormalized = normalizeCategory(cat);
+        const pCatRaw = (p.category || '').toLowerCase().trim();
+        const pCatNormalized = normalizeCategory(pCatRaw);
         const searchCatNormalized = normalizeCategory(normSelectedCategory);
+        
+        // Match if:
+        // 1. Normalized categories are identical
+        // 2. The raw category includes the search category string
+        // 3. The search category string includes the category name
         return pCatNormalized === searchCatNormalized || 
-               cat.includes(normSelectedCategory) || 
+               pCatRaw.includes(normSelectedCategory) || 
+               normSelectedCategory.includes(pCatRaw) ||
                pCatNormalized.includes(searchCatNormalized);
       });
     }

@@ -37,9 +37,9 @@ const Products: React.FC = () => {
     // 1. First apply search if query exists, pass current category context
     let result = searchProducts(query, category);
     
-    console.log(`Filtering ${result.length} products (Total in store: ${products.length})`);
-    if (query) console.log(`Search query active: "${query}"`);
-    if (category !== 'All') console.log(`Category filter active: "${category}"`);
+    console.log(`[Products Debug] Filtering ${result.length} products (Total in store: ${products.length})`);
+    if (query) console.log(`[Products Debug] Search query active: "${query}"`);
+    if (category !== 'All') console.log(`[Products Debug] Category filter active: "${category}"`);
 
     // 2. Then apply other filters
     result = result.filter(p => {
@@ -155,15 +155,20 @@ const Products: React.FC = () => {
             <div>
               <h4 className="text-xs font-black uppercase tracking-[0.2em] mb-6 text-gray-900">{t('category')}</h4>
               <div className="space-y-3">
-                {['All', ...CATEGORIES].map(cat => (
-                  <button 
-                    key={cat}
-                    onClick={() => setSearchParams({ q: query, category: cat })}
-                    className={`block w-full text-left text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors ${category === cat ? 'text-blue-600' : 'text-gray-400'}`}
-                  >
-                    {cat}
-                  </button>
-                ))}
+                {['All', ...CATEGORIES].map(cat => {
+                  const isSelected = category.toLowerCase().trim() === cat.toLowerCase().trim() ||
+                                   (category === 'All' && cat === 'All');
+                  
+                  return (
+                    <button 
+                      key={cat}
+                      onClick={() => setSearchParams({ q: query, category: cat })}
+                      className={`block w-full text-left text-xs font-bold uppercase tracking-widest hover:text-blue-600 transition-colors ${isSelected ? 'text-blue-600' : 'text-gray-400'}`}
+                    >
+                      {cat}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -401,15 +406,19 @@ const Products: React.FC = () => {
               <div>
                 <h4 className="text-xs font-black uppercase tracking-[0.2em] mb-6 text-blue-500">Category</h4>
                 <div className="flex flex-wrap gap-3">
-                  {['All', ...CATEGORIES].map(cat => (
-                    <button 
-                      key={cat}
-                      onClick={() => setSearchParams({ q: query, category: cat })}
-                      className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${category === cat ? 'bg-blue-600 border-blue-600 text-white' : 'border-white/10 text-gray-400'}`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
+                  {['All', ...CATEGORIES].map(cat => {
+                    const isSelected = category.toLowerCase().trim() === cat.toLowerCase().trim() ||
+                                     (category === 'All' && cat === 'All');
+                    return (
+                      <button 
+                        key={cat}
+                        onClick={() => setSearchParams({ q: query, category: cat })}
+                        className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${isSelected ? 'bg-blue-600 border-blue-600 text-white' : 'border-white/10 text-gray-400'}`}
+                      >
+                        {cat}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
