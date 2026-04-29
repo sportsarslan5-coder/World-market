@@ -61,7 +61,7 @@ interface StoreContextType {
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(PRODUCTS);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [sales, setSales] = useState<SaleRecord[]>([]);
@@ -85,14 +85,15 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     const q = query(collection(db, 'products'), orderBy('datePosted', 'desc')); 
     const unsubscribeProducts = onSnapshot(q, (snapshot) => {
-      if (snapshot.empty) {
-        setProducts(PRODUCTS);
-        setHasMoreProducts(false);
-      } else {
-        const productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
-        setProducts(productList);
-        setHasMoreProducts(false);
-      }
+      const dbProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+      
+      // Merge Firestore products with static PRODUCTS but deduplicate by ID
+      // This ensures "old" mock products and "newly uploaded" Firestore products are both visible
+      const dbIds = new Set(dbProducts.map(p => p.id));
+      const combined = [...dbProducts, ...PRODUCTS.filter(p => !dbIds.has(p.id))];
+      
+      setProducts(combined);
+      setHasMoreProducts(false);
       setIsProductsLoading(false);
     }, (error) => {
       console.error("Products sync error:", error);
@@ -230,6 +231,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (normSelectedCategory !== 'all') {
       filtered = filtered.filter(p => {
         const pCatRaw = (p.category || '').toLowerCase().trim();
+        const pName = (p.name || '').toLowerCase().trim();
+        const pTags = (p.tags || []).map(t => t.toLowerCase());
         const pCatNormalized = normalizeCategory(pCatRaw);
         const searchCatNormalized = normalizeCategory(normSelectedCategory);
         
@@ -237,10 +240,13 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         // 1. Normalized categories are identical
         // 2. The raw category includes the search category string
         // 3. The search category string includes the category name
+        // 4. Product name or tags contain the category name (Ensures Home blocks stay consistent)
         return pCatNormalized === searchCatNormalized || 
                pCatRaw.includes(normSelectedCategory) || 
                normSelectedCategory.includes(pCatRaw) ||
-               pCatNormalized.includes(searchCatNormalized);
+               pCatNormalized.includes(searchCatNormalized) ||
+               pName.includes(normSelectedCategory) ||
+               pTags.some(t => t.includes(normSelectedCategory));
       });
     }
 
