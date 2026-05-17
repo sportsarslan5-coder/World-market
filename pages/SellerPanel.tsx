@@ -225,6 +225,14 @@ const SellerPanel: React.FC = () => {
                )}
             </div>
           )}
+          <div className="mt-8 p-6 bg-blue-50 border border-blue-100 rounded-2xl flex items-center gap-4">
+            <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center shrink-0">
+              <AlertCircle size={20} />
+            </div>
+            <p className="text-[11px] font-black uppercase tracking-widest text-blue-600 leading-relaxed">
+              Payment will be processed after order completion. Seller will receive confirmation on WhatsApp.
+            </p>
+          </div>
         </section>
       </main>
 
@@ -244,19 +252,26 @@ const SellerPanel: React.FC = () => {
                   <section>
                     <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-2">Customer</h4>
                     <p className="text-xs font-black uppercase">{selectedOrder.customerName}</p>
-                    <p className="text-[10px] font-bold text-gray-500 mt-1">{selectedOrder.customerPhone}</p>
+                    <p className="text-[10px] font-bold text-gray-500 mt-1">{selectedOrder.customerPhone || 'N/A'}</p>
+                    <p className="text-[10px] font-black text-blue-600 lowercase mt-1">{selectedOrder.customerEmail || 'N/A'}</p>
                     <p className="text-[10px] font-bold text-gray-500 leading-tight mt-2">{selectedOrder.customerAddress}, {selectedOrder.customerCity}</p>
                   </section>
                   <section className="text-right">
                     <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-2">Metadata</h4>
                     <p className="text-[10px] font-black text-blue-600 uppercase">Time: {new Date(selectedOrder.date).toLocaleTimeString()}</p>
                     <p className="text-[10px] font-black text-gray-400 uppercase mt-1">Date: {new Date(selectedOrder.date).toLocaleDateString()}</p>
-                    <div className="mt-4">
+                    <p className="text-[9px] font-black text-purple-600 uppercase mt-4">Seller: {selectedOrder.sellerShopName || 'Main Store'}</p>
+                    <div className="mt-2">
                        <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${selectedOrder.status === 'Confirmed' ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'}`}>
                           {selectedOrder.status}
                         </span>
                     </div>
                   </section>
+               </div>
+               <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 italic">
+                 <p className="text-[10px] font-black uppercase tracking-widest text-blue-600">
+                   "Payment will be processed after order completion. Seller will receive confirmation on WhatsApp."
+                 </p>
                </div>
                <div>
                  <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-4">Items</h4>

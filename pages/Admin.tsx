@@ -336,7 +336,7 @@ const Admin: React.FC = () => {
                           <div className="flex flex-col">
                             <span className="text-sm font-black uppercase tracking-tighter text-gray-900">{s.customerName}</span>
                             <span className="text-[10px] text-blue-600 font-bold uppercase tracking-widest">{s.customerPhone}</span>
-                            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">{s.customerEmail}</span>
+                            <span className="text-[9px] text-gray-400 font-bold tracking-widest lowercase bg-gray-100 px-2 py-0.5 rounded-full mt-1 w-fit">{s.customerEmail}</span>
                             <span className="text-[8px] text-gray-500 font-bold uppercase mt-1 truncate max-w-[150px]">
                               {s.customerAddress}, {s.customerCity}, {s.customerCountry}
                             </span>
@@ -402,38 +402,52 @@ const Admin: React.FC = () => {
                 <div className="bg-white rounded-[2rem] shadow-2xl max-w-2xl w-full overflow-hidden animate-scaleIn">
                   <div className="bg-black text-white p-8 flex justify-between items-center">
                     <div>
-                      <h2 className="text-3xl font-black italic tracking-tighter uppercase">Order <span className="text-blue-500 underline">Details</span></h2>
-                      <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-2 px-1">ID: #{selectedOrder.id}</p>
+                      <h2 className="text-3xl font-black italic tracking-tighter uppercase">Order <span className="text-blue-500 underline">Summary</span></h2>
+                      <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-2 px-1">Order ID: #{selectedOrder.id}</p>
                     </div>
                     <button onClick={() => setSelectedOrder(null)} className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all text-white"><X size={20} /></button>
                   </div>
                   <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div>
-                        <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Customer Information</h4>
+                        <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Customer Profile</h4>
                         <p className="text-sm font-black uppercase text-gray-900">{selectedOrder.customerName}</p>
-                        <div className="flex flex-col gap-1 mt-1">
-                          <p className="text-xs font-bold text-gray-500">Phone: {selectedOrder.customerPhone || 'N/A'}</p>
-                          <p className="text-xs font-bold text-gray-400 break-all">Email: {selectedOrder.customerEmail || 'N/A'}</p>
+                        <div className="flex flex-col gap-1.5 mt-2">
+                          <p className="text-xs font-bold text-gray-500 flex items-center gap-2">
+                            <span className="w-16 text-[9px] uppercase text-gray-400">Phone:</span>
+                            <span className="text-gray-900">{selectedOrder.customerPhone || 'N/A'}</span>
+                          </p>
+                          <p className="text-xs font-bold text-gray-500 flex items-center gap-2">
+                            <span className="w-16 text-[9px] uppercase text-gray-400">Gmail:</span>
+                            <span className="text-blue-600 underline font-black">{selectedOrder.customerEmail || 'N/A'}</span>
+                          </p>
                         </div>
-                        <p className="text-[10px] font-bold text-gray-400 mt-4 uppercase tracking-widest">Delivery Address:</p>
+                        <p className="text-[10px] font-bold text-gray-400 mt-4 uppercase tracking-widest">Address:</p>
                         <div className="text-xs font-bold text-gray-500 leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100 mt-2">
                           <p className="uppercase">{selectedOrder.customerAddress || 'No Address'}</p>
-                          <p className="uppercase">{selectedOrder.customerCity && `${selectedOrder.customerCity}, `}{selectedOrder.customerCountry || 'No Country'}</p>
-                          <p className="mt-2 text-blue-600 font-black tracking-widest">ZIP: {selectedOrder.customerZip || 'N/A'}</p>
+                          <p className="uppercase font-black text-gray-700">{selectedOrder.customerCity && `${selectedOrder.customerCity}, `}{selectedOrder.customerCountry || 'No Country'}</p>
                         </div>
                       </div>
                       <div>
-                        <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Order Metadata</h4>
+                        <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3 text-right">Metadata</h4>
                         <div className="space-y-4">
-                          <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                            <p className="text-[10px] font-black uppercase text-blue-600 tracking-widest mb-1">Order Time</p>
-                            <p className="text-xs font-black uppercase">{new Date(selectedOrder.date).toLocaleString()}</p>
+                          <div className="bg-white p-4 rounded-xl border border-gray-100 text-right">
+                            <p className="text-[10px] font-black uppercase text-blue-600 tracking-widest mb-1">Time: {new Date(selectedOrder.date).toLocaleTimeString()}</p>
+                            <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Date: {new Date(selectedOrder.date).toLocaleDateString()}</p>
+                            <div className="mt-4 flex justify-end">
+                              <span className={`px-4 py-2 rounded-full text-[8px] font-black uppercase tracking-widest ${
+                                selectedOrder.status === 'Confirmed' ? 'bg-green-50 text-green-600' : 
+                                selectedOrder.status === 'Pending Payment' ? 'bg-orange-50 text-orange-600' : 
+                                'bg-blue-50 text-blue-600'
+                              }`}>
+                                {selectedOrder.status}
+                              </span>
+                            </div>
                           </div>
                           <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                             <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Seller Shop</p>
-                             <p className="text-xs font-black uppercase text-gray-900">{selectedOrder.sellerShopName || 'Main Admin'}</p>
-                             <p className="text-[9px] font-bold text-gray-400 mt-1">ID: {selectedOrder.sellerId || 'Direct'}</p>
+                             <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Seller Identity</p>
+                             <p className="text-xs font-black uppercase text-gray-900">{selectedOrder.sellerShopName || 'Main Warehouse Admin'}</p>
+                             <p className="text-[9px] font-bold text-gray-400 mt-1">UID: {selectedOrder.sellerId || 'OFFICIAL'}</p>
                           </div>
                         </div>
                       </div>

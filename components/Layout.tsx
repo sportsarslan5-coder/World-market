@@ -99,8 +99,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       { name: 'tags', weight: 6 },
       { name: 'description', weight: 1 }
     ],
-    threshold: 0.35,
-    distance: 100,
+    threshold: 0.2,
+    distance: 50,
     includeScore: true
   }), [products]);
 
@@ -114,8 +114,21 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       };
     }
     
-    // Fuzzy search for products
-    const productResults = fuse.search(searchQuery).slice(0, 8).map(r => r.item);
+    // Mixed search strategy: Prefix matches first, then fuzzy
+    const searchLower = searchQuery.toLowerCase();
+    
+    const prefixMatches = products.filter(p => 
+      p.name.toLowerCase().startsWith(searchLower) ||
+      p.category.toLowerCase().startsWith(searchLower) ||
+      p.tags?.some(t => t.toLowerCase().startsWith(searchLower))
+    ).slice(0, 5);
+
+    const fuzzyResults = fuse.search(searchQuery)
+      .map(r => r.item)
+      .filter(item => !prefixMatches.some(p => p.id === item.id))
+      .slice(0, 8 - prefixMatches.length);
+    
+    const productResults = [...prefixMatches, ...fuzzyResults];
     
     // Simple category match
     const categoryMatches = CATEGORIES.filter(c => 
