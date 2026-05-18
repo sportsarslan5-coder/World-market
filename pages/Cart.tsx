@@ -37,8 +37,9 @@ const Cart: React.FC = () => {
     console.log("Preparing to submit order to Firebase...");
     
     const urlParams = new URLSearchParams(window.location.search);
-    const shopName = urlParams.get('seller') || (activeSeller ? activeSeller.showName : (activeShowName || "Main Store"));
-    const sellerCode = referralCode || (activeSeller ? activeSeller.id : "Direct");
+    const referralFromUrl = urlParams.get('seller') || urlParams.get('ref');
+    const shopName = referralFromUrl || (activeSeller ? activeSeller.showName : (activeShowName && !activeShowName.includes('?') ? activeShowName : "Main Store"));
+    const sellerCode = referralCode || (activeSeller ? activeSeller.id : (referralFromUrl || "Direct"));
     
     const orderSummary = cart.map(item => 
       `Product: ${item.name} (ID: ${item.id})\nSize: ${item.selectedSize || 'N/A'}\nColor: ${item.selectedColor || 'N/A'}\nQuantity: ${item.quantity}\nPrice: $${item.price.toFixed(2)}`

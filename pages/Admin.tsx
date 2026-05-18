@@ -334,24 +334,34 @@ const Admin: React.FC = () => {
                         </td>
                         <td className="px-6 md:px-10 py-6">
                           <div className="flex flex-col">
-                            <span className="text-sm font-black uppercase tracking-tighter text-gray-900">{s.customerName}</span>
-                            <span className="text-[10px] text-blue-600 font-bold uppercase tracking-widest">{s.customerPhone}</span>
-                            <span className="text-[9px] text-gray-400 font-bold tracking-widest lowercase bg-gray-100 px-2 py-0.5 rounded-full mt-1 w-fit">{s.customerEmail}</span>
-                            <span className="text-[8px] text-gray-500 font-bold uppercase mt-1 truncate max-w-[150px]">
-                              {s.customerAddress}, {s.customerCity}, {s.customerCountry}
+                            <span className="text-sm font-black uppercase tracking-tighter text-gray-900 line-clamp-1">{s.customerName || 'No Name'}</span>
+                            <span className="text-[10px] text-blue-600 font-bold uppercase tracking-widest">{s.customerPhone || 'NO_PHONE'}</span>
+                            {s.customerEmail ? (
+                              <span className="text-[9px] text-gray-900 font-black tracking-widest lowercase bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full mt-1 w-fit">{s.customerEmail}</span>
+                            ) : (
+                              <span className="text-[9px] text-red-600 font-black tracking-widest uppercase bg-red-50 border border-red-100 px-2 py-0.5 rounded-full mt-1 w-fit">MISSING_GMAIL</span>
+                            )}
+                            <span className="text-[8px] text-gray-500 font-bold uppercase mt-2 leading-relaxed">
+                              {s.customerAddress || 'No Address'}, {s.customerCity || 'N/A'}, {s.customerCountry || 'N/A'}
                             </span>
                           </div>
                         </td>
                         <td className="px-6 md:px-10 py-6">
                           <div className="flex flex-col">
-                            <span className="text-xs font-black uppercase text-purple-600 tracking-tight">{s.sellerShopName || 'Main Store'}</span>
-                            <span className="text-[9px] text-gray-400 font-bold uppercase">{s.sellerId || 'Direct'}</span>
+                            <span className="text-xs font-black uppercase text-purple-600 tracking-tight">{s.sellerShopName || 'Official W-Lord'}</span>
+                            <span className="text-[9px] text-gray-400 font-black uppercase tracking-widest mt-1">UID: {s.sellerId || 'WAREHOUSE'}</span>
+                            <span className="text-[8px] font-bold text-gray-500 mt-1 uppercase italic">{s.sellerId ? 'Third-Party' : 'Main Admin'}</span>
                           </div>
                         </td>
                         <td className="px-6 md:px-10 py-6">
                           <div className="flex flex-col">
                             <span className="text-sm font-black text-gray-900">{formatPrice(s.amount)}</span>
-                            <span className="text-[10px] text-gray-400 font-bold">{s.products?.length || 0} Products</span>
+                            <div className="mt-1 flex flex-col gap-0.5">
+                               <span className="text-[9px] text-blue-600 font-black uppercase tracking-widest">{s.products?.length || 0} Products</span>
+                               <div className="max-w-[120px] truncate text-[8px] text-gray-400 font-bold uppercase">
+                                 {s.products?.map((p: any) => p.name).join(', ')}
+                               </div>
+                            </div>
                           </div>
                         </td>
                         <td className="px-6 md:px-10 py-6">

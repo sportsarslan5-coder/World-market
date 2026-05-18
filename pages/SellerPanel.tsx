@@ -183,7 +183,8 @@ const SellerPanel: React.FC = () => {
                           <ShoppingBag size={24}/>
                        </div>
                        <div>
-                          <p className="text-sm font-black uppercase text-gray-900">{order.customerName}</p>
+                          <p className="text-sm font-black uppercase text-gray-900">Buyer: Verified User</p>
+                          <p className="text-[10px] font-black text-blue-600 mt-1 uppercase tracking-widest italic">Identity Hidden for Privacy</p>
                           <p className="text-[10px] font-bold text-gray-400 mt-1 uppercase">ID: #{order.id.slice(-8)} • {new Date(order.date).toLocaleDateString()}</p>
                        </div>
                     </div>
@@ -250,9 +251,9 @@ const SellerPanel: React.FC = () => {
             <div className="p-8 space-y-8 max-h-[60vh] overflow-y-auto">
                <div className="grid grid-cols-2 gap-8 text-left">
                   <section>
-                    <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-2">Customer Details</h4>
-                    <p className="text-xs font-black uppercase">{selectedOrder.customerName}</p>
-                    <p className="text-[10px] font-bold text-gray-400 mt-1 italic tracking-widest uppercase">Contact Hidden for Privacy</p>
+                    <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-2">Customer Hierarchy</h4>
+                    <p className="text-xs font-black uppercase text-blue-600 italic">Verified Buyer</p>
+                    <p className="text-[10px] font-black text-gray-400 mt-1 italic tracking-widest uppercase">Contact Hidden for Privacy</p>
                     <div className="flex flex-col gap-1 mt-2">
                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Region: <span className="text-gray-900">{selectedOrder.customerCity || 'N/A'}</span></p>
                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Location: <span className="text-gray-900">{selectedOrder.customerCountry || 'N/A'}</span></p>
@@ -270,10 +271,14 @@ const SellerPanel: React.FC = () => {
                     </div>
                   </section>
                </div>
-               <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 italic">
+               <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 flex flex-col gap-3">
                  <p className="text-[10px] font-black uppercase tracking-widest text-blue-600">
                    "Payment will be processed after order completion. Seller will receive confirmation on WhatsApp."
                  </p>
+                 <div className="pt-2 border-t border-blue-100 flex justify-between items-center">
+                   <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Commission Type</span>
+                   <span className="text-[9px] font-black text-green-600 uppercase tracking-widest">Direct Escrow</span>
+                 </div>
                </div>
                <div>
                  <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-4">Items</h4>
