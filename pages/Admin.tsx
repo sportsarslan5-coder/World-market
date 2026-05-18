@@ -415,21 +415,22 @@ const Admin: React.FC = () => {
                         <div className="flex flex-col gap-1.5 mt-2">
                           <p className="text-xs font-bold text-gray-500 flex items-center gap-2">
                             <span className="w-16 text-[9px] uppercase text-gray-400">Phone:</span>
-                            <span className="text-gray-900">{selectedOrder.customerPhone || 'N/A'}</span>
+                            <span className="text-gray-900">{selectedOrder.customerPhone || 'Not Provided'}</span>
                           </p>
                           <p className="text-xs font-bold text-gray-500 flex items-center gap-2">
                             <span className="w-16 text-[9px] uppercase text-gray-400">Gmail:</span>
-                            <span className="text-blue-600 underline font-black">{selectedOrder.customerEmail || 'N/A'}</span>
+                            <span className="text-blue-600 underline font-black">{selectedOrder.customerEmail || 'Not Provided'}</span>
                           </p>
                         </div>
-                        <p className="text-[10px] font-bold text-gray-400 mt-4 uppercase tracking-widest">Address:</p>
+                        <p className="text-[10px] font-bold text-gray-400 mt-4 uppercase tracking-widest">Shipping Address:</p>
                         <div className="text-xs font-bold text-gray-500 leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100 mt-2">
-                          <p className="uppercase">{selectedOrder.customerAddress || 'No Address'}</p>
+                          <p className="uppercase">{selectedOrder.customerAddress || 'No Full Address'}</p>
                           <p className="uppercase font-black text-gray-700">{selectedOrder.customerCity && `${selectedOrder.customerCity}, `}{selectedOrder.customerCountry || 'No Country'}</p>
+                          <p className="mt-2 text-blue-600 font-bold tracking-widest">ZIP: {selectedOrder.customerZip || 'N/A'}</p>
                         </div>
                       </div>
                       <div>
-                        <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3 text-right">Metadata</h4>
+                        <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3 text-right">Order Stats</h4>
                         <div className="space-y-4">
                           <div className="bg-white p-4 rounded-xl border border-gray-100 text-right">
                             <p className="text-[10px] font-black uppercase text-blue-600 tracking-widest mb-1">Time: {new Date(selectedOrder.date).toLocaleTimeString()}</p>
@@ -445,9 +446,10 @@ const Admin: React.FC = () => {
                             </div>
                           </div>
                           <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                             <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Seller Identity</p>
-                             <p className="text-xs font-black uppercase text-gray-900">{selectedOrder.sellerShopName || 'Main Warehouse Admin'}</p>
-                             <p className="text-[9px] font-bold text-gray-400 mt-1">UID: {selectedOrder.sellerId || 'OFFICIAL'}</p>
+                             <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Source Seller</p>
+                             <p className="text-xs font-black uppercase text-gray-900">{selectedOrder.sellerShopName || 'Official W-Lord Admin'}</p>
+                             <p className="text-[9px] font-bold text-gray-400 mt-1">SELLER UID: <span className="text-blue-600">{selectedOrder.sellerId || 'OFFICIAL_WAREHOUSE'}</span></p>
+                             <p className="text-[9px] font-bold text-gray-400 uppercase mt-1">Role: {selectedOrder.sellerId ? 'Third-Party Merchant' : 'Platform Owner'}</p>
                           </div>
                         </div>
                       </div>

@@ -250,11 +250,13 @@ const SellerPanel: React.FC = () => {
             <div className="p-8 space-y-8 max-h-[60vh] overflow-y-auto">
                <div className="grid grid-cols-2 gap-8 text-left">
                   <section>
-                    <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-2">Customer</h4>
+                    <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-2">Customer Details</h4>
                     <p className="text-xs font-black uppercase">{selectedOrder.customerName}</p>
-                    <p className="text-[10px] font-bold text-gray-500 mt-1">{selectedOrder.customerPhone || 'N/A'}</p>
-                    <p className="text-[10px] font-black text-blue-600 lowercase mt-1">{selectedOrder.customerEmail || 'N/A'}</p>
-                    <p className="text-[10px] font-bold text-gray-500 leading-tight mt-2">{selectedOrder.customerAddress}, {selectedOrder.customerCity}</p>
+                    <p className="text-[10px] font-bold text-gray-400 mt-1 italic tracking-widest uppercase">Contact Hidden for Privacy</p>
+                    <div className="flex flex-col gap-1 mt-2">
+                       <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Region: <span className="text-gray-900">{selectedOrder.customerCity || 'N/A'}</span></p>
+                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Location: <span className="text-gray-900">{selectedOrder.customerCountry || 'N/A'}</span></p>
+                    </div>
                   </section>
                   <section className="text-right">
                     <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-2">Metadata</h4>

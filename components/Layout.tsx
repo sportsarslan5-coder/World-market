@@ -96,11 +96,10 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     keys: [
       { name: 'name', weight: 10 },
       { name: 'category', weight: 8 },
-      { name: 'tags', weight: 6 },
-      { name: 'description', weight: 1 }
+      { name: 'tags', weight: 6 }
     ],
-    threshold: 0.2,
-    distance: 50,
+    threshold: 0.15,
+    distance: 20,
     includeScore: true
   }), [products]);
 
@@ -114,21 +113,24 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       };
     }
     
-    // Mixed search strategy: Prefix matches first, then fuzzy
-    const searchLower = searchQuery.toLowerCase();
+    // Mixed search strategy: Higher precision filtering
+    const searchLower = searchQuery.toLowerCase().trim();
     
-    const prefixMatches = products.filter(p => 
-      p.name.toLowerCase().startsWith(searchLower) ||
-      p.category.toLowerCase().startsWith(searchLower) ||
-      p.tags?.some(t => t.toLowerCase().startsWith(searchLower))
-    ).slice(0, 5);
+    // 1. Priority: Names that start with the query or contain the query as a word
+    const priorityMatches = products.filter(p => {
+      const nameLower = p.name.toLowerCase();
+      return nameLower.startsWith(searchLower) || 
+             nameLower.split(' ').some(word => word.startsWith(searchLower)) ||
+             p.category.toLowerCase() === searchLower;
+    }).slice(0, 6);
 
+    // 2. Secondary: Fuzzy matches but very strict
     const fuzzyResults = fuse.search(searchQuery)
       .map(r => r.item)
-      .filter(item => !prefixMatches.some(p => p.id === item.id))
-      .slice(0, 8 - prefixMatches.length);
+      .filter(item => !priorityMatches.some(p => p.id === item.id))
+      .slice(0, 8 - priorityMatches.length);
     
-    const productResults = [...prefixMatches, ...fuzzyResults];
+    const productResults = [...priorityMatches, ...fuzzyResults];
     
     // Simple category match
     const categoryMatches = CATEGORIES.filter(c => 
