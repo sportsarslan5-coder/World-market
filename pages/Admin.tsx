@@ -335,14 +335,14 @@ const Admin: React.FC = () => {
                         <td className="px-6 md:px-10 py-6">
                           <div className="flex flex-col">
                             <span className="text-sm font-black uppercase tracking-tighter text-gray-900 line-clamp-1">{s.customerName || 'No Name'}</span>
-                            <span className="text-[10px] text-blue-600 font-bold uppercase tracking-widest">{s.customerPhone || 'NO_PHONE'}</span>
-                            {s.customerEmail ? (
-                              <span className="text-[9px] text-gray-900 font-black tracking-widest lowercase bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full mt-1 w-fit">{s.customerEmail}</span>
-                            ) : (
-                              <span className="text-[9px] text-red-600 font-black tracking-widest uppercase bg-red-50 border border-red-100 px-2 py-0.5 rounded-full mt-1 w-fit">MISSING_GMAIL</span>
-                            )}
-                            <span className="text-[8px] text-gray-500 font-bold uppercase mt-2 leading-relaxed">
-                              {s.customerAddress || 'No Address'}, {s.customerCity || 'N/A'}, {s.customerCountry || 'N/A'}
+                            <div className="flex flex-wrap gap-2 mt-1">
+                              <span className="text-[10px] text-blue-600 font-bold uppercase tracking-widest">{s.customerPhone || 'NO_PHONE'}</span>
+                              {s.customerEmail && (
+                                <span className="text-[9px] text-gray-900 font-black tracking-widest lowercase bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full">{s.customerEmail}</span>
+                              )}
+                            </div>
+                            <span className="text-[8px] text-gray-500 font-bold uppercase mt-2 leading-relaxed line-clamp-2">
+                              {s.customerAddress || 'No Address'}, {s.customerCity || 'N/A'}, {s.customerCountry || 'N/A'} {s.customerZip && `(ZIP: ${s.customerZip})`}
                             </span>
                           </div>
                         </td>
@@ -350,7 +350,16 @@ const Admin: React.FC = () => {
                           <div className="flex flex-col">
                             <span className="text-xs font-black uppercase text-purple-600 tracking-tight">{s.sellerShopName || 'Official W-Lord'}</span>
                             <span className="text-[9px] text-gray-400 font-black uppercase tracking-widest mt-1">UID: {s.sellerId || 'WAREHOUSE'}</span>
-                            <span className="text-[8px] font-bold text-gray-500 mt-1 uppercase italic">{s.sellerId ? 'Third-Party' : 'Main Admin'}</span>
+                            <div className="mt-1">
+                              <a 
+                                href={`https://wa.me/${sellers.find(sel => sel.id === s.sellerId)?.whatsapp || '923057390977'}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-[8px] font-black underline text-green-600 uppercase"
+                              >
+                                Contact Seller
+                              </a>
+                            </div>
                           </div>
                         </td>
                         <td className="px-6 md:px-10 py-6">

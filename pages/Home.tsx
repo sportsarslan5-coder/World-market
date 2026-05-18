@@ -27,7 +27,10 @@ import {
 
 const Home: React.FC = () => {
   const { showName: pathShowName } = useParams();
-  const { activeShowName: subdomainShowName, activeSeller, addToCart, formatPrice, setQuickViewProduct, products, language, normalizeCategory } = useStore();
+  const { 
+    activeShowName: subdomainShowName, activeSeller, addToCart, formatPrice, 
+    setQuickViewProduct, products, language, normalizeCategory, searchProducts 
+  } = useStore();
   const showName = pathShowName || subdomainShowName;
 
   useEffect(() => {
@@ -185,26 +188,17 @@ const Home: React.FC = () => {
           ].map((block) => {
             if (!products || products.length === 0) return null;
             
-            // Normalize for matching
-            const blockCatNormalized = normalizeCategory(block.cat);
-            const blockKw = block.kw.toLowerCase().trim();
-
-            // Unified filter for block images using shared normalization
-            const matchingProducts = products.filter(p => {
-              const pCatNormalized = normalizeCategory(p.category || '');
-              const pName = (p.name || '').toLowerCase();
-              return pCatNormalized === blockCatNormalized || pName.includes(blockKw);
-            });
-
+            // Use unified searchProducts from StoreContext for absolute consistency
+            const matchingProducts = searchProducts('', block.cat || block.kw);
             const images = matchingProducts.map(p => p.image).slice(0, 4);
             
-            // If No matches for this specific block, hide it or use placeholders if it's a core block
+            // If No matches for this specific block, hide it
             if (images.length === 0) return null;
 
             return (
               <Link 
                 key={block.title}
-                to={getLink(`/search?category=${encodeURIComponent(block.cat)}`)}
+                to={getLink(`/search?category=${encodeURIComponent(block.kw || block.cat)}`)}
                 className="bg-white p-5 shadow-lg hover:shadow-xl transition-all flex flex-col group"
               >
                 <h3 className="text-xl font-black uppercase italic tracking-tighter mb-4 text-gray-900 group-hover:text-blue-600 transition-colors">

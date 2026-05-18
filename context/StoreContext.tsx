@@ -213,43 +213,48 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const searchProducts = (term: string, category: string = 'All') => {
-    const rawCategory = category || 'All';
-    const normSelectedCategory = rawCategory.toLowerCase().trim();
+    const rawCategoryInput = category || 'All';
+    const normSelectedCategory = rawCategoryInput.toLowerCase().trim();
     
-    // Clean search term: remove URL patterns like /search?q= or tshirt/search?q=
+    // Clean search term
     let processedTerm = term.toLowerCase().trim();
     if (processedTerm.includes('?q=')) {
       processedTerm = processedTerm.split('?q=').pop() || '';
     }
-    // Remove any leading path markers or special characters
     processedTerm = processedTerm.replace(/^[^\w\s]+/, '').trim();
     
-    console.log(`[Search Debug] Term: "${processedTerm}", Category: "${normSelectedCategory}"`);
+    console.log(`[Search Debug] Term: "${processedTerm}", Category Input: "${rawCategoryInput}"`);
     
-    let filtered = products;
+    let filtered = [...products];
 
+    // 1. Category Filtering - Using identical logic as Home blocks
     if (normSelectedCategory !== 'all') {
+      const searchCatNormalized = normalizeCategory(normSelectedCategory);
+      
       filtered = filtered.filter(p => {
         const pCatRaw = (p.category || '').toLowerCase().trim();
+        const pCatNormalized = normalizeCategory(pCatRaw);
         const pName = (p.name || '').toLowerCase().trim();
         const pTags = (p.tags || []).map(t => t.toLowerCase());
-        const pCatNormalized = normalizeCategory(pCatRaw);
-        const searchCatNormalized = normalizeCategory(normSelectedCategory);
-        
+
         // Match if:
-        // 1. Normalized categories are identical
-        // 2. The raw category includes the search category string
-        // 3. The search category string includes the category name
-        // 4. Product name or tags contain the category name (Ensures Home blocks stay consistent)
-        return pCatNormalized === searchCatNormalized || 
-               pCatRaw.includes(normSelectedCategory) || 
-               normSelectedCategory.includes(pCatRaw) ||
-               pCatNormalized.includes(searchCatNormalized) ||
-               pName.includes(normSelectedCategory) ||
-               pTags.some(t => t.includes(normSelectedCategory));
+        // A. Normalized categories match (e.g. 'footwear' -> 'shoes' matches 'shoe' -> 'shoes')
+        const catMatch = pCatNormalized === searchCatNormalized;
+        
+        // B. Raw match or partial match (e.g. 'tracksuit' in 'Tracksuit Jersey')
+        const rawMatch = pCatRaw.includes(normSelectedCategory) || normSelectedCategory.includes(pCatRaw);
+        
+        // C. Keyword match in name or tags (Critical for Home blocks consistency)
+        // We check BOTH the normalized category AND the raw input string
+        const nameMatch = pName.includes(normSelectedCategory) || 
+                         pName.includes(searchCatNormalized) ||
+                         pTags.some(t => t.includes(normSelectedCategory) || t.includes(searchCatNormalized));
+
+        return catMatch || rawMatch || nameMatch;
       });
     }
 
+    // 2. Term Filtering (if search query exists)
     if (processedTerm) {
       filtered = filtered.filter(p => {
         const name = (p.name || '').toLowerCase();
@@ -266,8 +271,13 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       });
     }
 
-    console.log(`[Search Debug] Result Count: ${filtered.length}`);
-    return filtered;
+    // Deduplicate and return
+    const uniqueResults = Array.from(new Set(filtered.map(p => p.id)))
+      .map(id => filtered.find(p => p.id === id))
+      .filter((p): p is Product => p !== undefined);
+
+    console.log(`[Search Debug] Final Result Count: ${uniqueResults.length}`);
+    return uniqueResults;
   };
 
   const [activeShowName, setActiveShowName] = useState<string | null>(detectShowName());
