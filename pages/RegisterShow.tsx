@@ -20,8 +20,6 @@ const RegisterShow: React.FC = () => {
   });
   const [registrationSuccess, setRegistrationSuccess] = useState<string | null>(null);
 
-  const isPakistan = formData.country.toLowerCase().includes('pakistan');
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -60,7 +58,7 @@ Location: ${formData.city}, ${formData.country}
 Contact: ${formData.contactNumber}
 Show Name: ${formData.showName}
 PRO LINK: ${proLink}
-Payment Method: ${isPakistan ? 'JazzCash' : 'Bank Account (IBAN)'}
+Payment Method: Global Bank Account (IBAN)
 Details: ${formData.paymentDetails}
 ---------------------------------`;
 
@@ -151,10 +149,10 @@ Details: ${formData.paymentDetails}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Proposed Show Name (Business Link Name)</label>
+            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Proposed Shop Name (Business Link Name)</label>
             <input 
               required
-              placeholder="e.g. Arsalan Sports"
+              placeholder="e.g. Global Sports Shop"
               className="w-full bg-gray-50 border-2 border-transparent focus:border-blue-600 p-5 rounded-2xl outline-none font-black text-blue-600 transition-all text-lg shadow-inner"
               value={formData.showName}
               onChange={e => setFormData({...formData, showName: e.target.value})}
@@ -188,7 +186,7 @@ Details: ${formData.paymentDetails}
               <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1">WhatsApp Number</label>
               <input 
                 required
-                placeholder="e.g. 923187536795"
+                placeholder="e.g. 15551234567"
                 className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
                 value={formData.whatsapp}
                 onChange={e => setFormData({...formData, whatsapp: e.target.value})}
@@ -210,7 +208,7 @@ Details: ${formData.paymentDetails}
               <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1">Country</label>
               <input 
                 required
-                placeholder="e.g. Pakistan"
+                placeholder="e.g. United States"
                 className="w-full bg-gray-50 border p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
                 value={formData.country}
                 onChange={e => setFormData({...formData, country: e.target.value})}
@@ -229,13 +227,13 @@ Details: ${formData.paymentDetails}
 
           <div className="space-y-1">
             <label className="text-[10px] font-black uppercase text-blue-600 tracking-widest ml-1">
-              {isPakistan ? 'JazzCash Account Number' : 'International Bank Details (IBAN / BIC)'}
+              International Bank Details (IBAN / BIC)
             </label>
             <textarea 
               required
               rows={3}
               className="w-full bg-blue-50/30 border-2 border-blue-100 p-4 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold"
-              placeholder={isPakistan ? 'Enter your 11-digit JazzCash number' : 'Full IBAN and Bank Name for Global Payments'}
+              placeholder="Full IBAN and Bank Name for Global Payments"
               value={formData.paymentDetails}
               onChange={e => setFormData({...formData, paymentDetails: e.target.value})}
             />

@@ -1,13 +1,13 @@
 import { Product, Customer, Currency, Language, SellerInfo, BlogPost, SaleRecord } from './types';
 
-export const ADMIN_WHATSAPP = "923187536795"; 
+export const ADMIN_WHATSAPP = "10000000000"; 
 
 export const CURRENCIES: Currency[] = [
   { code: 'USD', symbol: '$', rate: 1, name: 'United States Dollar' },
   { code: 'EUR', symbol: '€', rate: 0.92, name: 'Euro' },
   { code: 'GBP', symbol: '£', rate: 0.79, name: 'British Pound' },
   { code: 'AED', symbol: 'د.إ', rate: 3.67, name: 'UAE Dirham' },
-  { code: 'PKR', symbol: 'Rs', rate: 278, name: 'Pakistani Rupee' },
+  { code: 'CAD', symbol: 'C$', rate: 1.36, name: 'Canadian Dollar' },
 ];
 
 export const LANGUAGES: Language[] = [
@@ -32,28 +32,28 @@ export const CATEGORIES = [
 ];
 
 export const SHIPPING_COUNTRIES = [
-  "United States", "United Kingdom", "United Arab Emirates", "Pakistan", "Germany", "France", "Spain", "Canada", "Australia"
+  "United States", "United Kingdom", "United Arab Emirates", "Germany", "France", "Spain", "Canada", "Australia", "Japan"
 ];
 
 export const SELLERS: SellerInfo[] = [
   {
     id: 'seller-1',
-    fullName: 'Global Sportswear Mfg',
-    whatsapp: '923187536795',
-    email: 'mfg@worldmarket.com',
-    country: 'Pakistan',
-    city: 'Sialkot',
-    contactNumber: '+92 318 7536795',
-    paymentDetails: 'Bank Transfer / JazzCash',
-    showName: 'globalsports',
-    rank: 'Gold',
-    rating: 4.9,
-    totalSales: 1250,
-    responseTime: '< 1 hour',
+    fullName: 'Global Logistics Hub',
+    whatsapp: '10000000000',
+    email: 'support@wlord-market.com',
+    country: 'United States',
+    city: 'New York',
+    contactNumber: '+1 (555) 000-0000',
+    paymentDetails: 'International Bank Transfer / Stripe',
+    showName: 'globalhub',
+    rank: 'Platinium',
+    rating: 5.0,
+    totalSales: 5000,
+    responseTime: '< 15 mins',
     isVerified: true,
     verificationStatus: 'Verified',
-    businessType: 'Business',
-    joinedDate: '2023-01-15'
+    businessType: 'Enterprise',
+    joinedDate: '2023-01-01'
   },
   {
     id: 'seller-2',

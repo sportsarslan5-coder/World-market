@@ -1,9 +1,9 @@
 
-export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'AED' | 'PKR';
+export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'AED' | 'CAD' | 'AUD' | 'PKR';
 export type LanguageCode = 'en' | 'ar' | 'fr' | 'es' | 'de';
-export type SellerRank = 'Gold' | 'Silver' | 'Standard';
+export type SellerRank = 'Platinium' | 'Diamond' | 'Gold' | 'Silver' | 'Standard';
 export type VerificationStatus = 'Pending' | 'Verified' | 'Rejected';
-export type BusinessType = 'Individual' | 'Business';
+export type BusinessType = 'Individual' | 'Business' | 'Enterprise';
 
 export interface Currency {
   code: CurrencyCode;

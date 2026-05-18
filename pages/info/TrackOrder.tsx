@@ -17,13 +17,13 @@ const TrackOrder: React.FC = () => {
     setTimeout(() => {
       setTrackingData({
         id: orderId,
-        status: 'Shipped',
-        estimatedDelivery: '2025-03-10',
-        currentLocation: 'Dubai Logistics Hub, UAE',
+        status: 'In Transit',
+        estimatedDelivery: '2025-05-30',
+        currentLocation: 'JFK International Hub, New York, USA',
         history: [
-          { date: '2025-02-28', time: '10:30 AM', status: 'Shipped', location: 'Dubai, UAE', description: 'Package is on its way to the destination country.' },
-          { date: '2025-02-27', time: '04:15 PM', status: 'Processed', location: 'Sialkot, Pakistan', description: 'Package has been processed and is ready for international shipping.' },
-          { date: '2025-02-26', time: '09:00 AM', status: 'Ordered', location: 'Sialkot, Pakistan', description: 'Order received and being prepared by the seller.' }
+          { date: '2025-05-18', time: '10:30 AM', status: 'In Transit', location: 'New York, USA', description: 'Package has arrived at the international sorting facility.' },
+          { date: '2025-05-17', time: '04:15 PM', status: 'Departed', location: 'London Gateway, UK', description: 'Package is in transit to the destination country.' },
+          { date: '2025-05-16', time: '09:00 AM', status: 'Processed', location: 'Global Logistics Center', description: 'Order verified and processed for international priority shipping.' }
         ]
       });
       setLoading(false);

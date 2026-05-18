@@ -115,13 +115,17 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     
     // Mixed search strategy: Higher precision filtering
     const searchLower = searchQuery.toLowerCase().trim();
+    const searchWords = searchLower.split(/\s+/).filter(w => w.length > 1);
     
     // 1. Priority: Names that start with the query or contain the query as a word
     const priorityMatches = products.filter(p => {
       const nameLower = p.name.toLowerCase();
-      return nameLower.startsWith(searchLower) || 
-             nameLower.split(' ').some(word => word.startsWith(searchLower)) ||
-             p.category.toLowerCase() === searchLower;
+      const catLower = p.category.toLowerCase();
+      
+      const exactMatch = nameLower.startsWith(searchLower) || catLower === searchLower;
+      const wordMatch = searchWords.length > 0 && searchWords.every(word => nameLower.includes(word) || catLower.includes(word));
+      
+      return exactMatch || wordMatch;
     }).slice(0, 6);
 
     // 2. Secondary: Fuzzy matches but very strict
@@ -242,20 +246,22 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             {/* Product Matches */}
             <div className="p-2">
               <p className="px-4 py-2 text-[10px] font-black uppercase text-gray-400 tracking-widest">
-                {suggestions.isTrending ? "Amazon's Trending Selection" : "Store Results"}
+                {suggestions.isTrending ? "Global Trending Selection" : "Store Results"}
               </p>
               {suggestions.products.map(p => (
-                <Link 
+                <div 
                   key={p.id}
-                  to={getLink(`/products/${p.id}`)}
-                  onClick={() => {
-                      addToHistory(p.name);
+                  onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                       setShowSuggestions(false);
+                      setSearchQuery('');
+                      navigate(getLink(`/products/${p.id}`));
                   }}
-                  className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all group border-b border-gray-50 last:border-none"
+                  className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all group border-b border-gray-50 last:border-none cursor-pointer"
                 >
                   <div className="w-14 h-14 bg-gray-50 rounded-lg overflow-hidden border border-gray-100 p-1">
-                    <img src={p.image} alt={p.name} className="w-full h-full object-contain mix-blend-multiply" />
+                    <img src={p.image} alt={p.name} className="w-full h-full object-contain mix-blend-multiply" loading="lazy" decoding="async" />
                   </div>
                   <div className="flex-grow min-w-0">
                     <h4 className="text-sm font-black text-gray-900 group-hover:text-blue-600 transition-colors uppercase truncate italic">{p.name}</h4>
@@ -268,7 +274,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     </div>
                   </div>
                   <ArrowRight size={14} className="text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
-                </Link>
+                </div>
               ))}
             </div>
 
@@ -327,10 +333,10 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <div className="bg-[#131921] py-2 px-4 hidden md:flex justify-between items-center text-xs font-bold text-white tracking-tight border-b border-white/5">
         <div className="flex items-center gap-8">
            <div className="flex items-center gap-2 hover:outline outline-white outline-1 p-1 px-2 cursor-pointer transition-all">
-             <MapPin size={16} className="text-gray-400" />
+             <Globe size={16} className="text-gray-400" />
              <div className="flex flex-col leading-none">
-               <span className="text-gray-400 text-[10px]">Deliver to</span>
-               <span className="font-black">{language.name}</span>
+               <span className="text-gray-400 text-[10px]">Shipping to</span>
+               <span className="font-black">Worldwide</span>
              </div>
            </div>
            
@@ -535,11 +541,10 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
       </nav>
 
-      {/* Mobile Location Bar (Amazon-Style Blue Gradient) */}
+      {/* Mobile Location Bar */}
       <div className="md:hidden bg-gradient-to-r from-[#232f3e] to-[#37475a] py-2.5 px-6 flex items-center gap-2 text-white border-t border-white/5">
-         <MapPin size={14} className="text-gray-400" />
-         <span className="text-[11px] font-medium truncate">Deliver to {language.name} - Choose location</span>
-         <ChevronDown size={14} className="ml-auto" />
+         <Globe size={14} className="text-blue-400" />
+         <span className="text-[11px] font-medium truncate uppercase tracking-widest font-black">Fast Worldwide Shipping Available</span>
       </div>
 
       {/* Mobile Menu Side Drawer (Amazon Style) */}

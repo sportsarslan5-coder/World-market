@@ -36,7 +36,7 @@ const ProductDetail: React.FC = () => {
     email: '',
     address: '',
     city: '',
-    country: 'Pakistan',
+    country: 'United States',
     zipCode: ''
   });
 
@@ -49,8 +49,8 @@ const ProductDetail: React.FC = () => {
     }
 
     const urlParams = new URLSearchParams(window.location.search);
-    const shopName = urlParams.get('seller') || (activeSeller ? activeSeller.showName : (showName || "Main Store"));
-    const sellerCode = referralCode || (activeSeller ? activeSeller.id : "Direct");
+    const shopName = urlParams.get('seller') || (activeSeller ? activeSeller.showName : (showName || "W-LORD Global"));
+    const sellerCode = referralCode || (activeSeller ? activeSeller.id : "Global-Direct");
 
     // Store order in system
     addSale({
@@ -66,41 +66,40 @@ const ProductDetail: React.FC = () => {
       customerPhone: customerInfo.phone,
       customerEmail: customerInfo.email || 'N/A',
       customerAddress: customerInfo.address,
-      customerCity: customerInfo.city || 'Direct',
-      customerCountry: customerInfo.country || 'N/A',
+      customerCity: customerInfo.city || 'Global',
+      customerCountry: customerInfo.country || 'International',
       customerZip: customerInfo.zipCode || '0000',
       amount: product.price * quantity,
       status: 'Pending Payment',
-      sellerId: activeSeller?.id || referralCode || 'Direct',
+      sellerId: activeSeller?.id || referralCode || 'WH-Global',
       sellerShopName: shopName
     });
 
-    const message = `NEW ORDER RECEIVED
+    const message = `NEW INTERNATIONAL ORDER
 --------------------------------
 
---- SHOP DETAILS ---
-Shop Name: ${shopName}
-Referral Code: ${sellerCode}
+--- MARKET DETAILS ---
+Global Store: ${shopName}
+Ref Code: ${sellerCode}
 
---- CUSTOMER DETAILS ---
+--- CUSTOMER PROFILE ---
 Name: ${customerInfo.name}
 Phone: ${customerInfo.phone}
-Address: ${customerInfo.address}
+Address: ${customerInfo.address}, ${customerInfo.city}, ${customerInfo.country}
 
---- ORDER SUMMARY ---
-Product: ${product.name} (ID: ${product.id})
-Size: ${selectedSize || 'N/A'}
-Color: ${selectedColor || 'N/A'}
-Quantity: ${quantity}
+--- ORDER DATA ---
+Item: ${product.name}
+Var: ${selectedSize || 'Standard'} / ${selectedColor || 'Default'}
+Qty: ${quantity}
 Price: $${product.price.toFixed(2)}
 
---- BILLING ---
-TOTAL: $${(product.price * quantity).toFixed(2)}
+--- TOTAL ---
+AMOUNT: $${(product.price * quantity).toFixed(2)}
 
 --------------------------------
-Secure manual payment confirmation via WhatsApp.`;
+Secure international payment confirmation.`;
 
-    const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;
+    const waLink = `https://wa.me/10000000000?text=${encodeURIComponent(message)}`;
     window.open(waLink, '_blank');
     setIsOrdering(false);
   };
@@ -222,6 +221,43 @@ Secure manual payment confirmation via WhatsApp.`;
                  <span>{product.fabric || 'Cotton Blend'}</span>
               </div>
 
+              {/* Variant Selectors */}
+              <div className="space-y-6 pt-4 border-t border-gray-100">
+                {product.sizes && product.sizes.length > 0 && (
+                  <div>
+                    <h4 className="text-[13px] font-bold text-gray-900 mb-3">Size: <span className="font-medium text-gray-600">{selectedSize}</span></h4>
+                    <div className="flex flex-wrap gap-2">
+                       {product.sizes.map(size => (
+                         <button 
+                           key={size}
+                           onClick={() => setSelectedSize(size)}
+                           className={`min-w-[44px] h-9 px-3 rounded border text-xs font-medium transition-all shadow-sm ${selectedSize === size ? 'border-[#e77600] bg-[#fff5ec] ring-1 ring-[#e77600]' : 'border-gray-300 hover:bg-gray-50'}`}
+                         >
+                           {size}
+                         </button>
+                       ))}
+                    </div>
+                  </div>
+                )}
+
+                {product.colors && product.colors.length > 0 && (
+                  <div>
+                    <h4 className="text-[13px] font-bold text-gray-900 mb-3">Color: <span className="font-medium text-gray-600">{selectedColor}</span></h4>
+                    <div className="flex flex-wrap gap-2">
+                       {product.colors.map(color => (
+                         <button 
+                           key={color}
+                           onClick={() => setSelectedColor(color)}
+                           className={`h-9 px-4 rounded border text-xs font-medium transition-all shadow-sm ${selectedColor === color ? 'border-[#e77600] bg-[#fff5ec] ring-1 ring-[#e77600]' : 'border-gray-300 hover:bg-gray-50'}`}
+                         >
+                           {color}
+                         </button>
+                       ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="border-t border-gray-100 pt-4">
                  <h4 className="font-bold text-sm mb-2">About this item</h4>
                  <ul className="list-disc pl-5 text-sm text-gray-800 space-y-1">
@@ -248,7 +284,7 @@ Secure manual payment confirmation via WhatsApp.`;
                 </div>
                 <div className="text-sm">
                   <span>Deliver to </span>
-                  <span className="text-[#007185] hover:text-[#c45500] cursor-pointer inline-flex items-center gap-1"><Truck size={14}/> Pakistan</span>
+                  <span className="text-[#007185] hover:text-[#c45500] cursor-pointer inline-flex items-center gap-1"><Truck size={14}/> Worldwide Shipping</span>
                 </div>
               </div>
 

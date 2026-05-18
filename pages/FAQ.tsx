@@ -15,7 +15,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: "What payment methods do you accept?",
-      answer: "We accept all major credit cards (Visa, Mastercard), PayPal, and bank transfers. For customers in Pakistan, we also support JazzCash."
+      answer: "We accept all major credit cards (Visa, Mastercard), PayPal, Apple Pay, Google Pay, and international bank transfers (SWIFT/SEPA)."
     },
     {
       question: "Do you offer international shipping?",
@@ -86,7 +86,7 @@ const FAQ: React.FC = () => {
           </p>
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
             <a 
-              href="https://wa.me/923187536795" 
+              href="https://wa.me/10000000000" 
               target="_blank" 
               rel="noopener noreferrer"
               className="bg-green-500 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-green-600 transition-all shadow-xl shadow-green-600/20 flex items-center gap-3"

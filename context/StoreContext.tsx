@@ -197,87 +197,91 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const normalizeCategory = (cat: string): string => {
     if (!cat) return '';
     const c = cat.toLowerCase().trim();
-    if (c.includes('hoodie')) return 'hoodie';
-    if (c.includes('t-shirt') || c.includes('tshirt')) return 'tshirt';
-    if (c.includes('jacket')) return 'jacket';
-    if (c.includes('shoe') || c.includes('footwear')) return 'shoes'; 
-    if (c.includes('cap')) return 'cap';
+    // Broad matching rules for stabilization
+    if (c.includes('hoodie')) return 'hoodies';
+    if (c.includes('t-shirt') || c.includes('tshirt') || c.includes('tee')) return 't-shirts';
+    if (c.includes('jacket')) return 'jackets';
+    if (c.includes('shoe') || c.includes('footwear') || c.includes('sneaker')) return 'shoes'; 
+    if (c.includes('cap') || c.includes('hat')) return 'caps';
     if (c.includes('short')) return 'shorts';
-    if (c.includes('jersey') || c.includes('tracksuit')) return 'jersey';
+    if (c.includes('jersey') || c.includes('tracksuit') || c.includes('uniform') || c.includes('kit')) return 'jerseys';
     if (c.includes('electronic')) return 'electronics';
     if (c.includes('book')) return 'books';
-    if (c.includes('jean')) return 'jeans';
-    if (c.includes('pant')) return 'pants';
-    if (c.includes('accessory') || c.includes('accessories')) return 'accessories';
+    if (c.includes('jean') || c.includes('denim')) return 'jeans';
+    if (c.includes('pant') || c.includes('trouser')) return 'pants';
+    if (c.includes('accessory') || c.includes('bag') || c.includes('belt') || c.includes('sock')) return 'accessories';
     return c;
   };
 
   const searchProducts = (term: string, category: string = 'All') => {
-    const rawCategoryInput = category || 'All';
-    const normSelectedCategory = rawCategoryInput.toLowerCase().trim();
+    const rawCategoryInput = (category || 'All').toLowerCase().trim();
+    const normSearchCategory = normalizeCategory(rawCategoryInput);
     
     // Clean search term
-    let processedTerm = term.toLowerCase().trim();
+    let processedTerm = (term || '').toLowerCase().trim();
     if (processedTerm.includes('?q=')) {
       processedTerm = processedTerm.split('?q=').pop() || '';
     }
+    processedTerm = processedTerm.split('/').pop() || processedTerm;
     processedTerm = processedTerm.replace(/^[^\w\s]+/, '').trim();
     
-    console.log(`[Search Debug] Term: "${processedTerm}", Category Input: "${rawCategoryInput}"`);
+    const isCategoryAll = normSearchCategory === 'all' || rawCategoryInput === 'all';
+
+    console.log(`[CORE SEARCH] Term: "${processedTerm}", Cat: "${rawCategoryInput}"`);
     
     let filtered = [...products];
 
-    // 1. Category Filtering - Using identical logic as Home blocks
-    if (normSelectedCategory !== 'all') {
-      const searchCatNormalized = normalizeCategory(normSelectedCategory);
-      
+    // 1. Category Filtering
+    if (!isCategoryAll) {
       filtered = filtered.filter(p => {
-        const pCatRaw = (p.category || '').toLowerCase().trim();
-        const pCatNormalized = normalizeCategory(pCatRaw);
-        const pName = (p.name || '').toLowerCase().trim();
+        const pCatRaw = (p.category || '').toLowerCase();
+        const pCatNorm = normalizeCategory(pCatRaw);
+        const pName = (p.name || '').toLowerCase();
         const pTags = (p.tags || []).map(t => t.toLowerCase());
 
-        // Match if:
-        // A. Normalized categories match (e.g. 'footwear' -> 'shoes' matches 'shoe' -> 'shoes')
-        const catMatch = pCatNormalized === searchCatNormalized;
-        
-        // B. Raw match or partial match (e.g. 'tracksuit' in 'Tracksuit Jersey')
-        const rawMatch = pCatRaw.includes(normSelectedCategory) || normSelectedCategory.includes(pCatRaw);
-        
-        // C. Keyword match in name or tags (Critical for Home blocks consistency)
-        // We check BOTH the normalized category AND the raw input string
-        const nameMatch = pName.includes(normSelectedCategory) || 
-                         pName.includes(searchCatNormalized) ||
-                         pTags.some(t => t.includes(normSelectedCategory) || t.includes(searchCatNormalized));
-
-        return catMatch || rawMatch || nameMatch;
+        return pCatNorm === normSearchCategory || 
+               pCatRaw.includes(rawCategoryInput) || 
+               rawCategoryInput.includes(pCatRaw) ||
+               pName.includes(rawCategoryInput) ||
+               pTags.some(t => t.includes(rawCategoryInput));
       });
     }
 
-    // 2. Term Filtering (if search query exists)
+    // 2. Term Filtering (Partial Word Matching)
     if (processedTerm) {
+      const searchWords = processedTerm.split(/\s+/).filter(w => w.length > 1);
+      
       filtered = filtered.filter(p => {
-        const name = (p.name || '').toLowerCase();
-        const cat = (p.category || '').toLowerCase();
-        const tags = (p.tags || []).map(t => t.toLowerCase());
-        const desc = (p.description || '').toLowerCase();
-        const pCatNormalized = normalizeCategory(cat);
-        
-        return name.includes(processedTerm) || 
-               cat.includes(processedTerm) || 
-               pCatNormalized.includes(processedTerm) ||
-               tags.some(t => t.includes(processedTerm)) ||
-               desc.includes(processedTerm);
+        const pName = (p.name || '').toLowerCase();
+        const pCat = (p.category || '').toLowerCase();
+        const pTags = (p.tags || []).map(t => t.toLowerCase());
+        const pDesc = (p.description || '').toLowerCase();
+
+        // Check if any search word matches any property
+        return searchWords.every(word => 
+          pName.includes(word) || 
+          pCat.includes(word) || 
+          pTags.some(t => t.includes(word)) ||
+          pDesc.includes(word)
+        );
       });
+
+      // Special case: If filtering by words returned nothing, try a broader search
+      if (filtered.length === 0) {
+        filtered = products.filter(p => {
+          const pName = (p.name || '').toLowerCase();
+          return pName.includes(processedTerm) || processedTerm.includes(pName);
+        });
+      }
     }
 
     // Deduplicate and return
-    const uniqueResults = Array.from(new Set(filtered.map(p => p.id)))
-      .map(id => filtered.find(p => p.id === id))
-      .filter((p): p is Product => p !== undefined);
-
-    console.log(`[Search Debug] Final Result Count: ${uniqueResults.length}`);
-    return uniqueResults;
+    const uniqueMap = new Map();
+    filtered.forEach(p => uniqueMap.set(p.id, p));
+    
+    const results = Array.from(uniqueMap.values());
+    console.log(`[CORE SEARCH] Results: ${results.length}`);
+    return results;
   };
 
   const [activeShowName, setActiveShowName] = useState<string | null>(detectShowName());
@@ -356,10 +360,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const addProduct = async (newP: Omit<Product, 'id' | 'datePosted'>) => {
     try {
       const docRef = doc(collection(db, 'products'));
-      const normalizedCategory = (newP.category || '').toLowerCase().trim();
       const productData = {
         ...newP,
-        category: normalizedCategory,
+        category: normalizeCategory(newP.category || ''),
         id: docRef.id,
         datePosted: new Date().toISOString()
       };
@@ -375,7 +378,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const docRef = doc(db, 'products', id);
       const finalUpdate = { ...updatedP };
       if (finalUpdate.category) {
-        finalUpdate.category = finalUpdate.category.toLowerCase().trim();
+        finalUpdate.category = normalizeCategory(finalUpdate.category);
       }
       await updateDoc(docRef, finalUpdate);
     } catch (e) {

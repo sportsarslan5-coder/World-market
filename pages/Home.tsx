@@ -21,6 +21,7 @@ import {
   Clock,
   Heart,
   ShoppingCart,
+  ShoppingBag,
   Zap,
   Eye
 } from 'lucide-react';
@@ -321,10 +322,16 @@ const Home: React.FC = () => {
           </Link>
         </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6">
-            {!products || products.length === 0 ? (
+            {!products ? (
               <div className="col-span-full py-20 text-center">
                 <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-                <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Loading Catalog...</p>
+                <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Initial Sync...</p>
+              </div>
+            ) : products.length === 0 ? (
+              <div className="col-span-full py-20 text-center border-2 border-dashed border-gray-100 rounded-[3rem]">
+                <ShoppingBag size={48} className="mx-auto text-gray-200 mb-4" />
+                <h3 className="text-xl font-black uppercase italic tracking-tighter">No Products in Inventory</h3>
+                <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-2">Check back later for global restock</p>
               </div>
             ) : products.map(p => (
               <div key={p.id} className="group flex flex-col gap-3 bg-white p-2 md:p-3 rounded-[1.5rem] md:rounded-[2rem] border border-gray-100 hover:shadow-2xl hover:shadow-blue-500/10 transition-all">
