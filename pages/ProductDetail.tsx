@@ -99,7 +99,7 @@ AMOUNT: $${(product.price * quantity).toFixed(2)}
 --------------------------------
 Secure international payment confirmation.`;
 
-    const waLink = `https://wa.me/10000000000?text=${encodeURIComponent(message)}`;
+    const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;
     window.open(waLink, '_blank');
     setIsOrdering(false);
   };

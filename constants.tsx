@@ -1,6 +1,6 @@
 import { Product, Customer, Currency, Language, SellerInfo, BlogPost, SaleRecord } from './types';
 
-export const ADMIN_WHATSAPP = "10000000000"; 
+export const ADMIN_WHATSAPP = "923187536795"; 
 
 export const CURRENCIES: Currency[] = [
   { code: 'USD', symbol: '$', rate: 1, name: 'United States Dollar' },
@@ -39,7 +39,7 @@ export const SELLERS: SellerInfo[] = [
   {
     id: 'seller-1',
     fullName: 'Global Logistics Hub',
-    whatsapp: '10000000000',
+    whatsapp: '923187536795',
     email: 'support@wlord-market.com',
     country: 'United States',
     city: 'New York',

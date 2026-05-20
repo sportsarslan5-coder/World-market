@@ -366,7 +366,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         id: docRef.id,
         datePosted: new Date().toISOString()
       };
-      await setDoc(docRef, productData);
+      await setDoc(docRef, sanitizeFirestoreData(productData));
     } catch (e) {
       console.error("Error adding product:", e);
       throw e;
@@ -380,7 +380,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (finalUpdate.category) {
         finalUpdate.category = normalizeCategory(finalUpdate.category);
       }
-      await updateDoc(docRef, finalUpdate);
+      await updateDoc(docRef, sanitizeFirestoreData(finalUpdate));
     } catch (e) {
       console.error("Error updating product:", e);
       throw e;
@@ -424,19 +424,61 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const clearCart = () => setCart([]);
 
+  const sanitizeFirestoreData = (data: any): any => {
+    if (data === undefined) return null;
+    if (data === null) return null;
+    if (Array.isArray(data)) {
+      return data.map(item => sanitizeFirestoreData(item));
+    }
+    if (typeof data === 'object') {
+      const clean: any = {};
+      for (const key of Object.keys(data)) {
+        const val = data[key];
+        if (val !== undefined) {
+          clean[key] = sanitizeFirestoreData(val);
+        } else {
+          clean[key] = null;
+        }
+      }
+      return clean;
+    }
+    return data;
+  };
+
   const addSale = async (newSale: Omit<SaleRecord, 'id' | 'date'>) => {
     try {
       const docRef = doc(collection(db, 'sales'));
+      
+      const safeProducts = (newSale.products || []).map(p => ({
+        productId: p.productId || '',
+        name: p.name || '',
+        price: p.price || 0,
+        quantity: p.quantity || 1,
+        size: p.size || 'Standard',
+        color: p.color || 'Default'
+      }));
+
       const saleData = {
         ...newSale,
         id: docRef.id,
         date: new Date().toISOString(),
-        status: newSale.status || 'Pending Payment'
+        status: newSale.status || 'Pending Payment',
+        customerName: newSale.customerName || '',
+        customerPhone: newSale.customerPhone || '',
+        customerEmail: newSale.customerEmail || 'N/A',
+        customerAddress: newSale.customerAddress || '',
+        customerCity: newSale.customerCity || 'N/A',
+        customerCountry: newSale.customerCountry || 'N/A',
+        customerZip: newSale.customerZip || 'N/A',
+        amount: newSale.amount || 0,
+        sellerId: newSale.sellerId || 'admin',
+        sellerShopName: newSale.sellerShopName || 'Main Admin',
+        products: safeProducts
       };
-      if (!saleData.customerCity) saleData.customerCity = 'N/A';
-      if (!saleData.customerCountry) saleData.customerCountry = 'N/A';
-      if (!saleData.customerZip) saleData.customerZip = 'N/A';
-      await setDoc(docRef, saleData);
+
+      const cleanSaleData = sanitizeFirestoreData(saleData);
+      console.log("FINAL ORDER DATA:", cleanSaleData);
+      await setDoc(docRef, cleanSaleData);
       
       const productSummary = saleData.products?.map(p => `${p.name} x${p.quantity}`).join(', ') || 'Items';
       const sellerInfo = saleData.sellerShopName ? `[${saleData.sellerShopName}]` : '[Main Admin]';
@@ -468,12 +510,13 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const addNotification = async (newNotif: Omit<AppNotification, 'id' | 'timestamp' | 'isRead'>) => {
     try {
       const docRef = doc(collection(db, 'notifications'));
-      await setDoc(docRef, {
+      const notifData = {
         ...newNotif,
         id: docRef.id,
         isRead: false,
         timestamp: new Date().toISOString()
-      });
+      };
+      await setDoc(docRef, sanitizeFirestoreData(notifData));
     } catch (e) {
       console.error("Error adding notification:", e);
     }
@@ -490,7 +533,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const addSeller = async (newS: Omit<SellerInfo, 'id' | 'joinedDate' | 'totalSales' | 'rating' | 'rank' | 'isVerified' | 'verificationStatus'>) => {
     const docRef = doc(collection(db, 'sellers'));
-    await setDoc(docRef, {
+    const sellerData = {
       ...newS,
       id: docRef.id,
       joinedDate: new Date().toISOString(),
@@ -500,7 +543,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       isVerified: false,
       verificationStatus: 'Pending',
       responseTime: "24h"
-    });
+    };
+    await setDoc(docRef, sanitizeFirestoreData(sellerData));
   };
 
   const updateSaleStatus = async (id: string, status: SaleRecord['status']) => {

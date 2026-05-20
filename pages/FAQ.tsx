@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
 import { useTranslation } from '../src/translations';
+import { ADMIN_WHATSAPP } from '../constants';
 import { ChevronDown, ChevronUp, HelpCircle, Search, MessageCircle } from 'lucide-react';
 
 const FAQ: React.FC = () => {
@@ -86,7 +87,7 @@ const FAQ: React.FC = () => {
           </p>
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
             <a 
-              href="https://wa.me/10000000000" 
+              href={`https://wa.me/${ADMIN_WHATSAPP}`}
               target="_blank" 
               rel="noopener noreferrer"
               className="bg-green-500 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-green-600 transition-all shadow-xl shadow-green-600/20 flex items-center gap-3"
