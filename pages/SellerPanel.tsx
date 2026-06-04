@@ -183,10 +183,10 @@ const SellerPanel: React.FC = () => {
                           <ShoppingBag size={24}/>
                        </div>
                        <div>
-                          <p className="text-sm font-black uppercase text-gray-900">Buyer: {order.customerName || 'Verified User'}</p>
+                          <p className="text-sm font-black uppercase text-gray-900">Buyer: Private Customer</p>
                           <div className="flex gap-2 mt-1">
-                            <span className="text-[10px] text-blue-600 font-bold uppercase tracking-widest">{order.customerPhone || 'NO_PHONE'}</span>
-                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{order.customerCity || 'NO_REGION'}</span>
+                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">[Details Protected]</span>
+                            <span className="text-[10px] hidden"></span>
                           </div>
                           <p className="text-[10px] font-bold text-gray-400 mt-1 uppercase">ID: #{order.id.slice(-8)} • {new Date(order.date).toLocaleDateString()}</p>
                        </div>
@@ -255,11 +255,11 @@ const SellerPanel: React.FC = () => {
                <div className="grid grid-cols-2 gap-8 text-left">
                   <section>
                     <h4 className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-2">Customer Profile</h4>
-                    <p className="text-xs font-black uppercase text-gray-900">{selectedOrder.customerName || 'Verified Buyer'}</p>
+                    <p className="text-xs font-semibold uppercase text-gray-400 italic">[Protected for Privacy]</p>
                     <div className="flex flex-col gap-1 mt-2">
-                       <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Phone: {selectedOrder.customerPhone || 'N/A'}</p>
-                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Email: {selectedOrder.customerEmail || 'N/A'}</p>
-                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-2">{selectedOrder.customerAddress}, {selectedOrder.customerCity}, {selectedOrder.customerCountry}</p>
+                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Phone: [Hidden for Privacy]</p>
+                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Email: [Hidden for Privacy]</p>
+                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-2">[Full Address Protected]</p>
                     </div>
                   </section>
                   <section className="text-right">
