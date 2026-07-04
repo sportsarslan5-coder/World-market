@@ -6,7 +6,6 @@ import SEO from './SEO';
 import { useStore } from '../context/StoreContext';
 import { detectShowName } from '../services/routingUtils';
 import { CATEGORIES, CURRENCIES, LANGUAGES, PRODUCTS } from '../constants';
-import Fuse from 'fuse.js';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Search, 
@@ -35,7 +34,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
   const { 
     products, cart, currency, language, setCurrency, setLanguage, formatPrice,
-    quickViewProduct, setQuickViewProduct, addToCart, activeSeller
+    quickViewProduct, setQuickViewProduct, addToCart, activeSeller, searchProducts
   } = useStore();
   
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,7 +47,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   
-  const searchRef = useRef<HTMLDivElement>(null);
+  const desktopSearchRef = useRef<HTMLDivElement>(null);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
 
   // Load search history from localStorage
   useEffect(() => {
@@ -81,27 +81,23 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }, [quickViewProduct]);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node;
+      const inDesktop = desktopSearchRef.current && desktopSearchRef.current.contains(target);
+      const inMobile = mobileSearchRef.current && mobileSearchRef.current.contains(target);
+      if (!inDesktop && !inMobile) {
         setShowSuggestions(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
   }, []);
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
-
-  const fuse = useMemo(() => new Fuse(products, {
-    keys: [
-      { name: 'name', weight: 10 },
-      { name: 'category', weight: 8 },
-      { name: 'tags', weight: 6 }
-    ],
-    threshold: 0.15,
-    distance: 20,
-    includeScore: true
-  }), [products]);
 
   const suggestions = useMemo(() => {
     if (!searchQuery.trim()) {
@@ -113,32 +109,12 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       };
     }
     
-    // Mixed search strategy: Higher precision filtering
-    const searchLower = searchQuery.toLowerCase().trim();
-    const searchWords = searchLower.split(/\s+/).filter(w => w.length > 1);
-    
-    // 1. Priority: Names that start with the query or contain the query as a word
-    const priorityMatches = products.filter(p => {
-      const nameLower = p.name.toLowerCase();
-      const catLower = p.category.toLowerCase();
-      
-      const exactMatch = nameLower.startsWith(searchLower) || catLower === searchLower;
-      const wordMatch = searchWords.length > 0 && searchWords.every(word => nameLower.includes(word) || catLower.includes(word));
-      
-      return exactMatch || wordMatch;
-    }).slice(0, 6);
-
-    // 2. Secondary: Fuzzy matches but very strict
-    const fuzzyResults = fuse.search(searchQuery)
-      .map(r => r.item)
-      .filter(item => !priorityMatches.some(p => p.id === item.id))
-      .slice(0, 8 - priorityMatches.length);
-    
-    const productResults = [...priorityMatches, ...fuzzyResults];
+    const productResults = searchProducts(searchQuery, searchCategory).slice(0, 8);
     
     // Simple category match
+    const searchLower = searchQuery.toLowerCase().trim();
     const categoryMatches = CATEGORIES.filter(c => 
-      c.toLowerCase().includes(searchQuery.toLowerCase())
+      c.toLowerCase().includes(searchLower) || searchLower.includes(c.toLowerCase())
     ).slice(0, 3);
 
     return {
@@ -147,7 +123,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       history: [],
       isTrending: false
     };
-  }, [searchQuery, fuse, products, searchHistory]);
+  }, [searchQuery, searchCategory, products, searchProducts, searchHistory]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -206,12 +182,18 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 {searchHistory.map(q => (
                   <button
                     key={q}
+                    type="button"
+                    onMouseDown={() => {
+                        setSearchQuery(q);
+                        navigate(getLink(`/search?q=${encodeURIComponent(q)}`));
+                        setShowSuggestions(false);
+                    }}
                     onClick={() => {
                         setSearchQuery(q);
                         navigate(getLink(`/search?q=${encodeURIComponent(q)}`));
                         setShowSuggestions(false);
                     }}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-3 group transition-colors"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-3 group transition-colors cursor-pointer select-none"
                   >
                     <Clock size={14} className="text-gray-300 group-hover:text-blue-500" />
                     <span className="text-sm font-bold text-gray-700 capitalize">{q}</span>
@@ -228,8 +210,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   <Link
                     key={cat}
                     to={getLink(`/search?category=${cat}`)}
+                    onMouseDown={() => setShowSuggestions(false)}
                     onClick={() => setShowSuggestions(false)}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-white hover:shadow-sm rounded-lg transition-all group"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-white hover:shadow-sm rounded-lg transition-all group cursor-pointer select-none"
                   >
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all">
                        <Search size={14} />
@@ -249,16 +232,18 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 {suggestions.isTrending ? "Global Trending Selection" : "Store Results"}
               </p>
               {suggestions.products.map(p => (
-                <div 
+                <Link 
                   key={p.id}
-                  onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                  to={getLink(`/products/${p.id}`)}
+                  onMouseDown={() => {
                       setShowSuggestions(false);
                       setSearchQuery('');
-                      navigate(getLink(`/products/${p.id}`));
                   }}
-                  className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all group border-b border-gray-50 last:border-none cursor-pointer"
+                  onClick={() => {
+                      setShowSuggestions(false);
+                      setSearchQuery('');
+                  }}
+                  className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl transition-all group border-b border-gray-50 last:border-none cursor-pointer select-none"
                 >
                   <div className="w-14 h-14 bg-gray-50 rounded-lg overflow-hidden border border-gray-100 p-1">
                     <img src={p.image} alt={p.name} className="w-full h-full object-contain mix-blend-multiply" loading="lazy" decoding="async" />
@@ -274,14 +259,19 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     </div>
                   </div>
                   <ArrowRight size={14} className="text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
-                </div>
+                </Link>
               ))}
             </div>
 
             {searchQuery.length > 0 && (
               <button 
+                type="button"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  handleSearch(e);
+                }}
                 onClick={handleSearch}
-                className="w-full py-4 bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all flex items-center justify-center gap-3 group"
+                className="w-full py-4 bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all flex items-center justify-center gap-3 group cursor-pointer select-none"
               >
                 Search all items matching "{searchQuery}"
                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-all" />
@@ -426,15 +416,19 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </Link>
 
             {/* Mobile Profile & Cart (Always Visible on mobile right) */}
-            <div className="flex md:hidden items-center ml-auto gap-2">
-               <button className="p-2 flex items-center">
-                  <span className="text-[10px] font-black mr-1">Sign In</span>
-                  <User size={24} />
-               </button>
-               <Link to={getLink('/cart')} className="relative p-2 flex items-center">
-                  <ShoppingCart size={28} />
+            <div className="flex md:hidden items-center ml-auto gap-1 sm:gap-2 flex-shrink-0 z-20">
+               <Link to="/seller-login" className="p-2 flex items-center text-white/90 hover:text-white flex-shrink-0">
+                  <span className="text-[10px] font-black mr-1 hidden xs:inline">Sign In</span>
+                  <User size={24} className="pointer-events-none" />
+               </Link>
+               <Link 
+                  to={getLink('/cart')} 
+                  className="relative flex items-center justify-center min-w-[48px] min-h-[48px] p-2.5 rounded-lg active:bg-white/10 z-30 cursor-pointer flex-shrink-0 select-none"
+                  aria-label="Shopping Cart"
+               >
+                  <ShoppingCart size={28} className="pointer-events-none" />
                   {cartCount > 0 && (
-                    <span className="absolute top-1 right-1 bg-yellow-400 text-black text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#232f3e]">
+                    <span className="absolute top-1.5 right-1.5 bg-yellow-400 text-black text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#232f3e] pointer-events-none shadow-sm">
                       {cartCount}
                     </span>
                   )}
@@ -442,7 +436,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </div>
 
             {/* Advanced Search - Expanded for Desktop & Prominent for Mobile */}
-            <div className="hidden md:block flex-grow relative max-w-4xl" ref={searchRef}>
+            <div className="hidden md:block flex-grow relative max-w-4xl" ref={desktopSearchRef}>
               <form onSubmit={handleSearch} className="flex h-11 rounded-lg overflow-hidden shadow-sm group focus-within:ring-4 focus-within:ring-[#febd69]/40 transition-all border-2 border-transparent focus-within:border-[#febd69]">
                 <div className="relative group/cat">
                   <select 
@@ -476,16 +470,16 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </div>
 
             {/* Desktop Cart */}
-            <Link to={getLink('/cart')} className="hidden md:flex relative items-center gap-2 group md:hover:outline outline-white outline-1 h-full px-4 transition-all">
-              <div className="relative">
+            <Link to={getLink('/cart')} className="hidden md:flex relative items-center gap-2 group md:hover:outline outline-white outline-1 h-full px-4 transition-all cursor-pointer select-none">
+              <div className="relative pointer-events-none">
                 <ShoppingCart size={32} className="text-white" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 right-0 bg-yellow-400 text-black text-[12px] font-black w-5 h-5 flex items-center justify-center rounded-full">
+                  <span className="absolute -top-1 right-0 bg-yellow-400 text-black text-[12px] font-black w-5 h-5 flex items-center justify-center rounded-full shadow-sm">
                     {cartCount}
                   </span>
                 )}
               </div>
-              <div className="flex flex-col justify-center leading-none mt-1">
+              <div className="flex flex-col justify-center leading-none mt-1 pointer-events-none">
                  <span className="text-[10px] font-black text-white/70 uppercase">Cart</span>
                  <span className="text-sm font-black whitespace-nowrap">{t('cart_items_count', { count: cartCount })}</span>
               </div>
@@ -493,7 +487,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
 
           {/* Amazon Mobile Search Bar (Sticky-ish Below header) */}
-          <div className="md:hidden px-4 pb-3" ref={searchRef}>
+          <div className="md:hidden px-4 pb-3 relative" ref={mobileSearchRef}>
             <form onSubmit={handleSearch} className="flex relative h-12 rounded-xl overflow-hidden shadow-lg border-2 border-[#131921]">
               <input 
                 type="text" 
@@ -509,8 +503,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <button type="submit" className="bg-[#febd69] text-black w-14 flex items-center justify-center active:scale-95 border-none">
                 <Search size={22} className="stroke-[3]" />
               </button>
-              {renderSuggestions()}
             </form>
+            {renderSuggestions()}
           </div>
         </div>
 

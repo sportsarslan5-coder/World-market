@@ -223,7 +223,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       processedTerm = processedTerm.split('?q=').pop() || '';
     }
     processedTerm = processedTerm.split('/').pop() || processedTerm;
-    processedTerm = processedTerm.replace(/^[^\w\s]+/, '').trim();
+    processedTerm = processedTerm.replace(/^[^\w\s#]+/, '').trim();
     
     const isCategoryAll = normSearchCategory === 'all' || rawCategoryInput === 'all';
 
@@ -240,6 +240,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const pTags = (p.tags || []).map(t => t.toLowerCase());
 
         return pCatNorm === normSearchCategory || 
+               pCatRaw === rawCategoryInput ||
                pCatRaw.includes(rawCategoryInput) || 
                rawCategoryInput.includes(pCatRaw) ||
                pName.includes(rawCategoryInput) ||
@@ -247,32 +248,49 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       });
     }
 
-    // 2. Term Filtering (Partial Word Matching)
+    // 2. Term Filtering (Partial Word Matching on Name, Category, Tags, Keywords)
     if (processedTerm) {
-      const searchWords = processedTerm.split(/\s+/).filter(w => w.length > 1);
+      const searchWords = processedTerm.split(/\s+/).filter(w => w.length > 0);
+      const normTerm = normalizeCategory(processedTerm);
       
       filtered = filtered.filter(p => {
         const pName = (p.name || '').toLowerCase();
         const pCat = (p.category || '').toLowerCase();
+        const pCatNorm = normalizeCategory(pCat);
         const pTags = (p.tags || []).map(t => t.toLowerCase());
-        const pDesc = (p.description || '').toLowerCase();
+        const pKeywords = (p.metaKeywords || '').toLowerCase();
 
-        // Check if any search word matches any property
-        return searchWords.every(word => 
-          pName.includes(word) || 
-          pCat.includes(word) || 
-          pTags.some(t => t.includes(word)) ||
-          pDesc.includes(word)
-        );
+        // 1. Direct full term match against Product Name, Category, Tags, or Keywords
+        const fullMatch = pName.includes(processedTerm) || 
+                          processedTerm.includes(pName) ||
+                          pCat === processedTerm ||
+                          pCat.includes(processedTerm) ||
+                          processedTerm.includes(pCat) ||
+                          pCatNorm === normTerm ||
+                          pCatNorm.includes(normTerm) ||
+                          normTerm.includes(pCatNorm) ||
+                          pTags.some(t => t === processedTerm || t.includes(processedTerm) || processedTerm.includes(t)) ||
+                          pKeywords.includes(processedTerm);
+
+        if (fullMatch) return true;
+
+        // 2. Word by word match: Every word in the search query must match at least one searchable field
+        if (searchWords.length > 1) {
+          return searchWords.every(word => {
+            const normWord = normalizeCategory(word);
+            return pName.includes(word) || 
+                   pCat.includes(word) || 
+                   word.includes(pCat) ||
+                   pCatNorm === normWord ||
+                   pCatNorm.includes(normWord) ||
+                   normWord.includes(pCatNorm) ||
+                   pTags.some(t => t.includes(word) || word.includes(t)) ||
+                   pKeywords.includes(word);
+          });
+        }
+
+        return false;
       });
-
-      // Special case: If filtering by words returned nothing, try a broader search
-      if (filtered.length === 0) {
-        filtered = products.filter(p => {
-          const pName = (p.name || '').toLowerCase();
-          return pName.includes(processedTerm) || processedTerm.includes(pName);
-        });
-      }
     }
 
     // Deduplicate and return
