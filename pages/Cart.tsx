@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { ADMIN_WHATSAPP } from '../constants';
+import { getWhatsAppLink } from '../services/routingUtils';
 
 const Cart: React.FC = () => {
   const { cart, removeFromCart, clearCart, activeShowName, referralCode, activeSeller, addSale } = useStore();
@@ -100,10 +101,10 @@ TOTAL: $${total.toFixed(2)}
 --------------------------------
 Secure manual payment confirmation via WhatsApp.`;
 
-      const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;
+      const waLink = getWhatsAppLink(ADMIN_WHATSAPP, message);
       
       setIsSubmitting(false);
-      window.open(waLink, '_blank');
+      window.location.href = waLink;
       clearCart();
       setIsCheckingOut(false);
       alert("Order success! Order details saved to Cloud & sent to WhatsApp! Our team will provide payment instructions shortly.");

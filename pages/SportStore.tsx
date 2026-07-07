@@ -18,6 +18,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { ADMIN_WHATSAPP } from '../constants';
+import { getWhatsAppLink } from '../services/routingUtils';
 
 const SportStore: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -342,8 +343,8 @@ const SportStore: React.FC = () => {
   ];
 
   const handleWhatsAppOrder = (productName: string) => {
-    const message = encodeURIComponent(`Hello, I am interested in ordering the ${productName} from your Sport Store. Please provide more details.`);
-    window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${message}`, '_blank');
+    const message = `Hello, I am interested in ordering the ${productName} from your Sport Store. Please provide more details.`;
+    window.location.href = getWhatsAppLink(ADMIN_WHATSAPP, message);
   };
 
   const filteredCategories = useMemo(() => {

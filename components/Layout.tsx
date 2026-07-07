@@ -83,10 +83,23 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       const target = event.target as Node;
+      
+      // Prevent click/touch disruption on the cart buttons by bypassing state changes
+      if (target instanceof Element && (
+        target.closest('#mobile-cart-btn') || 
+        target.closest('#desktop-cart-btn') || 
+        target.closest('a[href*="/cart"]')
+      )) {
+        return;
+      }
+
       const inDesktop = desktopSearchRef.current && desktopSearchRef.current.contains(target);
       const inMobile = mobileSearchRef.current && mobileSearchRef.current.contains(target);
       if (!inDesktop && !inMobile) {
-        setShowSuggestions(false);
+        setShowSuggestions(prev => {
+          if (prev) return false;
+          return prev;
+        });
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -416,19 +429,20 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </Link>
 
             {/* Mobile Profile & Cart (Always Visible on mobile right) */}
-            <div className="flex md:hidden items-center ml-auto gap-1 sm:gap-2 flex-shrink-0 z-20">
+            <div className="flex md:hidden items-center ml-auto gap-1 sm:gap-2 flex-shrink-0 z-[60] relative">
                <Link to="/seller-login" className="p-2 flex items-center text-white/90 hover:text-white flex-shrink-0">
                   <span className="text-[10px] font-black mr-1 hidden xs:inline">Sign In</span>
                   <User size={24} className="pointer-events-none" />
                </Link>
                <Link 
+                  id="mobile-cart-btn"
                   to={getLink('/cart')} 
-                  className="relative flex items-center justify-center min-w-[48px] min-h-[48px] p-2.5 rounded-lg active:bg-white/10 z-30 cursor-pointer flex-shrink-0 select-none"
+                  className="relative flex items-center justify-center min-w-[54px] min-h-[54px] p-2 rounded-lg active:bg-white/10 z-[70] cursor-pointer flex-shrink-0 select-none pointer-events-auto"
                   aria-label="Shopping Cart"
                >
                   <ShoppingCart size={28} className="pointer-events-none" />
                   {cartCount > 0 && (
-                    <span className="absolute top-1.5 right-1.5 bg-yellow-400 text-black text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#232f3e] pointer-events-none shadow-sm">
+                    <span className="absolute top-1 right-1 bg-yellow-400 text-black text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#232f3e] pointer-events-none shadow-sm">
                       {cartCount}
                     </span>
                   )}
@@ -470,7 +484,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </div>
 
             {/* Desktop Cart */}
-            <Link to={getLink('/cart')} className="hidden md:flex relative items-center gap-2 group md:hover:outline outline-white outline-1 h-full px-4 transition-all cursor-pointer select-none">
+            <Link id="desktop-cart-btn" to={getLink('/cart')} className="hidden md:flex relative items-center gap-2 group md:hover:outline outline-white outline-1 h-full px-4 transition-all cursor-pointer select-none">
               <div className="relative pointer-events-none">
                 <ShoppingCart size={32} className="text-white" />
                 {cartCount > 0 && (

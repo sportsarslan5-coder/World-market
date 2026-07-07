@@ -4,6 +4,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { useStore } from '../context/StoreContext';
 import { ADMIN_WHATSAPP } from '../constants';
+import { getWhatsAppLink } from '../services/routingUtils';
 import { Star, Truck, ShieldCheck, RotateCcw, MessageCircle, ShoppingCart, ChevronRight, Share2, Heart, CheckCircle2, Eye, Clock, Zap } from 'lucide-react';
 
 const ProductDetail: React.FC = () => {
@@ -99,8 +100,8 @@ AMOUNT: $${(product.price * quantity).toFixed(2)}
 --------------------------------
 Secure international payment confirmation.`;
 
-    const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`;
-    window.open(waLink, '_blank');
+    const waLink = getWhatsAppLink(ADMIN_WHATSAPP, message);
+    window.location.href = waLink;
     setIsOrdering(false);
   };
 

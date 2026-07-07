@@ -73,3 +73,25 @@ export const generateProfessionalLink = (showName: string) => {
     return `/${showName}`;
   }
 };
+
+/**
+ * Generates the most direct WhatsApp link.
+ * On mobile (Android/iOS), it uses the custom deep link scheme "whatsapp://" to open the installed app directly without any intermediate pages.
+ * On desktop, it falls back to the official API web link.
+ */
+export const getWhatsAppLink = (phone: string, text: string) => {
+  const cleanPhone = phone.replace(/[^\d]/g, '');
+  const encodedText = encodeURIComponent(text);
+  
+  // Detect mobile devices (Android, iOS)
+  const isMobile = typeof navigator !== 'undefined' && 
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+  if (isMobile) {
+    // Return direct deep link scheme to launch the WhatsApp mobile application directly
+    return `whatsapp://send?phone=${cleanPhone}&text=${encodedText}`;
+  } else {
+    // Desktop fallback link
+    return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodedText}`;
+  }
+};
