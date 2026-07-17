@@ -30,8 +30,29 @@ const Products: React.FC = () => {
   const [availability, setAvailability] = useState<'all' | 'inStock' | 'outOfStock'>('all');
   const [sortBy, setSortBy] = useState('newest');
 
-  const query = searchParams.get('q') || '';
-  const category = searchParams.get('category') || searchParams.get('cat') || 'All';
+  // Helper for cross-platform and iframe-safe URL parameter retrieval
+  const getQueryParam = (key: string): string => {
+    const val = searchParams.get(key);
+    if (val) return val;
+    if (typeof window !== 'undefined') {
+      const search = window.location.search;
+      if (search) {
+        const params = new URLSearchParams(search);
+        const pVal = params.get(key);
+        if (pVal) return pVal;
+      }
+      const hash = window.location.hash;
+      if (hash && hash.includes('?')) {
+        const params = new URLSearchParams(hash.split('?')[1]);
+        const pVal = params.get(key);
+        if (pVal) return pVal;
+      }
+    }
+    return '';
+  };
+
+  const query = getQueryParam('q');
+  const category = getQueryParam('category') || getQueryParam('cat') || 'All';
 
   const filteredProducts = useMemo(() => {
     // 1. First apply search if query exists, pass current category context

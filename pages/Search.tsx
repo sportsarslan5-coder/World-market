@@ -9,8 +9,30 @@ import { motion, AnimatePresence } from 'motion/react';
 const Search: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { categoryName } = useParams();
-  const query = searchParams.get('q') || '';
-  const categoryParam = categoryName || searchParams.get('category') || searchParams.get('cat') || 'All';
+
+  // Helper for cross-platform and iframe-safe URL parameter retrieval
+  const getQueryParam = (key: string): string => {
+    const val = searchParams.get(key);
+    if (val) return val;
+    if (typeof window !== 'undefined') {
+      const search = window.location.search;
+      if (search) {
+        const params = new URLSearchParams(search);
+        const pVal = params.get(key);
+        if (pVal) return pVal;
+      }
+      const hash = window.location.hash;
+      if (hash && hash.includes('?')) {
+        const params = new URLSearchParams(hash.split('?')[1]);
+        const pVal = params.get(key);
+        if (pVal) return pVal;
+      }
+    }
+    return '';
+  };
+
+  const query = getQueryParam('q');
+  const categoryParam = categoryName || getQueryParam('category') || getQueryParam('cat') || 'All';
   const { formatPrice, setQuickViewProduct, products, searchProducts } = useStore();
 
   const [sortBy, setSortBy] = useState('best-selling');

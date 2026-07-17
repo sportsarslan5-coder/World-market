@@ -217,13 +217,32 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const rawCategoryInput = (category || 'All').toLowerCase().trim();
     const normSearchCategory = normalizeCategory(rawCategoryInput);
     
-    // Clean search term
-    let processedTerm = (term || '').toLowerCase().trim();
+    // Clean and decode search term robustly (handling potential percent encodings and URL parameters)
+    let processedTerm = '';
+    try {
+      processedTerm = decodeURIComponent(term || '');
+    } catch (e) {
+      try {
+        processedTerm = decodeURI(term || '');
+      } catch (err) {
+        processedTerm = term || '';
+      }
+    }
+
+    processedTerm = processedTerm.toLowerCase().trim();
     if (processedTerm.includes('?q=')) {
       processedTerm = processedTerm.split('?q=').pop() || '';
     }
     processedTerm = processedTerm.split('/').pop() || processedTerm;
-    processedTerm = processedTerm.replace(/^[^\w\s#]+/, '').trim();
+    
+    // Standardize all types of whitespace (including non-breaking spaces \u00A0 often sent by iOS keyboard/autocorrect) to normal single spaces
+    processedTerm = processedTerm.replace(/[\s\u00A0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+/g, ' ');
+    
+    // Normalize smart/curly quotes (which iOS autocorrect inserts automatically)
+    processedTerm = processedTerm.replace(/[\u201c\u201d\u2018\u2019"']/g, '');
+
+    // Safely remove only leading garbage punctuation without stripping non-English letters (avoids \w issue on iOS/Safari)
+    processedTerm = processedTerm.replace(/^[\?\*!\.,\-\+\/\\_]+/, '').trim();
     
     const isCategoryAll = normSearchCategory === 'all' || rawCategoryInput === 'all';
 
@@ -250,7 +269,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     // 2. Term Filtering (Partial Word Matching on Name, Category, Tags, Keywords)
     if (processedTerm) {
-      const searchWords = processedTerm.split(/\s+/).filter(w => w.length > 0);
+      const searchWords = processedTerm.split(' ').filter(w => w.length > 0);
       const normTerm = normalizeCategory(processedTerm);
       
       filtered = filtered.filter(p => {
@@ -275,7 +294,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (fullMatch) return true;
 
         // 2. Word by word match: Every word in the search query must match at least one searchable field
-        if (searchWords.length > 1) {
+        if (searchWords.length > 0) {
           return searchWords.every(word => {
             const normWord = normalizeCategory(word);
             return pName.includes(word) || 
