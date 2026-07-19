@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useSearchParams, Link, useParams } from 'react-router-dom';
+import { useSearchParams, Link, useParams, useLocation } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES, SHIPPING_COUNTRIES } from '../constants';
 import { useTranslation } from '../src/translations';
@@ -17,11 +17,26 @@ import {
   Globe
 } from 'lucide-react';
 
+const getSafeTime = (datePosted: any): number => {
+  if (!datePosted) return 0;
+  if (typeof datePosted === 'object') {
+    if (typeof datePosted.toDate === 'function') {
+      return datePosted.toDate().getTime();
+    }
+    if (typeof datePosted.seconds === 'number') {
+      return datePosted.seconds * 1000;
+    }
+  }
+  const parsed = new Date(datePosted).getTime();
+  return isNaN(parsed) ? 0 : parsed;
+};
+
 const Products: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { products, addToCart, formatPrice, language, setQuickViewProduct, isProductsLoading, hasMoreProducts, loadMoreProducts, searchProducts } = useStore();
   const { t } = useTranslation(language.code);
   const { showName } = useParams();
+  const location = useLocation();
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
@@ -51,8 +66,13 @@ const Products: React.FC = () => {
     return '';
   };
 
-  const query = getQueryParam('q');
-  const category = getQueryParam('category') || getQueryParam('cat') || 'All';
+  const query = useMemo(() => {
+    return getQueryParam('q');
+  }, [location.search, location.hash, searchParams]);
+
+  const category = useMemo(() => {
+    return getQueryParam('category') || getQueryParam('cat') || 'All';
+  }, [location.search, location.hash, searchParams]);
 
   const filteredProducts = useMemo(() => {
     // 1. First apply search if query exists, pass current category context
@@ -64,8 +84,9 @@ const Products: React.FC = () => {
 
     // 2. Then apply other filters
     result = result.filter(p => {
-      const matchesPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
-      const matchesRating = !selectedRating || p.rating >= selectedRating;
+      const price = Number(p.price) || 0;
+      const matchesPrice = price >= priceRange[0] && price <= priceRange[1];
+      const matchesRating = !selectedRating || (Number(p.rating || 0) >= selectedRating);
       const matchesCountry = !selectedCountry || p.shippingCountry === selectedCountry;
       const matchesAvailability = availability === 'all' || 
                                   (availability === 'inStock' && p.stock > 0) ||
@@ -75,15 +96,15 @@ const Products: React.FC = () => {
     });
 
     switch (sortBy) {
-      case 'price-low': result.sort((a, b) => a.price - b.price); break;
-      case 'price-high': result.sort((a, b) => b.price - a.price); break;
-      case 'top-rated': result.sort((a, b) => b.rating - a.rating); break;
+      case 'price-low': result.sort((a, b) => (a.price || 0) - (b.price || 0)); break;
+      case 'price-high': result.sort((a, b) => (b.price || 0) - (a.price || 0)); break;
+      case 'top-rated': result.sort((a, b) => (Number(b.rating || 0)) - (Number(a.rating || 0))); break;
       case 'best-selling': result.sort((a, b) => (b.sales || 0) - (a.sales || 0)); break;
-      case 'newest': result.sort((a, b) => new Date(b.datePosted).getTime() - new Date(a.datePosted).getTime()); break;
+      case 'newest': result.sort((a, b) => getSafeTime(b.datePosted) - getSafeTime(a.datePosted)); break;
     }
 
     return result;
-  }, [products, query, category, priceRange, selectedRating, selectedCountry, availability, sortBy]);
+  }, [products, query, category, priceRange, selectedRating, selectedCountry, availability, sortBy, searchProducts]);
 
   const getProductLink = (id: string) => {
     if (showName) return `/${showName}/products/${id}`;

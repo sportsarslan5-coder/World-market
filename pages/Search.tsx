@@ -1,14 +1,29 @@
 
 import React, { useState, useMemo } from 'react';
-import { useSearchParams, Link, useParams } from 'react-router-dom';
+import { useSearchParams, Link, useParams, useLocation } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { CATEGORIES } from '../constants';
 import { Search as SearchIcon, Filter, Grid, List as ListIcon, Star, ArrowRight, ShoppingBag, TrendingUp, Truck, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
+const getSafeTime = (datePosted: any): number => {
+  if (!datePosted) return 0;
+  if (typeof datePosted === 'object') {
+    if (typeof datePosted.toDate === 'function') {
+      return datePosted.toDate().getTime();
+    }
+    if (typeof datePosted.seconds === 'number') {
+      return datePosted.seconds * 1000;
+    }
+  }
+  const parsed = new Date(datePosted).getTime();
+  return isNaN(parsed) ? 0 : parsed;
+};
+
 const Search: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { categoryName } = useParams();
+  const location = useLocation();
 
   // Helper for cross-platform and iframe-safe URL parameter retrieval
   const getQueryParam = (key: string): string => {
@@ -31,8 +46,14 @@ const Search: React.FC = () => {
     return '';
   };
 
-  const query = getQueryParam('q');
-  const categoryParam = categoryName || getQueryParam('category') || getQueryParam('cat') || 'All';
+  const query = useMemo(() => {
+    return getQueryParam('q');
+  }, [location.search, location.hash, searchParams]);
+
+  const categoryParam = useMemo(() => {
+    return categoryName || getQueryParam('category') || getQueryParam('cat') || 'All';
+  }, [categoryName, location.search, location.hash, searchParams]);
+
   const { formatPrice, setQuickViewProduct, products, searchProducts } = useStore();
 
   const [sortBy, setSortBy] = useState('best-selling');
@@ -51,13 +72,16 @@ const Search: React.FC = () => {
 
   const rawResults = useMemo(() => {
     return searchProducts(query, filters.selectedCategory);
-  }, [query, filters.selectedCategory, products]); // Added products to deps just in case
+  }, [query, filters.selectedCategory, products, searchProducts]);
 
   const filteredAndSortedResults = useMemo(() => {
     let items = [...rawResults];
 
     // Price Filter
-    items = items.filter(p => p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]);
+    items = items.filter(p => {
+      const price = Number(p.price) || 0;
+      return price >= filters.priceRange[0] && price <= filters.priceRange[1];
+    });
 
     // Size Filter
     if (filters.selectedSize !== 'All') {
@@ -72,13 +96,13 @@ const Search: React.FC = () => {
     // Sorting
     switch (sortBy) {
       case 'newest':
-        items.sort((a, b) => new Date(b.datePosted).getTime() - new Date(a.datePosted).getTime());
+        items.sort((a, b) => getSafeTime(b.datePosted) - getSafeTime(a.datePosted));
         break;
       case 'price-low':
-        items.sort((a, b) => a.price - b.price);
+        items.sort((a, b) => (a.price || 0) - (b.price || 0));
         break;
       case 'price-high':
-        items.sort((a, b) => b.price - a.price);
+        items.sort((a, b) => (b.price || 0) - (a.price || 0));
         break;
       case 'best-selling':
       default:
@@ -230,7 +254,7 @@ const Search: React.FC = () => {
                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                  {filteredAndSortedResults.map(product => {
                    const isBestSeller = (product.sales || 0) > 400;
-                   const isTopRated = parseFloat(product.rating.toString()) >= 4.8;
+                   const isTopRated = Number(product.rating || 0) >= 4.8;
 
                    return (
                      <div key={product.id} className="bg-white border border-gray-200 rounded-lg flex flex-col group hover:shadow-lg transition-shadow overflow-hidden">
@@ -274,8 +298,8 @@ const Search: React.FC = () => {
                                  <Star 
                                    key={i} 
                                    size={14} 
-                                   fill={i < Math.floor(product.rating) ? "currentColor" : "none"} 
-                                   className={i < Math.floor(product.rating) ? "text-yellow-500" : "text-gray-300"} 
+                                   fill={i < Math.floor(Number(product.rating || 0)) ? "currentColor" : "none"} 
+                                   className={i < Math.floor(Number(product.rating || 0)) ? "text-yellow-500" : "text-gray-300"} 
                                  />
                                ))}
                              </div>
