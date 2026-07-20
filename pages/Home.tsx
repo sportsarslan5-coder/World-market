@@ -335,14 +335,17 @@ const Home: React.FC = () => {
               </div>
             ) : products.map(p => (
               <div key={p.id} className="group flex flex-col gap-3 bg-white p-2 md:p-3 rounded-[1.5rem] md:rounded-[2rem] border border-gray-100 hover:shadow-2xl hover:shadow-blue-500/10 transition-all">
-              <Link to={getProductLink(p.id)} className="aspect-square bg-gray-50 rounded-xl md:rounded-2xl overflow-hidden relative">
+              <Link to={getProductLink(p.id)} className="block w-full aspect-square bg-gray-50 rounded-xl md:rounded-2xl overflow-hidden relative">
                 <img 
                   src={p.image} 
                   alt={p.name} 
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                   loading="lazy"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/placeholder/400/400';
+                    const target = e.target as HTMLImageElement;
+                    if (!target.src.includes('seed/placeholder/400/400')) {
+                      target.src = 'https://picsum.photos/seed/placeholder/400/400';
+                    }
                   }}
                 />
                 

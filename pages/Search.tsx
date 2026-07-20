@@ -259,13 +259,16 @@ const Search: React.FC = () => {
                    return (
                      <div key={product.id} className="bg-white border border-gray-200 rounded-lg flex flex-col group hover:shadow-lg transition-shadow overflow-hidden">
                         {/* Image area */}
-                        <Link to={`/products/${product.id}`} className="block relative aspect-square bg-gray-50 p-4">
+                        <Link to={`/products/${product.id}`} className="block w-full relative aspect-square bg-gray-50 p-4">
                            <img 
                              src={product.image || 'https://picsum.photos/seed/product/400/400'} 
                              alt={product.name} 
-                             className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500" 
+                             className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" 
                              onError={(e) => {
-                               (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/product/400/400';
+                               const target = e.target as HTMLImageElement;
+                               if (!target.src.includes('seed/product/400/400')) {
+                                 target.src = 'https://picsum.photos/seed/product/400/400';
+                               }
                              }}
                            />
                         </Link>
