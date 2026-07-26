@@ -233,7 +233,16 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (processedTerm.includes('?q=')) {
       processedTerm = processedTerm.split('?q=').pop() || '';
     }
-    processedTerm = processedTerm.split('/').pop() || processedTerm;
+    if (processedTerm.includes('&')) {
+      processedTerm = processedTerm.split('&')[0] || processedTerm;
+    }
+
+    // Safely remove trailing slashes before path splitting
+    processedTerm = processedTerm.replace(/\/+$/, '');
+    if (processedTerm.includes('/')) {
+      const parts = processedTerm.split('/').filter(Boolean);
+      processedTerm = parts.pop() || processedTerm;
+    }
     
     // Standardize all types of whitespace (including non-breaking spaces \u00A0 often sent by iOS keyboard/autocorrect) to normal single spaces
     processedTerm = processedTerm.replace(/[\s\u00A0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+/g, ' ');
@@ -241,8 +250,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Normalize smart/curly quotes (which iOS autocorrect inserts automatically)
     processedTerm = processedTerm.replace(/[\u201c\u201d\u2018\u2019"']/g, '');
 
-    // Safely remove only leading garbage punctuation without stripping non-English letters (avoids \w issue on iOS/Safari)
-    processedTerm = processedTerm.replace(/^[\?\*!\.,\-\+\/\\_]+/, '').trim();
+    // Safely remove leading and trailing garbage punctuation without stripping non-English letters (avoids \w issue on iOS/Safari)
+    processedTerm = processedTerm.replace(/^[\?\*!\.,\-\+\/\\_]+/, '').replace(/[\?\*!\.,\-\+\/\\_]+$/, '').trim();
     
     const isCategoryAll = normSearchCategory === 'all' || rawCategoryInput === 'all';
 

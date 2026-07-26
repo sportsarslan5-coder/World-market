@@ -27,20 +27,25 @@ const Search: React.FC = () => {
 
   // Helper for cross-platform and iframe-safe URL parameter retrieval
   const getQueryParam = (key: string): string => {
-    const val = searchParams.get(key);
+    const val = searchParams.get(key) || searchParams.get(key.toLowerCase()) || searchParams.get(key.toUpperCase());
     if (val) return val;
     if (typeof window !== 'undefined') {
       const search = window.location.search;
       if (search) {
         const params = new URLSearchParams(search);
-        const pVal = params.get(key);
-        if (pVal) return pVal;
+        for (const [pKey, pVal] of params.entries()) {
+          if (pKey.toLowerCase() === key.toLowerCase() && pVal) return pVal;
+        }
       }
       const hash = window.location.hash;
       if (hash && hash.includes('?')) {
-        const params = new URLSearchParams(hash.split('?')[1]);
-        const pVal = params.get(key);
-        if (pVal) return pVal;
+        const queryStr = hash.split('?')[1];
+        if (queryStr) {
+          const params = new URLSearchParams(queryStr);
+          for (const [pKey, pVal] of params.entries()) {
+            if (pKey.toLowerCase() === key.toLowerCase() && pVal) return pVal;
+          }
+        }
       }
     }
     return '';
@@ -259,7 +264,7 @@ const Search: React.FC = () => {
                    return (
                      <div key={product.id} className="bg-white border border-gray-200 rounded-lg flex flex-col group hover:shadow-lg transition-shadow overflow-hidden">
                         {/* Image area */}
-                        <Link to={`/products/${product.id}`} className="block w-full relative aspect-square bg-gray-50 p-4">
+                        <Link to={`/products/${product.id}`} className="block w-full shrink-0 relative aspect-square bg-gray-50 p-4">
                            <img 
                              src={product.image || 'https://picsum.photos/seed/product/400/400'} 
                              alt={product.name} 
@@ -274,7 +279,7 @@ const Search: React.FC = () => {
                         </Link>
 
                         {/* Info area */}
-                        <div className="p-4 flex flex-col flex-grow bg-white">
+                        <div className="p-4 flex flex-col flex-grow min-w-0 bg-white">
                            {/* Badges */}
                            <div className="h-6 mb-2 flex flex-wrap gap-2">
                              {isBestSeller && (
@@ -288,7 +293,7 @@ const Search: React.FC = () => {
                              )}
                            </div>
 
-                           <Link to={`/products/${product.id}`} className="hover:text-[#c45500] group/title transition-colors">
+                           <Link to={`/products/${product.id}`} className="block w-full hover:text-[#c45500] group/title transition-colors">
                              <h3 className="text-sm md:text-base font-normal text-gray-900 line-clamp-3 mb-1 group-hover/title:underline italic uppercase font-bold tracking-tight leading-tight">
                                 {product.name}
                              </h3>
