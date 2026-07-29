@@ -268,7 +268,9 @@ const Search: React.FC = () => {
                            <img 
                              src={product.image || 'https://picsum.photos/seed/product/400/400'} 
                              alt={product.name} 
-                             className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" 
+                             loading="lazy"
+                             decoding="async"
+                             className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" 
                              onError={(e) => {
                                const target = e.target as HTMLImageElement;
                                if (!target.src.includes('seed/product/400/400')) {

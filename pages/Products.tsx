@@ -47,20 +47,27 @@ const Products: React.FC = () => {
 
   // Helper for cross-platform and iframe-safe URL parameter retrieval
   const getQueryParam = (key: string): string => {
-    const val = searchParams.get(key);
-    if (val) return val;
+    const targetKey = key.toLowerCase();
+    
+    // Check searchParams case-insensitively
+    for (const [k, val] of searchParams.entries()) {
+      if (k.toLowerCase() === targetKey && val) return val;
+    }
+    
     if (typeof window !== 'undefined') {
       const search = window.location.search;
       if (search) {
         const params = new URLSearchParams(search);
-        const pVal = params.get(key);
-        if (pVal) return pVal;
+        for (const [k, val] of params.entries()) {
+          if (k.toLowerCase() === targetKey && val) return val;
+        }
       }
       const hash = window.location.hash;
       if (hash && hash.includes('?')) {
         const params = new URLSearchParams(hash.split('?')[1]);
-        const pVal = params.get(key);
-        if (pVal) return pVal;
+        for (const [k, val] of params.entries()) {
+          if (k.toLowerCase() === targetKey && val) return val;
+        }
       }
     }
     return '';

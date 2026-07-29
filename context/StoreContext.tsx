@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { Product, CartItem, SaleRecord, Customer, Currency, Language, CurrencyCode, LanguageCode, SellerInfo, AppNotification } from '../types';
 import { PRODUCTS, MOCK_CUSTOMERS, CURRENCIES, LANGUAGES, SELLERS } from '../constants';
 import { detectShowName } from '../services/routingUtils';
@@ -21,6 +21,102 @@ import {
   DocumentData
 } from 'firebase/firestore';
 import { db, auth, validateConnection } from '../services/firebase';
+
+export const normalizeCategory = (cat: string): string => {
+  if (!cat) return '';
+  const c = cat.toLowerCase().trim();
+  // Broad matching rules for stabilization across all products
+  if (c.includes('hoodie')) return 'hoodies';
+  if (c.includes('t-shirt') || c.includes('tshirt') || c.includes('tee')) return 't-shirts';
+  if (c.includes('jacket')) return 'jackets';
+  if (c.includes('shoe') || c.includes('footwear') || c.includes('sneaker') || c.includes('boot')) return 'shoes'; 
+  if (c.includes('cap') || c.includes('hat')) return 'caps';
+  if (c.includes('short')) return 'shorts';
+  if (c.includes('jersey') || c.includes('tracksuit') || c.includes('uniform') || c.includes('kit') || c.includes('sport')) return 'jerseys';
+  if (c.includes('electronic')) return 'electronics';
+  if (c.includes('book')) return 'books';
+  if (c.includes('jean') || c.includes('denim')) return 'jeans';
+  if (c.includes('pant') || c.includes('trouser') || c.includes('jogger')) return 'pants';
+  if (c.includes('accessory') || c.includes('bag') || c.includes('belt') || c.includes('sock') || c.includes('backpack')) return 'accessories';
+  return c;
+};
+
+export const sanitizeProduct = (docId: string, data: Record<string, any>): Product => {
+  let datePosted = new Date().toISOString();
+  if (data.datePosted) {
+    if (typeof data.datePosted === 'object' && typeof data.datePosted.toDate === 'function') {
+      datePosted = data.datePosted.toDate().toISOString();
+    } else if (typeof data.datePosted === 'string') {
+      datePosted = data.datePosted;
+    } else if (typeof data.datePosted === 'number') {
+      datePosted = new Date(data.datePosted).toISOString();
+    } else if (data.datePosted.seconds) {
+      datePosted = new Date(data.datePosted.seconds * 1000).toISOString();
+    }
+  }
+
+  const rawCategory = (data.category || '').toString();
+  const normalizedCat = normalizeCategory(rawCategory);
+
+  const mainImage = data.image || (Array.isArray(data.images) && data.images[0]) || 'https://picsum.photos/seed/product/400/400';
+  const imagesList = Array.isArray(data.images) && data.images.length > 0 ? data.images : [mainImage];
+
+  return {
+    id: docId,
+    name: (data.name || 'Untitled Product').toString(),
+    category: normalizedCat || rawCategory || 'general',
+    description: (data.description || '').toString(),
+    image: mainImage,
+    images: imagesList,
+    price: Number(data.price) || 0,
+    oldPrice: data.oldPrice ? Number(data.oldPrice) : undefined,
+    discount: data.discount ? Number(data.discount) : undefined,
+    rating: Number(data.rating) || 5.0,
+    stock: typeof data.stock === 'number' ? data.stock : 100,
+    datePosted: datePosted,
+    fabric: data.fabric?.toString(),
+    quality: data.quality || 'Export Quality',
+    sizes: Array.isArray(data.sizes) && data.sizes.length > 0 ? data.sizes : ['S', 'M', 'L', 'XL'],
+    colors: Array.isArray(data.colors) && data.colors.length > 0 ? data.colors : ['Black', 'White'],
+    reviews: Array.isArray(data.reviews) ? data.reviews : [],
+    shippingCountry: data.shippingCountry || 'Worldwide',
+    sellerId: data.sellerId,
+    sales: Number(data.sales) || 0,
+    viewers: Number(data.viewers) || 0,
+    metaTitle: data.metaTitle,
+    metaDescription: data.metaDescription,
+    metaKeywords: data.metaKeywords,
+    imageAlt: data.imageAlt || data.name,
+    badges: Array.isArray(data.badges) ? data.badges : ['New'],
+    tags: Array.isArray(data.tags) ? data.tags : [normalizedCat, data.name],
+    ratingCount: Number(data.ratingCount) || 0
+  };
+};
+
+const normalizedStaticProducts: Product[] = PRODUCTS.map(p => ({
+  ...p,
+  category: normalizeCategory(p.category || ''),
+  tags: Array.isArray(p.tags) && p.tags.length > 0 ? p.tags : [normalizeCategory(p.category || ''), p.name]
+}));
+
+const getInitialProducts = (): Product[] => {
+  if (typeof window !== 'undefined') {
+    try {
+      const cached = localStorage.getItem('cached_firestore_products');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const sanitizedCached = parsed.map(p => sanitizeProduct(p.id || p.docId, p));
+          const dbIds = new Set(sanitizedCached.map(p => p.id));
+          return [...sanitizedCached, ...normalizedStaticProducts.filter(p => !dbIds.has(p.id))];
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to load cached products:", e);
+    }
+  }
+  return normalizedStaticProducts;
+};
 
 interface StoreContextType {
   products: Product[];
@@ -61,7 +157,7 @@ interface StoreContextType {
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [products, setProducts] = useState<Product[]>(PRODUCTS);
+  const [products, setProducts] = useState<Product[]>(getInitialProducts);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [sales, setSales] = useState<SaleRecord[]>([]);
@@ -85,23 +181,27 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     const q = query(collection(db, 'products'), orderBy('datePosted', 'desc')); 
     const unsubscribeProducts = onSnapshot(q, (snapshot) => {
-      const dbProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+      const dbProducts = snapshot.docs.map(doc => sanitizeProduct(doc.id, doc.data()));
       
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('cached_firestore_products', JSON.stringify(dbProducts));
+        } catch (e) {
+          console.warn("Failed to update cached products:", e);
+        }
+      }
+
       // Merge Firestore products with static PRODUCTS but deduplicate by ID
-      // This ensures "old" mock products and "newly uploaded" Firestore products are both visible
       const dbIds = new Set(dbProducts.map(p => p.id));
-      const combined = [...dbProducts, ...PRODUCTS.filter(p => !dbIds.has(p.id))];
+      const combined = [...dbProducts, ...normalizedStaticProducts.filter(p => !dbIds.has(p.id))];
       
       setProducts(combined);
       setHasMoreProducts(false);
       setIsProductsLoading(false);
     }, (error) => {
       console.error("Products sync error:", error);
-      setProducts(PRODUCTS);
       setIsProductsLoading(false);
     });
-
-    setIsProductsLoading(true);
 
     const unsubscribeSales = onSnapshot(
       query(collection(db, 'sales'), orderBy('date', 'desc')), 
@@ -175,7 +275,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         limit(24)
       );
       const snapshot = await getDocs(q);
-      const newProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+      const newProducts = snapshot.docs.map(doc => sanitizeProduct(doc.id, doc.data()));
       if (newProducts.length > 0) {
         setProducts(prev => {
           const existingIds = new Set(prev.map(p => p.id));
@@ -194,26 +294,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const normalizeCategory = (cat: string): string => {
-    if (!cat) return '';
-    const c = cat.toLowerCase().trim();
-    // Broad matching rules for stabilization
-    if (c.includes('hoodie')) return 'hoodies';
-    if (c.includes('t-shirt') || c.includes('tshirt') || c.includes('tee')) return 't-shirts';
-    if (c.includes('jacket')) return 'jackets';
-    if (c.includes('shoe') || c.includes('footwear') || c.includes('sneaker')) return 'shoes'; 
-    if (c.includes('cap') || c.includes('hat')) return 'caps';
-    if (c.includes('short')) return 'shorts';
-    if (c.includes('jersey') || c.includes('tracksuit') || c.includes('uniform') || c.includes('kit')) return 'jerseys';
-    if (c.includes('electronic')) return 'electronics';
-    if (c.includes('book')) return 'books';
-    if (c.includes('jean') || c.includes('denim')) return 'jeans';
-    if (c.includes('pant') || c.includes('trouser')) return 'pants';
-    if (c.includes('accessory') || c.includes('bag') || c.includes('belt') || c.includes('sock')) return 'accessories';
-    return c;
-  };
-
-  const searchProducts = (term: string, category: string = 'All') => {
+  const searchProducts = useCallback((term: string, category: string = 'All'): Product[] => {
     const rawCategoryInput = (category || 'All').toLowerCase().trim();
     const normSearchCategory = normalizeCategory(rawCategoryInput);
     
@@ -250,13 +331,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Normalize smart/curly quotes (which iOS autocorrect inserts automatically)
     processedTerm = processedTerm.replace(/[\u201c\u201d\u2018\u2019"']/g, '');
 
-    // Safely remove leading and trailing garbage punctuation without stripping non-English letters (avoids \w issue on iOS/Safari)
+    // Safely remove leading and trailing garbage punctuation without stripping non-English letters
     processedTerm = processedTerm.replace(/^[\?\*!\.,\-\+\/\\_]+/, '').replace(/[\?\*!\.,\-\+\/\\_]+$/, '').trim();
     
     const isCategoryAll = normSearchCategory === 'all' || rawCategoryInput === 'all';
 
-    console.log(`[CORE SEARCH] Term: "${processedTerm}", Cat: "${rawCategoryInput}"`);
-    
     let filtered = [...products];
 
     // 1. Category Filtering
@@ -276,7 +355,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       });
     }
 
-    // 2. Term Filtering (Partial Word Matching on Name, Category, Tags, Keywords)
+    // 2. Term Filtering (Partial Word Matching on Name, Category, Tags, Keywords, Description)
     if (processedTerm) {
       const searchWords = processedTerm.split(' ').filter(w => w.length > 0);
       const normTerm = normalizeCategory(processedTerm);
@@ -287,8 +366,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const pCatNorm = normalizeCategory(pCat);
         const pTags = (p.tags || []).map(t => t.toLowerCase());
         const pKeywords = (p.metaKeywords || '').toLowerCase();
+        const pDesc = (p.description || '').toLowerCase();
 
-        // 1. Direct full term match against Product Name, Category, Tags, or Keywords
+        // Direct full term match against Product Name, Category, Tags, Keywords, or Description
         const fullMatch = pName.includes(processedTerm) || 
                           processedTerm.includes(pName) ||
                           pCat === processedTerm ||
@@ -298,11 +378,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                           pCatNorm.includes(normTerm) ||
                           normTerm.includes(pCatNorm) ||
                           pTags.some(t => t === processedTerm || t.includes(processedTerm) || processedTerm.includes(t)) ||
-                          pKeywords.includes(processedTerm);
+                          pKeywords.includes(processedTerm) ||
+                          pDesc.includes(processedTerm);
 
         if (fullMatch) return true;
 
-        // 2. Word by word match: Every word in the search query must match at least one searchable field
+        // Word by word match: Every word in the search query must match at least one searchable field
         if (searchWords.length > 0) {
           return searchWords.every(word => {
             const normWord = normalizeCategory(word);
@@ -313,7 +394,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                    pCatNorm.includes(normWord) ||
                    normWord.includes(pCatNorm) ||
                    pTags.some(t => t.includes(word) || word.includes(t)) ||
-                   pKeywords.includes(word);
+                   pKeywords.includes(word) ||
+                   pDesc.includes(word);
           });
         }
 
@@ -325,10 +407,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const uniqueMap = new Map();
     filtered.forEach(p => uniqueMap.set(p.id, p));
     
-    const results = Array.from(uniqueMap.values());
-    console.log(`[CORE SEARCH] Results: ${results.length}`);
-    return results;
-  };
+    return Array.from(uniqueMap.values());
+  }, [products]);
 
   const [activeShowName, setActiveShowName] = useState<string | null>(detectShowName());
   const [referralCode, setReferralCode] = useState<string | null>(null);
