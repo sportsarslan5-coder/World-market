@@ -1,18 +1,18 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
-import { BLOG_POSTS, PRODUCTS } from '../constants';
+import { BLOG_POSTS } from '../constants';
 import { Calendar, User, ArrowLeft, Tag, ShoppingCart, Star, Eye } from 'lucide-react';
 
 const BlogPost: React.FC = () => {
   const { slug } = useParams();
-  const { language, formatPrice, addToCart, setQuickViewProduct } = useStore();
+  const { products, language, formatPrice, addToCart, setQuickViewProduct } = useStore();
   const post = BLOG_POSTS.find(p => p.slug === slug);
 
   if (!post) return <div className="min-h-screen flex items-center justify-center">Post not found</div>;
 
   // Related products for SEO internal linking
-  const relatedProducts = PRODUCTS.slice(0, 4);
+  const relatedProducts = products.slice(0, 4);
 
   return (
     <div className="min-h-screen bg-white pb-24">

@@ -1,17 +1,17 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
-import { SELLERS, PRODUCTS } from '../constants';
+import { SELLERS } from '../constants';
 import { Star, CheckCircle, MapPin, MessageCircle, ShoppingBag, Award, Clock, Eye, ShieldCheck } from 'lucide-react';
 
 const SellerProfile: React.FC = () => {
   const { sellerId } = useParams();
-  const { formatPrice, addToCart, setQuickViewProduct } = useStore();
+  const { products, formatPrice, addToCart, setQuickViewProduct } = useStore();
   const seller = SELLERS.find(s => s.id === sellerId);
 
   if (!seller) return <div className="min-h-screen flex items-center justify-center">Seller not found</div>;
 
-  const sellerProducts = PRODUCTS.filter(p => p.sellerId === seller.id);
+  const sellerProducts = products.filter(p => p.sellerId === seller.id);
 
   const RankBadge = ({ rank }: { rank: string }) => {
     switch (rank) {

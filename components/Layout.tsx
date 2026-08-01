@@ -5,7 +5,7 @@ import BrandLogo from './BrandLogo';
 import SEO from './SEO';
 import { useStore } from '../context/StoreContext';
 import { detectShowName } from '../services/routingUtils';
-import { CATEGORIES, CURRENCIES, LANGUAGES, PRODUCTS } from '../constants';
+import { CATEGORIES, CURRENCIES, LANGUAGES } from '../constants';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Search, 
@@ -115,7 +115,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const suggestions = useMemo(() => {
     if (!searchQuery.trim()) {
       return {
-        products: products.sort((a, b) => (b.sales || 0) - (a.sales || 0)).slice(0, 5),
+        products: [...products].sort((a, b) => (b.sales || 0) - (a.sales || 0)).slice(0, 5),
         categories: CATEGORIES.slice(0, 4),
         history: searchHistory,
         isTrending: true
@@ -586,7 +586,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                       Sports Store (Direct Factory)
                       <ArrowRight size={16} />
                     </Link>
-                    {['hoodie', 'tshirt', 'shoes', 'bag', 'cap'].map(cat => (
+                    {CATEGORIES.map(cat => (
                       <Link 
                         key={cat} 
                         to={getLink(`/search?category=${cat}`)}
