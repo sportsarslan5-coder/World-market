@@ -93,11 +93,7 @@ export const sanitizeProduct = (docId: string, data: Record<string, any>): Produ
   };
 };
 
-const normalizedStaticProducts: Product[] = PRODUCTS.map(p => ({
-  ...p,
-  category: normalizeCategory(p.category || ''),
-  tags: Array.isArray(p.tags) && p.tags.length > 0 ? p.tags : [normalizeCategory(p.category || ''), p.name]
-}));
+const normalizedStaticProducts: Product[] = PRODUCTS.map(p => sanitizeProduct(p.id, p));
 
 const getInitialProducts = (): Product[] => {
   if (typeof window !== 'undefined') {

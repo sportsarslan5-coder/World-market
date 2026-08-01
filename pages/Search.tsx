@@ -104,14 +104,17 @@ const Search: React.FC = () => {
         items.sort((a, b) => getSafeTime(b.datePosted) - getSafeTime(a.datePosted));
         break;
       case 'price-low':
-        items.sort((a, b) => (a.price || 0) - (b.price || 0));
+        items.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
         break;
       case 'price-high':
-        items.sort((a, b) => (b.price || 0) - (a.price || 0));
+        items.sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
+        break;
+      case 'rating':
+        items.sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0));
         break;
       case 'best-selling':
       default:
-        items.sort((a, b) => (b.sales || 0) - (a.sales || 0));
+        items.sort((a, b) => (Number(b.sales) || 0) - (Number(a.sales) || 0));
         break;
     }
 
@@ -262,9 +265,13 @@ const Search: React.FC = () => {
                    const isTopRated = Number(product.rating || 0) >= 4.8;
 
                    return (
-                     <div key={product.id} className="bg-white border border-gray-200 rounded-lg flex flex-col group hover:shadow-lg transition-shadow overflow-hidden">
+                     <div key={product.id} className="bg-white border border-gray-200 rounded-lg flex flex-col group hover:shadow-lg transition-shadow overflow-hidden w-full">
                         {/* Image area */}
-                        <Link to={`/products/${product.id}`} className="block w-full shrink-0 relative aspect-square bg-gray-50 p-4">
+                        <Link 
+                          to={`/products/${product.id}`} 
+                          className="block w-full relative aspect-square bg-gray-50 p-4 shrink-0 overflow-hidden"
+                          style={{ aspectRatio: '1 / 1' }}
+                        >
                            <img 
                              src={product.image || 'https://picsum.photos/seed/product/400/400'} 
                              alt={product.name} 
@@ -273,6 +280,7 @@ const Search: React.FC = () => {
                              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" 
                              onError={(e) => {
                                const target = e.target as HTMLImageElement;
+                               target.onerror = null;
                                if (!target.src.includes('seed/product/400/400')) {
                                  target.src = 'https://picsum.photos/seed/product/400/400';
                                }
