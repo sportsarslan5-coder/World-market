@@ -22,17 +22,31 @@ import {
 } from 'firebase/firestore';
 import { db, auth, validateConnection } from '../services/firebase';
 
+const getSafeTime = (datePosted: any): number => {
+  if (!datePosted) return 0;
+  if (typeof datePosted === 'object') {
+    if (typeof datePosted.toDate === 'function') {
+      return datePosted.toDate().getTime();
+    }
+    if (typeof datePosted.seconds === 'number') {
+      return datePosted.seconds * 1000;
+    }
+  }
+  const parsed = new Date(datePosted).getTime();
+  return isNaN(parsed) ? 0 : parsed;
+};
+
 export const normalizeCategory = (cat: string): string => {
   if (!cat) return '';
   const c = cat.toLowerCase().trim();
   // Broad matching rules for stabilization across all products
-  if (c.includes('hoodie')) return 'hoodies';
-  if (c.includes('t-shirt') || c.includes('tshirt') || c.includes('tee')) return 't-shirts';
-  if (c.includes('jacket')) return 'jackets';
+  if (c.includes('hoodie') || c.includes('sweater') || c.includes('pullover') || c.includes('sweatshirt')) return 'hoodies';
+  if (c.includes('t-shirt') || c.includes('tshirt') || c.includes('tee') || c.includes('polo') || c.includes('clothing')) return 't-shirts';
+  if (c.includes('jacket') || c.includes('coat') || c.includes('outdoor') || c.includes('windbreaker')) return 'jackets';
   if (c.includes('shoe') || c.includes('footwear') || c.includes('sneaker') || c.includes('boot')) return 'shoes'; 
   if (c.includes('cap') || c.includes('hat')) return 'caps';
   if (c.includes('short')) return 'shorts';
-  if (c.includes('jersey') || c.includes('tracksuit') || c.includes('uniform') || c.includes('kit') || c.includes('sport')) return 'jerseys';
+  if (c.includes('jersey') || c.includes('tracksuit') || c.includes('uniform') || c.includes('kit') || c.includes('sport') || c.includes('tank')) return 'jerseys';
   if (c.includes('electronic')) return 'electronics';
   if (c.includes('book')) return 'books';
   if (c.includes('jean') || c.includes('denim')) return 'jeans';
@@ -175,10 +189,13 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     }
 
-    const q = query(collection(db, 'products'), orderBy('datePosted', 'desc')); 
+    const q = query(collection(db, 'products')); 
     const unsubscribeProducts = onSnapshot(q, (snapshot) => {
       const dbProducts = snapshot.docs.map(doc => sanitizeProduct(doc.id, doc.data()));
       
+      // Sort products by post date descending
+      dbProducts.sort((a, b) => getSafeTime(b.datePosted) - getSafeTime(a.datePosted));
+
       if (typeof window !== 'undefined') {
         try {
           localStorage.setItem('cached_firestore_products', JSON.stringify(dbProducts));
