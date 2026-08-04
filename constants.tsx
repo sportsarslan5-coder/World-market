@@ -19,20 +19,16 @@ export const LANGUAGES: Language[] = [
 ];
 
 export const CATEGORIES = [
-  "Graphic T-Shirt",
-  "Polo",
-  "Hoodie",
-  "Jersey",
-  "Jacket",
-  "Shoes",
-  "Shorts",
-  "Gym Tank",
-  "Pants",
-  "Tracksuit",
-  "Sweater",
-  "Accessories",
-  "Electronics",
-  "Books"
+  "hoodie", 
+  "tshirt", 
+  "jacket", 
+  "shoes", 
+  "cap", 
+  "shorts", 
+  "jersey",
+  "electronics",
+  "books",
+  "footwear"
 ];
 
 export const SHIPPING_COUNTRIES = [

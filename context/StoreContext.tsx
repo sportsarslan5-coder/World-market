@@ -39,23 +39,19 @@ const getSafeTime = (datePosted: any): number => {
 export const normalizeCategory = (cat: string): string => {
   if (!cat) return '';
   const c = cat.toLowerCase().trim();
-
-  if (c.includes('graphic') || c === 'tshirt' || c === 't-shirt' || c === 'tshirts' || c === 't-shirts' || c === 'tee') return 'Graphic T-Shirt';
-  if (c.includes('polo')) return 'Polo';
-  if (c.includes('hoodie') || c.includes('pullover') || c.includes('sweatshirt')) return 'Hoodie';
-  if (c.includes('jersey') || c.includes('uniform') || c.includes('kit')) return 'Jersey';
-  if (c.includes('tank')) return 'Gym Tank';
-  if (c.includes('tracksuit')) return 'Tracksuit';
-  if (c.includes('sweater')) return 'Sweater';
-  if (c.includes('jacket') || c.includes('coat') || c.includes('blazer') || c.includes('windbreaker') || c.includes('outdoor')) return 'Jacket';
-  if (c.includes('shoe') || c.includes('footwear') || c.includes('sneaker') || c.includes('boot')) return 'Shoes';
-  if (c.includes('short')) return 'Shorts';
-  if (c.includes('pant') || c.includes('jogger') || c.includes('trouser') || c.includes('denim') || c.includes('jean') || c.includes('yoga')) return 'Pants';
-  if (c.includes('backpack') || c.includes('cap') || c.includes('hat') || c.includes('accessory') || c.includes('bag')) return 'Accessories';
-  if (c.includes('electronic')) return 'Electronics';
-  if (c.includes('book')) return 'Books';
-
-  return cat.trim();
+  if (c.includes('hoodie') || c.includes('sweater') || c.includes('pullover') || c.includes('sweatshirt')) return 'hoodies';
+  if (c.includes('t-shirt') || c.includes('tshirt') || c.includes('tee') || c.includes('polo') || c.includes('clothing')) return 't-shirts';
+  if (c.includes('jacket') || c.includes('coat') || c.includes('outdoor') || c.includes('windbreaker')) return 'jackets';
+  if (c.includes('shoe') || c.includes('footwear') || c.includes('sneaker') || c.includes('boot')) return 'shoes'; 
+  if (c.includes('cap') || c.includes('hat')) return 'caps';
+  if (c.includes('short')) return 'shorts';
+  if (c.includes('jersey') || c.includes('tracksuit') || c.includes('uniform') || c.includes('kit') || c.includes('sport') || c.includes('tank')) return 'jerseys';
+  if (c.includes('electronic')) return 'electronics';
+  if (c.includes('book')) return 'books';
+  if (c.includes('jean') || c.includes('denim')) return 'jeans';
+  if (c.includes('pant') || c.includes('trouser') || c.includes('jogger')) return 'pants';
+  if (c.includes('accessory') || c.includes('bag') || c.includes('belt') || c.includes('sock') || c.includes('backpack')) return 'accessories';
+  return c;
 };
 
 export const sanitizeProduct = (docId: string, data: Record<string, any>): Product => {
@@ -72,26 +68,8 @@ export const sanitizeProduct = (docId: string, data: Record<string, any>): Produ
     }
   }
 
-  const rawId = (docId || '').toLowerCase();
-  const rawName = (data.name || '').toLowerCase();
-  const rawCategory = (data.category || '').toString();
-
-  let category = '';
-  if (rawId.startsWith('polo') || rawName.includes('polo')) category = 'Polo';
-  else if (rawId.startsWith('graphic') || rawName.includes('graphic')) category = 'Graphic T-Shirt';
-  else if (rawId.startsWith('hoodie') || rawId.startsWith('oversized') || rawName.includes('hoodie')) category = 'Hoodie';
-  else if (rawId.startsWith('jersey') || rawId.startsWith('sport') || rawName.includes('jersey') || rawName.includes('uniform')) category = 'Jersey';
-  else if (rawId.startsWith('gym') || rawName.includes('tank')) category = 'Gym Tank';
-  else if (rawId.startsWith('tracksuit') || rawName.includes('tracksuit')) category = 'Tracksuit';
-  else if (rawId.startsWith('wool') || rawName.includes('sweater')) category = 'Sweater';
-  else if (rawId.startsWith('winter') || rawId.startsWith('blazer') || rawName.includes('jacket') || rawName.includes('blazer')) category = 'Jacket';
-  else if (rawId.startsWith('sneaker') || rawId.startsWith('boot') || rawName.includes('shoe') || rawName.includes('sneaker')) category = 'Shoes';
-  else if (rawId.startsWith('shorts') || rawName.includes('short')) category = 'Shorts';
-  else if (rawId.startsWith('joggers') || rawId.startsWith('yoga') || rawName.includes('jogger') || rawName.includes('yoga')) category = 'Pants';
-  else if (rawId.startsWith('backpack') || rawId.startsWith('cap') || rawName.includes('backpack') || rawName.includes('cap')) category = 'Accessories';
-  else if (rawId.startsWith('electronics')) category = 'Electronics';
-  else if (rawId.startsWith('books')) category = 'Books';
-  else category = normalizeCategory(rawCategory);
+  const rawCategory = (data.category || '').toString().trim();
+  const normalizedCat = normalizeCategory(rawCategory);
 
   const mainImage = data.image || (Array.isArray(data.images) && data.images[0]) || 'https://picsum.photos/seed/product/400/400';
   const imagesList = Array.isArray(data.images) && data.images.length > 0 ? data.images : [mainImage];
@@ -99,7 +77,7 @@ export const sanitizeProduct = (docId: string, data: Record<string, any>): Produ
   return {
     id: docId,
     name: (data.name || 'Untitled Product').toString(),
-    category: category || 'General',
+    category: normalizedCat || rawCategory || 'general',
     description: (data.description || '').toString(),
     image: mainImage,
     images: imagesList,
@@ -123,7 +101,7 @@ export const sanitizeProduct = (docId: string, data: Record<string, any>): Produ
     metaKeywords: data.metaKeywords,
     imageAlt: data.imageAlt || data.name,
     badges: Array.isArray(data.badges) ? data.badges : ['New'],
-    tags: Array.isArray(data.tags) ? data.tags : [category, data.name],
+    tags: Array.isArray(data.tags) ? data.tags : [normalizedCat, data.name],
     ratingCount: Number(data.ratingCount) || 0
   };
 };
@@ -229,6 +207,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const dbIds = new Set(dbProducts.map(p => p.id));
       const combined = [...dbProducts, ...normalizedStaticProducts.filter(p => !dbIds.has(p.id))];
       
+      console.log(`[StoreContext Sync] Total hardcoded products loaded: ${normalizedStaticProducts.length}`);
+      console.log(`[StoreContext Sync] Total Firestore products loaded: ${dbProducts.length}`);
+      console.log(`[StoreContext Sync] Total merged products: ${combined.length}`);
+
       setProducts(combined);
       setHasMoreProducts(false);
       setIsProductsLoading(false);
@@ -374,61 +356,47 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     let filtered = [...products];
 
-    // 1. Strict Category Filtering (must match exact or normalized category string)
+    // 1. Category Filtering
     if (!isCategoryAll) {
+      const catLower = rawCategoryInput.toLowerCase();
+      const normTarget = normSearchCategory.toLowerCase();
+
       filtered = filtered.filter(p => {
         const pCatRaw = (p.category || '').toLowerCase().trim();
         const pCatNorm = normalizeCategory(p.category || '').toLowerCase().trim();
-        const normTarget = normSearchCategory.toLowerCase().trim();
-        const rawTarget = rawCategoryInput.toLowerCase().trim();
+        const pName = (p.name || '').toLowerCase();
 
-        return pCatNorm === normTarget || pCatRaw === rawTarget;
+        return pCatNorm === normTarget || 
+               pCatRaw === catLower || 
+               pCatRaw.includes(catLower) || 
+               catLower.includes(pCatRaw) ||
+               pName.includes(catLower);
       });
     }
 
-    // 2. Term Filtering
+    // 2. Search Term Filtering
     if (processedTerm) {
-      const normTerm = normalizeCategory(processedTerm);
-      const isCategoryQuery = CATEGORIES.some(c => normalizeCategory(c).toLowerCase() === normTerm.toLowerCase());
+      const searchWords = processedTerm.split(' ').filter(w => w.length > 0);
+      filtered = filtered.filter(p => {
+        const pName = (p.name || '').toLowerCase();
+        const pCat = (p.category || '').toLowerCase();
+        const pCatNorm = normalizeCategory(pCat).toLowerCase();
+        const pTags = (p.tags || []).map(t => String(t).toLowerCase());
+        const pKeywords = (p.metaKeywords || '').toLowerCase();
+        const pDesc = (p.description || '').toLowerCase();
 
-      if (isCategoryQuery) {
-        filtered = filtered.filter(p => {
-          const pCatNorm = normalizeCategory(p.category || '').toLowerCase();
-          return pCatNorm === normTerm.toLowerCase();
+        return searchWords.every(word => {
+          return pName.includes(word) || 
+                 pCat.includes(word) || 
+                 pCatNorm.includes(word) ||
+                 pTags.some(t => t.includes(word)) ||
+                 pKeywords.includes(word) ||
+                 pDesc.includes(word);
         });
-      } else {
-        const searchWords = processedTerm.split(' ').filter(w => w.length > 0);
-        filtered = filtered.filter(p => {
-          const pName = (p.name || '').toLowerCase();
-          const pCat = (p.category || '').toLowerCase();
-          const pCatNorm = normalizeCategory(pCat).toLowerCase();
-          const pTags = (p.tags || []).map(t => t.toLowerCase());
-          const pKeywords = (p.metaKeywords || '').toLowerCase();
-          const pDesc = (p.description || '').toLowerCase();
-
-          const fullMatch = pName.includes(processedTerm) || 
-                            pCat.includes(processedTerm) ||
-                            pCatNorm === normTerm.toLowerCase() ||
-                            pTags.some(t => t.includes(processedTerm)) ||
-                            pKeywords.includes(processedTerm) ||
-                            pDesc.includes(processedTerm);
-
-          if (fullMatch) return true;
-
-          if (searchWords.length > 0) {
-            return searchWords.every(word => {
-              return pName.includes(word) || 
-                     pCat.includes(word) || 
-                     pTags.some(t => t.includes(word)) ||
-                     pKeywords.includes(word) ||
-                     pDesc.includes(word);
-            });
-          }
-
-          return false;
-        });
-      }
+      });
     }
+
+    console.log(`[StoreContext Search] Total products before filtering: ${products.length} | Total products after filtering: ${filtered.length} (Query: "${term}", Category: "${category}")`);
 
     // Deduplicate and return
     const uniqueMap = new Map();
