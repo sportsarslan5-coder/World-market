@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { Product, CartItem, SaleRecord, Customer, Currency, Language, CurrencyCode, LanguageCode, SellerInfo, AppNotification } from '../types';
-import { PRODUCTS, MOCK_CUSTOMERS, CURRENCIES, LANGUAGES, SELLERS } from '../constants';
+import { PRODUCTS, CATEGORIES, MOCK_CUSTOMERS, CURRENCIES, LANGUAGES, SELLERS } from '../constants';
 import { detectShowName } from '../services/routingUtils';
 import { 
   collection, 
@@ -39,20 +39,23 @@ const getSafeTime = (datePosted: any): number => {
 export const normalizeCategory = (cat: string): string => {
   if (!cat) return '';
   const c = cat.toLowerCase().trim();
-  // Broad matching rules for stabilization across all products
-  if (c.includes('hoodie') || c.includes('sweater') || c.includes('pullover') || c.includes('sweatshirt')) return 'hoodies';
-  if (c.includes('t-shirt') || c.includes('tshirt') || c.includes('tee') || c.includes('polo') || c.includes('clothing')) return 't-shirts';
-  if (c.includes('jacket') || c.includes('coat') || c.includes('outdoor') || c.includes('windbreaker')) return 'jackets';
-  if (c.includes('shoe') || c.includes('footwear') || c.includes('sneaker') || c.includes('boot')) return 'shoes'; 
-  if (c.includes('cap') || c.includes('hat')) return 'caps';
-  if (c.includes('short')) return 'shorts';
-  if (c.includes('jersey') || c.includes('tracksuit') || c.includes('uniform') || c.includes('kit') || c.includes('sport') || c.includes('tank')) return 'jerseys';
-  if (c.includes('electronic')) return 'electronics';
-  if (c.includes('book')) return 'books';
-  if (c.includes('jean') || c.includes('denim')) return 'jeans';
-  if (c.includes('pant') || c.includes('trouser') || c.includes('jogger')) return 'pants';
-  if (c.includes('accessory') || c.includes('bag') || c.includes('belt') || c.includes('sock') || c.includes('backpack')) return 'accessories';
-  return c;
+
+  if (c.includes('graphic') || c === 'tshirt' || c === 't-shirt' || c === 'tshirts' || c === 't-shirts' || c === 'tee') return 'Graphic T-Shirt';
+  if (c.includes('polo')) return 'Polo';
+  if (c.includes('hoodie') || c.includes('pullover') || c.includes('sweatshirt')) return 'Hoodie';
+  if (c.includes('jersey') || c.includes('uniform') || c.includes('kit')) return 'Jersey';
+  if (c.includes('tank')) return 'Gym Tank';
+  if (c.includes('tracksuit')) return 'Tracksuit';
+  if (c.includes('sweater')) return 'Sweater';
+  if (c.includes('jacket') || c.includes('coat') || c.includes('blazer') || c.includes('windbreaker') || c.includes('outdoor')) return 'Jacket';
+  if (c.includes('shoe') || c.includes('footwear') || c.includes('sneaker') || c.includes('boot')) return 'Shoes';
+  if (c.includes('short')) return 'Shorts';
+  if (c.includes('pant') || c.includes('jogger') || c.includes('trouser') || c.includes('denim') || c.includes('jean') || c.includes('yoga')) return 'Pants';
+  if (c.includes('backpack') || c.includes('cap') || c.includes('hat') || c.includes('accessory') || c.includes('bag')) return 'Accessories';
+  if (c.includes('electronic')) return 'Electronics';
+  if (c.includes('book')) return 'Books';
+
+  return cat.trim();
 };
 
 export const sanitizeProduct = (docId: string, data: Record<string, any>): Product => {
@@ -69,8 +72,26 @@ export const sanitizeProduct = (docId: string, data: Record<string, any>): Produ
     }
   }
 
+  const rawId = (docId || '').toLowerCase();
+  const rawName = (data.name || '').toLowerCase();
   const rawCategory = (data.category || '').toString();
-  const normalizedCat = normalizeCategory(rawCategory);
+
+  let category = '';
+  if (rawId.startsWith('polo') || rawName.includes('polo')) category = 'Polo';
+  else if (rawId.startsWith('graphic') || rawName.includes('graphic')) category = 'Graphic T-Shirt';
+  else if (rawId.startsWith('hoodie') || rawId.startsWith('oversized') || rawName.includes('hoodie')) category = 'Hoodie';
+  else if (rawId.startsWith('jersey') || rawId.startsWith('sport') || rawName.includes('jersey') || rawName.includes('uniform')) category = 'Jersey';
+  else if (rawId.startsWith('gym') || rawName.includes('tank')) category = 'Gym Tank';
+  else if (rawId.startsWith('tracksuit') || rawName.includes('tracksuit')) category = 'Tracksuit';
+  else if (rawId.startsWith('wool') || rawName.includes('sweater')) category = 'Sweater';
+  else if (rawId.startsWith('winter') || rawId.startsWith('blazer') || rawName.includes('jacket') || rawName.includes('blazer')) category = 'Jacket';
+  else if (rawId.startsWith('sneaker') || rawId.startsWith('boot') || rawName.includes('shoe') || rawName.includes('sneaker')) category = 'Shoes';
+  else if (rawId.startsWith('shorts') || rawName.includes('short')) category = 'Shorts';
+  else if (rawId.startsWith('joggers') || rawId.startsWith('yoga') || rawName.includes('jogger') || rawName.includes('yoga')) category = 'Pants';
+  else if (rawId.startsWith('backpack') || rawId.startsWith('cap') || rawName.includes('backpack') || rawName.includes('cap')) category = 'Accessories';
+  else if (rawId.startsWith('electronics')) category = 'Electronics';
+  else if (rawId.startsWith('books')) category = 'Books';
+  else category = normalizeCategory(rawCategory);
 
   const mainImage = data.image || (Array.isArray(data.images) && data.images[0]) || 'https://picsum.photos/seed/product/400/400';
   const imagesList = Array.isArray(data.images) && data.images.length > 0 ? data.images : [mainImage];
@@ -78,7 +99,7 @@ export const sanitizeProduct = (docId: string, data: Record<string, any>): Produ
   return {
     id: docId,
     name: (data.name || 'Untitled Product').toString(),
-    category: normalizedCat || rawCategory || 'general',
+    category: category || 'General',
     description: (data.description || '').toString(),
     image: mainImage,
     images: imagesList,
@@ -102,7 +123,7 @@ export const sanitizeProduct = (docId: string, data: Record<string, any>): Produ
     metaKeywords: data.metaKeywords,
     imageAlt: data.imageAlt || data.name,
     badges: Array.isArray(data.badges) ? data.badges : ['New'],
-    tags: Array.isArray(data.tags) ? data.tags : [normalizedCat, data.name],
+    tags: Array.isArray(data.tags) ? data.tags : [category, data.name],
     ratingCount: Number(data.ratingCount) || 0
   };
 };
@@ -308,7 +329,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const searchProducts = useCallback((term: string, category: string = 'All'): Product[] => {
-    const rawCategoryInput = (category || 'All').toLowerCase().trim();
+    const rawCategoryInput = (category || 'All').trim();
     const normSearchCategory = normalizeCategory(rawCategoryInput);
     
     // Clean and decode search term robustly (handling potential percent encodings and URL parameters)
@@ -347,73 +368,66 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Safely remove leading and trailing garbage punctuation without stripping non-English letters
     processedTerm = processedTerm.replace(/^[\?\*!\.,\-\+\/\\_]+/, '').replace(/[\?\*!\.,\-\+\/\\_]+$/, '').trim();
     
-    const isCategoryAll = normSearchCategory === 'all' || rawCategoryInput === 'all';
+    const isCategoryAll = !rawCategoryInput || 
+                          rawCategoryInput.toLowerCase() === 'all' || 
+                          normSearchCategory.toLowerCase() === 'all';
 
     let filtered = [...products];
 
-    // 1. Category Filtering
+    // 1. Strict Category Filtering (must match exact or normalized category string)
     if (!isCategoryAll) {
       filtered = filtered.filter(p => {
-        const pCatRaw = (p.category || '').toLowerCase();
-        const pCatNorm = normalizeCategory(pCatRaw);
-        const pName = (p.name || '').toLowerCase();
-        const pTags = (p.tags || []).map(t => t.toLowerCase());
+        const pCatRaw = (p.category || '').toLowerCase().trim();
+        const pCatNorm = normalizeCategory(p.category || '').toLowerCase().trim();
+        const normTarget = normSearchCategory.toLowerCase().trim();
+        const rawTarget = rawCategoryInput.toLowerCase().trim();
 
-        return pCatNorm === normSearchCategory || 
-               pCatRaw === rawCategoryInput ||
-               pCatRaw.includes(rawCategoryInput) || 
-               rawCategoryInput.includes(pCatRaw) ||
-               pName.includes(rawCategoryInput) ||
-               pTags.some(t => t.includes(rawCategoryInput));
+        return pCatNorm === normTarget || pCatRaw === rawTarget;
       });
     }
 
-    // 2. Term Filtering (Partial Word Matching on Name, Category, Tags, Keywords, Description)
+    // 2. Term Filtering
     if (processedTerm) {
-      const searchWords = processedTerm.split(' ').filter(w => w.length > 0);
       const normTerm = normalizeCategory(processedTerm);
-      
-      filtered = filtered.filter(p => {
-        const pName = (p.name || '').toLowerCase();
-        const pCat = (p.category || '').toLowerCase();
-        const pCatNorm = normalizeCategory(pCat);
-        const pTags = (p.tags || []).map(t => t.toLowerCase());
-        const pKeywords = (p.metaKeywords || '').toLowerCase();
-        const pDesc = (p.description || '').toLowerCase();
+      const isCategoryQuery = CATEGORIES.some(c => normalizeCategory(c).toLowerCase() === normTerm.toLowerCase());
 
-        // Direct full term match against Product Name, Category, Tags, Keywords, or Description
-        const fullMatch = pName.includes(processedTerm) || 
-                          processedTerm.includes(pName) ||
-                          pCat === processedTerm ||
-                          pCat.includes(processedTerm) ||
-                          processedTerm.includes(pCat) ||
-                          pCatNorm === normTerm ||
-                          pCatNorm.includes(normTerm) ||
-                          normTerm.includes(pCatNorm) ||
-                          pTags.some(t => t === processedTerm || t.includes(processedTerm) || processedTerm.includes(t)) ||
-                          pKeywords.includes(processedTerm) ||
-                          pDesc.includes(processedTerm);
+      if (isCategoryQuery) {
+        filtered = filtered.filter(p => {
+          const pCatNorm = normalizeCategory(p.category || '').toLowerCase();
+          return pCatNorm === normTerm.toLowerCase();
+        });
+      } else {
+        const searchWords = processedTerm.split(' ').filter(w => w.length > 0);
+        filtered = filtered.filter(p => {
+          const pName = (p.name || '').toLowerCase();
+          const pCat = (p.category || '').toLowerCase();
+          const pCatNorm = normalizeCategory(pCat).toLowerCase();
+          const pTags = (p.tags || []).map(t => t.toLowerCase());
+          const pKeywords = (p.metaKeywords || '').toLowerCase();
+          const pDesc = (p.description || '').toLowerCase();
 
-        if (fullMatch) return true;
+          const fullMatch = pName.includes(processedTerm) || 
+                            pCat.includes(processedTerm) ||
+                            pCatNorm === normTerm.toLowerCase() ||
+                            pTags.some(t => t.includes(processedTerm)) ||
+                            pKeywords.includes(processedTerm) ||
+                            pDesc.includes(processedTerm);
 
-        // Word by word match: Every word in the search query must match at least one searchable field
-        if (searchWords.length > 0) {
-          return searchWords.every(word => {
-            const normWord = normalizeCategory(word);
-            return pName.includes(word) || 
-                   pCat.includes(word) || 
-                   word.includes(pCat) ||
-                   pCatNorm === normWord ||
-                   pCatNorm.includes(normWord) ||
-                   normWord.includes(pCatNorm) ||
-                   pTags.some(t => t.includes(word) || word.includes(t)) ||
-                   pKeywords.includes(word) ||
-                   pDesc.includes(word);
-          });
-        }
+          if (fullMatch) return true;
 
-        return false;
-      });
+          if (searchWords.length > 0) {
+            return searchWords.every(word => {
+              return pName.includes(word) || 
+                     pCat.includes(word) || 
+                     pTags.some(t => t.includes(word)) ||
+                     pKeywords.includes(word) ||
+                     pDesc.includes(word);
+            });
+          }
+
+          return false;
+        });
+      }
     }
 
     // Deduplicate and return
