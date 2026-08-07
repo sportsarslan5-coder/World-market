@@ -190,16 +190,22 @@ const Home: React.FC = () => {
             if (!products || products.length === 0) return null;
             
             // Use unified searchProducts from StoreContext for absolute consistency
-            const matchingProducts = searchProducts('', block.cat || block.kw);
+            const matchingProducts = (block.kw && block.kw !== block.cat)
+              ? searchProducts(block.kw, 'All')
+              : searchProducts('', block.cat || block.kw);
             const images = matchingProducts.map(p => p.image).slice(0, 4);
             
             // If No matches for this specific block, hide it
             if (images.length === 0) return null;
 
+            const linkTarget = (block.kw && block.kw !== block.cat)
+              ? `/search?q=${encodeURIComponent(block.kw)}`
+              : `/search?category=${encodeURIComponent(block.cat || block.kw)}`;
+
             return (
               <Link 
                 key={block.title}
-                to={getLink(`/search?category=${encodeURIComponent(block.kw || block.cat)}`)}
+                to={getLink(linkTarget)}
                 className="bg-white p-5 shadow-lg hover:shadow-xl transition-all flex flex-col group"
               >
                 <h3 className="text-xl font-black uppercase italic tracking-tighter mb-4 text-gray-900 group-hover:text-blue-600 transition-colors">

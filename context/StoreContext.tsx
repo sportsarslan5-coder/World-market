@@ -26,30 +26,34 @@ const getSafeTime = (datePosted: any): number => {
   if (!datePosted) return 0;
   if (typeof datePosted === 'object') {
     if (typeof datePosted.toDate === 'function') {
-      return datePosted.toDate().getTime();
+      try { return datePosted.toDate().getTime(); } catch (e) {}
     }
     if (typeof datePosted.seconds === 'number') {
       return datePosted.seconds * 1000;
     }
   }
-  const parsed = new Date(datePosted).getTime();
+  if (typeof datePosted === 'string') {
+    const isoStr = datePosted.trim().replace(' ', 'T');
+    const parsed = Date.parse(isoStr);
+    return isNaN(parsed) ? 0 : parsed;
+  }
+  const parsed = Number(datePosted);
   return isNaN(parsed) ? 0 : parsed;
 };
 
 export const normalizeCategory = (cat: string): string => {
   if (!cat) return '';
   const c = cat.toLowerCase().trim();
-  if (c.includes('hoodie') || c.includes('sweater') || c.includes('pullover') || c.includes('sweatshirt')) return 'hoodies';
-  if (c.includes('t-shirt') || c.includes('tshirt') || c.includes('tee') || c.includes('polo') || c.includes('clothing')) return 't-shirts';
-  if (c.includes('jacket') || c.includes('coat') || c.includes('outdoor') || c.includes('windbreaker')) return 'jackets';
-  if (c.includes('shoe') || c.includes('footwear') || c.includes('sneaker') || c.includes('boot')) return 'shoes'; 
-  if (c.includes('cap') || c.includes('hat')) return 'caps';
-  if (c.includes('short')) return 'shorts';
-  if (c.includes('jersey') || c.includes('tracksuit') || c.includes('uniform') || c.includes('kit') || c.includes('sport') || c.includes('tank')) return 'jerseys';
+  if (c === 'hoodie' || c === 'hoodies' || c.includes('hoodie')) return 'hoodie';
+  if (c === 'tshirt' || c === 't-shirt' || c === 't shirt' || c === 't-shirts' || c.includes('t-shirt') || c.includes('tshirt') || c.includes('tee') || c === 'polo') return 'tshirt';
+  if (c === 'jacket' || c === 'jackets' || c.includes('jacket') || c.includes('coat') || c.includes('blazer') || c.includes('windbreaker')) return 'jacket';
+  if (c === 'shoes' || c === 'shoe' || c.includes('shoe') || c.includes('footwear') || c.includes('sneaker') || c.includes('boot')) return 'shoes'; 
+  if (c === 'cap' || c === 'caps' || c.includes('cap') || c.includes('hat')) return 'cap';
+  if (c === 'shorts' || c === 'short' || c.includes('short') || c.includes('jogger') || c.includes('pant') || c.includes('yoga')) return 'shorts';
+  if (c === 'jersey' || c === 'jerseys' || c.includes('jersey') || c.includes('uniform') || c.includes('tracksuit')) return 'jersey';
   if (c.includes('electronic')) return 'electronics';
   if (c.includes('book')) return 'books';
   if (c.includes('jean') || c.includes('denim')) return 'jeans';
-  if (c.includes('pant') || c.includes('trouser') || c.includes('jogger')) return 'pants';
   if (c.includes('accessory') || c.includes('bag') || c.includes('belt') || c.includes('sock') || c.includes('backpack')) return 'accessories';
   return c;
 };
@@ -69,7 +73,21 @@ export const sanitizeProduct = (docId: string, data: Record<string, any>): Produ
   }
 
   const rawCategory = (data.category || '').toString().trim();
-  const normalizedCat = normalizeCategory(rawCategory);
+  const rawId = (docId || '').toLowerCase();
+  const rawName = (data.name || '').toLowerCase();
+
+  let category = rawCategory;
+  if (!category || category === 'Clothing' || category === 'Sportswear' || category === 'sportswear' || category === 'General' || category === 'Outdoor') {
+    if (rawId.includes('hoodie') || rawName.includes('hoodie')) category = 'hoodie';
+    else if (rawId.includes('jacket') || rawName.includes('jacket') || rawName.includes('blazer') || rawName.includes('sweater')) category = 'jacket';
+    else if (rawId.includes('shoe') || rawId.includes('sneaker') || rawId.includes('boot') || rawName.includes('shoe') || rawName.includes('sneaker')) category = 'shoes';
+    else if (rawId.includes('shorts') || rawId.includes('jogger') || rawName.includes('short') || rawName.includes('jogger') || rawName.includes('yoga')) category = 'shorts';
+    else if (rawId.includes('jersey') || rawId.includes('tracksuit') || rawName.includes('jersey') || rawName.includes('uniform') || rawName.includes('kit')) category = 'jersey';
+    else if (rawId.includes('polo') || rawId.includes('tshirt') || rawName.includes('t-shirt') || rawName.includes('polo') || rawName.includes('graphic')) category = 'tshirt';
+    else if (rawId.includes('cap') || rawName.includes('cap')) category = 'cap';
+  }
+
+  const normalizedCat = normalizeCategory(category);
 
   const mainImage = data.image || (Array.isArray(data.images) && data.images[0]) || 'https://picsum.photos/seed/product/400/400';
   const imagesList = Array.isArray(data.images) && data.images.length > 0 ? data.images : [mainImage];
@@ -181,10 +199,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     validateConnection();
     
-    // Request notification permission
+    // Request notification permission safely (prevent iOS Safari crash)
     if (typeof window !== 'undefined' && 'Notification' in window) {
-      if (Notification.permission === 'default') {
-        Notification.requestPermission();
+      try {
+        if (Notification.permission === 'default') {
+          Notification.requestPermission().catch(() => {});
+        }
+      } catch (e) {
+        // Safe fallback for iOS Safari
       }
     }
 
@@ -364,19 +386,22 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       filtered = filtered.filter(p => {
         const pCatRaw = (p.category || '').toLowerCase().trim();
         const pCatNorm = normalizeCategory(p.category || '').toLowerCase().trim();
-        const pName = (p.name || '').toLowerCase();
 
-        return pCatNorm === normTarget || 
-               pCatRaw === catLower || 
-               pCatRaw.includes(catLower) || 
-               catLower.includes(pCatRaw) ||
-               pName.includes(catLower);
+        return pCatNorm === normTarget || pCatRaw === catLower;
       });
     }
 
     // 2. Search Term Filtering
     if (processedTerm) {
-      const searchWords = processedTerm.split(' ').filter(w => w.length > 0);
+      let normalizedQuery = processedTerm;
+      normalizedQuery = normalizedQuery.replace(/\bt[\s\-_]*shirt(s)?\b/g, 'tshirt');
+      normalizedQuery = normalizedQuery.replace(/\bgraphic[\s\-_]*tshirt(s)?\b/g, 'graphic-tshirt');
+      normalizedQuery = normalizedQuery.replace(/\bgym[\s\-_]*tank(s)?\b/g, 'gym-tank');
+
+      const words = normalizedQuery
+        .split(/[\s\-_]+/)
+        .filter(w => w.length > 0 && (w.length > 1 || normalizedQuery.length === 1));
+
       filtered = filtered.filter(p => {
         const pName = (p.name || '').toLowerCase();
         const pCat = (p.category || '').toLowerCase();
@@ -385,7 +410,19 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const pKeywords = (p.metaKeywords || '').toLowerCase();
         const pDesc = (p.description || '').toLowerCase();
 
-        return searchWords.every(word => {
+        // Exact term or phrase match
+        if (pName.includes(normalizedQuery) || 
+            pName.includes(processedTerm) || 
+            pCat.includes(normalizedQuery) || 
+            pCatNorm.includes(normalizedQuery) || 
+            pKeywords.includes(normalizedQuery) || 
+            pTags.some(t => t.includes(normalizedQuery) || t.includes(processedTerm))) {
+          return true;
+        }
+
+        if (words.length === 0) return false;
+
+        return words.every(word => {
           return pName.includes(word) || 
                  pCat.includes(word) || 
                  pCatNorm.includes(word) ||
