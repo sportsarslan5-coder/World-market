@@ -138,6 +138,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     };
   }, [searchQuery, searchCategory, products, searchProducts, searchHistory]);
 
+  const handleMobileNav = (to: string, e?: React.MouseEvent | React.TouchEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
+    setIsMobileMenuOpen(false);
+    navigate(to);
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const cleanQuery = searchQuery.trim();
@@ -157,6 +165,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     }
     
     setShowSuggestions(false);
+    setIsMobileMenuOpen(false);
   };
 
   const clearHistory = () => {
@@ -578,24 +587,24 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                <div className="bg-white mb-2 pb-4">
                   <h4 className="px-6 py-4 text-lg font-black uppercase italic tracking-tighter text-gray-900 border-b border-gray-100 mb-2">Shop by Category</h4>
                   <div className="flex flex-col">
-                    <Link 
-                      to="/sport-store"
-                      className="px-6 py-4 flex items-center justify-between text-sm font-black text-blue-600 bg-blue-50"
-                      onClick={() => setIsMobileMenuOpen(false)}
+                    <button 
+                      type="button"
+                      onClick={(e) => handleMobileNav('/sport-store', e)}
+                      className="px-6 py-4 flex items-center justify-between text-sm font-black text-blue-600 bg-blue-50 text-left w-full cursor-pointer"
                     >
                       Sports Store (Direct Factory)
                       <ArrowRight size={16} />
-                    </Link>
+                    </button>
                     {CATEGORIES.map(cat => (
-                      <Link 
+                      <button 
                         key={cat} 
-                        to={getLink(`/search?category=${cat}`)}
-                        className="px-6 py-4 flex items-center justify-between text-sm font-bold text-gray-700 hover:bg-gray-50 active:bg-gray-100"
-                        onClick={() => setIsMobileMenuOpen(false)}
+                        type="button"
+                        onClick={(e) => handleMobileNav(getLink(`/search?category=${encodeURIComponent(cat)}`), e)}
+                        className="px-6 py-4 flex items-center justify-between text-sm font-bold text-gray-700 hover:bg-gray-50 active:bg-gray-100 text-left w-full cursor-pointer"
                       >
                         {cat.toUpperCase()}
                         <ArrowRight size={16} className="text-gray-300" />
-                      </Link>
+                      </button>
                     ))}
                   </div>
                </div>

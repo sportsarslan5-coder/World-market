@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { BLOG_POSTS } from '../constants';
@@ -7,9 +7,61 @@ import { Calendar, User, ArrowLeft, Tag, ShoppingCart, Star, Eye } from 'lucide-
 const BlogPost: React.FC = () => {
   const { slug } = useParams();
   const { products, language, formatPrice, addToCart, setQuickViewProduct } = useStore();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(true);
+    let isMounted = true;
+    try {
+      // Find post
+    } catch (err) {
+      console.error("Blog post resolution error:", err);
+    } finally {
+      const timer = setTimeout(() => {
+        if (isMounted) setIsLoading(false);
+      }, 150);
+      return () => {
+        isMounted = false;
+        clearTimeout(timer);
+      };
+    }
+  }, [slug]);
+
   const post = BLOG_POSTS.find(p => p.slug === slug);
 
-  if (!post) return <div className="min-h-screen flex items-center justify-center">Post not found</div>;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white pb-24">
+        <div className="max-w-4xl mx-auto px-4 py-24 animate-pulse">
+          <div className="h-4 bg-gray-200 rounded w-28 mb-12" />
+          <div className="space-y-6 mb-12">
+            <div className="h-6 bg-gray-200 rounded-full w-24" />
+            <div className="h-12 bg-gray-200 rounded w-full" />
+            <div className="h-12 bg-gray-200 rounded w-3/4" />
+            <div className="h-12 bg-gray-200 rounded-2xl w-48 mt-4" />
+          </div>
+          <div className="aspect-video bg-gray-200 rounded-[4rem] w-full mb-12" />
+          <div className="space-y-4">
+            <div className="h-6 bg-gray-200 rounded w-full" />
+            <div className="h-6 bg-gray-200 rounded w-5/6" />
+            <div className="h-6 bg-gray-200 rounded w-4/5" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!post) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gray-50">
+        <h2 className="text-3xl font-black italic uppercase mb-4">Post Not Found</h2>
+        <p className="text-gray-500 mb-8">The requested blog article could not be located.</p>
+        <Link to="/blog" className="px-6 py-3 bg-blue-600 text-white rounded-xl font-black uppercase text-xs tracking-widest shadow-lg">
+          Back to Blog
+        </Link>
+      </div>
+    );
+  }
 
   // Related products for SEO internal linking
   const relatedProducts = products.slice(0, 4);
@@ -47,8 +99,21 @@ const BlogPost: React.FC = () => {
             </div>
           </div>
 
-          <div className="aspect-video rounded-[4rem] overflow-hidden shadow-2xl shadow-blue-600/10">
-            <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
+          <div className="aspect-video rounded-[4rem] overflow-hidden shadow-2xl shadow-blue-600/10 bg-gray-100">
+            <img 
+              src={post.image} 
+              alt={post.title} 
+              className="w-full h-full object-cover" 
+              loading="lazy"
+              decoding="async"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                if (!target.src.includes('seed/blog/800/600')) {
+                  target.src = 'https://picsum.photos/seed/blog/800/600';
+                }
+              }}
+            />
           </div>
 
           <div className="prose prose-blue prose-2xl max-w-none text-gray-600 leading-relaxed font-medium">
@@ -84,7 +149,20 @@ const BlogPost: React.FC = () => {
             {relatedProducts.map(p => (
               <div key={p.id} className="group bg-white p-4 rounded-[2rem] border border-transparent hover:border-gray-100 hover:shadow-2xl transition-all">
                 <div className="aspect-square bg-gray-50 rounded-3xl overflow-hidden relative mb-4">
-                  <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <img 
+                    src={p.image} 
+                    alt={p.name} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.onerror = null;
+                      if (!target.src.includes('seed/placeholder/400/400')) {
+                        target.src = 'https://picsum.photos/seed/placeholder/400/400';
+                      }
+                    }}
+                  />
                   <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                     <button 
                       onClick={() => setQuickViewProduct(p)}

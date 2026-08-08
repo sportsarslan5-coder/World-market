@@ -1,13 +1,16 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { initializeFirestore } from 'firebase/firestore';
+import { initializeFirestore, setLogLevel } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
+
+// Silence non-fatal Firestore connection warnings in console
+setLogLevel('error');
 
 const app = initializeApp(firebaseConfig);
 
-// Use initializeFirestore with settings for better reliability in some environments
+// Use initializeFirestore with force long polling for max reliability across browser environments
 export const db = initializeFirestore(app, {
-  experimentalAutoDetectLongPolling: true, // Prefer WebSockets and auto-detect long polling if needed
+  experimentalForceLongPolling: true, // Force standard HTTPS long polling for firewalls, iOS Safari, and proxies
   ignoreUndefinedProperties: true, // Prevent undefined errors on schema writes
 }, firebaseConfig.firestoreDatabaseId);
 
@@ -20,9 +23,9 @@ export const validateConnection = async () => {
       console.log('Client is offline: Firebase operating in local offline cache mode');
       return;
     }
-    console.log('Firebase services initialized and ready for real-time synchronization');
+    console.log('Firebase services initialized and ready');
   } catch (error) {
-    // Log connection status in a clean, professional, non-crashing format
-    console.log('Firebase operating in robust local offline cache mode (data will automatically synchronize when connection establishes)');
+    console.log('Firebase operating in local offline cache mode');
   }
 };
+

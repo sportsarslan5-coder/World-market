@@ -59,7 +59,7 @@ const Search: React.FC = () => {
     return categoryName || getQueryParam('category') || getQueryParam('cat') || 'All';
   }, [categoryName, location.search, location.hash, searchParams]);
 
-  const { formatPrice, setQuickViewProduct, products, searchProducts } = useStore();
+  const { formatPrice, setQuickViewProduct, products, searchProducts, isProductsLoading } = useStore();
 
   const [sortBy, setSortBy] = useState('best-selling');
   const [filters, setFilters] = useState({
@@ -69,11 +69,33 @@ const Search: React.FC = () => {
     selectedColor: 'All'
   });
   const [showFilters, setShowFilters] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Sync category from URL
   React.useEffect(() => {
     setFilters(prev => ({ ...prev, selectedCategory: categoryParam }));
   }, [categoryParam]);
+
+  // Safely manage loading state inside a try/finally block so skeleton loaders never freeze on iOS Safari
+  React.useEffect(() => {
+    setIsLoading(true);
+    let isMounted = true;
+    try {
+      if (!isProductsLoading || products.length > 0) {
+        if (isMounted) setIsLoading(false);
+      }
+    } catch (e) {
+      console.error("Search loading error:", e);
+    } finally {
+      const timer = setTimeout(() => {
+        if (isMounted) setIsLoading(false);
+      }, 150);
+      return () => {
+        isMounted = false;
+        clearTimeout(timer);
+      };
+    }
+  }, [query, categoryParam, filters.selectedCategory, products, isProductsLoading]);
 
   const rawResults = useMemo(() => {
     return searchProducts(query, filters.selectedCategory);
@@ -256,7 +278,22 @@ const Search: React.FC = () => {
 
         {/* Results Stream */}
         <div className="flex-grow">
-          {filteredAndSortedResults.length > 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col gap-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-2 animate-pulse">Loading Results...</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="bg-white border border-gray-200 rounded-lg p-4 flex flex-col gap-3 animate-pulse">
+                    <div className="w-full bg-gray-200 rounded-md" style={{ aspectRatio: '1 / 1' }} />
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mt-2" />
+                    <div className="h-3 bg-gray-200 rounded w-1/2" />
+                    <div className="h-6 bg-gray-200 rounded w-1/3 mt-2" />
+                    <div className="h-8 bg-gray-200 rounded-full w-full mt-auto" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : filteredAndSortedResults.length > 0 ? (
             <div className="flex flex-col gap-6">
                <h2 className="text-xl font-bold text-gray-900 mb-2">Results</h2>
                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
